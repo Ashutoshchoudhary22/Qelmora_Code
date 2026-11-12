@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../api/client';
 import { ProductGrid } from '../components/ProductGrid';
@@ -7,13 +8,17 @@ import { ProductGrid } from '../components/ProductGrid';
 const TITLES = {
   men: 'Men',
   women: 'Women',
-  unisex: 'Unisex',
   'new-arrivals': 'New Arrivals',
 };
 
 export default function ShopPage() {
   const { category } = useParams();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (category === 'unisex') navigate('/shop/men', { replace: true });
+  }, [category, navigate]);
   const page = Number(searchParams.get('page') || 1);
   const search = searchParams.get('q') || '';
 

@@ -7,6 +7,7 @@ import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
+import { AuthLayout } from './components/layout/AuthLayout';
 import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
 import ResetPasswordPage from './pages/auth/ResetPasswordPage';
 import {
@@ -23,18 +24,26 @@ import AdminProducts from './pages/admin/AdminProducts';
 import AdminProductForm from './pages/admin/AdminProductForm';
 import AdminOrders from './pages/admin/AdminOrders';
 import AdminBanners from './pages/admin/AdminBanners';
+import AdminCategories from './pages/admin/AdminCategories';
+import AdminBrandStory from './pages/admin/AdminBrandStory';
+import AdminInstagram from './pages/admin/AdminInstagram';
+import AdminStaticPages from './pages/admin/AdminStaticPages';
+import AdminLoginBanner from './pages/admin/AdminLoginBanner';
 
 export default function App() {
   return (
     <Routes>
+      <Route element={<AuthLayout />}>
+        <Route path="login" element={<LoginPage />} />
+        <Route path="register" element={<RegisterPage />} />
+      </Route>
+
       <Route element={<SiteLayout />}>
         <Route index element={<HomePage />} />
         <Route path="shop/:category" element={<ShopPage />} />
         <Route path="product/:slug" element={<ProductPage />} />
         <Route path="cart" element={<CartPage />} />
         <Route path="checkout" element={<CheckoutPage />} />
-        <Route path="login" element={<LoginPage />} />
-        <Route path="register" element={<RegisterPage />} />
         <Route path="forgot-password" element={<ForgotPasswordPage />} />
         <Route path="reset-password" element={<ResetPasswordPage />} />
         <Route path="about" element={<AboutPage />} />
@@ -53,6 +62,11 @@ export default function App() {
         <Route path="products" element={<AdminProducts />} />
         <Route path="products/:id" element={<AdminProductForm />} />
         <Route path="orders" element={<AdminOrders />} />
+        <Route path="categories" element={<AdminCategories />} />
+        <Route path="brand-story" element={<AdminBrandStory />} />
+        <Route path="instagram" element={<AdminInstagram />} />
+        <Route path="static-pages" element={<AdminStaticPages />} />
+        <Route path="login-banner" element={<AdminLoginBanner />} />
         <Route path="banners" element={<AdminBanners />} />
       </Route>
 

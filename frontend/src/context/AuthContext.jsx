@@ -7,6 +7,7 @@ const USER_KEY = 'qelmora_user';
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
+    if (!localStorage.getItem(TOKEN_KEY)) return null;
     try {
       const raw = localStorage.getItem(USER_KEY);
       return raw ? JSON.parse(raw) : null;
@@ -47,21 +48,40 @@ export function AuthProvider({ children }) {
   );
 
   useEffect(() => {
-    if (!localStorage.getItem(TOKEN_KEY)) {
-      setBooting(false);
-      return;
-    }
-    api
-      .get('/auth/me')
-      .then(({ data }) => persist(data.user))
-      .catch(() => logout())
-      .finally(() => setBooting(false));
+    const syncSession = () => {
+      const token = localStorage.getItem(TOKEN_KEY);
+      if (!token) {
+        if (localStorage.getItem(USER_KEY)) localStorage.removeItem(USER_KEY);
+        setUser(null);
+        setBooting(false);
+        return;
+      }
+      setBooting(true);
+      api
+        .get('/auth/me')
+        .then(({ data }) => persist(data.user, token))
+        .catch(() => logout())
+        .finally(() => setBooting(false));
+    };
+
+    syncSession();
+    window.addEventListener('qelmora:session-expired', syncSession);
+    return () => window.removeEventListener('qelmora:session-expired', syncSession);
   }, [logout, persist]);
 
-  const value = useMemo(
-    () => ({ user, booting, login, register, logout, isAdmin: user?.role === 'admin' }),
-    [user, booting, login, register, logout]
-  );
+  const value = useMemo(() => {
+    const hasToken = typeof window !== 'undefined' && !!localStorage.getItem(TOKEN_KEY);
+    return {
+      user,
+      booting,
+      hasToken,
+      isAuthenticated: !!user || hasToken,
+      login,
+      register,
+      logout,
+      isAdmin: user?.role === 'admin',
+    };
+  }, [user, booting, login, register, logout]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

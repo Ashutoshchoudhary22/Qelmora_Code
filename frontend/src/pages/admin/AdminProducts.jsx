@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../api/client';
 import { formatInr } from '../../lib/money';
+import { downloadMedia } from '../../lib/download';
 
 export default function AdminProducts() {
   const { data, isLoading } = useQuery({
@@ -23,7 +24,8 @@ export default function AdminProducts() {
         <table className="mt-8 w-full text-left text-sm">
           <thead className="text-[10px] uppercase tracking-widest text-stone-500">
             <tr>
-              <th className="py-2">Name</th>
+              <th className="py-2 w-24">Image</th>
+              <th>Name</th>
               <th>Category</th>
               <th>Price</th>
               <th>Status</th>
@@ -33,6 +35,22 @@ export default function AdminProducts() {
           <tbody className="divide-y divide-white/10">
             {(data?.items || []).map((p) => (
               <tr key={p.id}>
+                <td className="py-3">
+                  {p.image ? (
+                    <div className="flex items-center gap-2">
+                      <img src={p.image} alt="" className="h-14 w-11 rounded object-cover ring-1 ring-white/10" />
+                      <button
+                        type="button"
+                        className="text-[9px] uppercase tracking-wider text-q-accent hover:underline"
+                        onClick={() => downloadMedia(p.image, p.slug || `product-${p.id}`)}
+                      >
+                        ↓
+                      </button>
+                    </div>
+                  ) : (
+                    <span className="text-stone-600">—</span>
+                  )}
+                </td>
                 <td className="py-3">{p.name}</td>
                 <td>{p.category || '—'}</td>
                 <td>{formatInr(p.price)}</td>

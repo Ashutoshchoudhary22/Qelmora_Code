@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { pool } from '../config/db.js';
 import { requireAuth, requireAdmin } from '../middleware/auth.js';
-import cloudinary from '../config/cloudinary.js';
+import { cloudinaryConfigErrorResponse, createUploadSignature } from '../utils/cloudinary-sign.js';
 
 const router = Router();
 
@@ -114,16 +114,10 @@ router.delete('/admin/:id', requireAuth, requireAdmin, async (req, res, next) =>
 });
 
 router.post('/admin/cloudinary-signature', requireAuth, requireAdmin, (req, res) => {
-  const timestamp = Math.round(Date.now() / 1000);
+  const err = cloudinaryConfigErrorResponse();
+  if (err) return res.status(err.status).json(err.body);
   const folder = req.body?.folder || 'qelmora/banners';
-  const signature = cloudinary.utils.api_sign_request({ timestamp, folder }, process.env.CLOUDINARY_API_SECRET);
-  res.json({
-    timestamp,
-    folder,
-    signature,
-    cloudName: process.env.CLOUDINARY_CLOUD_NAME,
-    apiKey: process.env.CLOUDINARY_API_KEY,
-  });
+  res.json(createUploadSignature(folder));
 });
 
 export default router;

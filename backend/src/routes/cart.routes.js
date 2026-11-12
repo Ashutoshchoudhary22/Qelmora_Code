@@ -51,10 +51,12 @@ router.get('/', async (req, res, next) => {
 router.post('/items', async (req, res, next) => {
   try {
     const { variantId, quantity = 1 } = req.body;
-    if (!Number.isInteger(Number(variantId)) || !Number.isInteger(Number(quantity)) || quantity < 1 || quantity > 10)
+    const vid = Number(variantId);
+    const qty = Number(quantity);
+    if (!Number.isInteger(vid) || vid < 1 || !Number.isInteger(qty) || qty < 1 || qty > 10)
       return res.status(400).json({ message: 'Invalid variant or quantity' });
-    const [v] = await pool.execute('SELECT id,stock FROM product_variants WHERE id=?', [variantId]);
-    if (!v[0] || v[0].stock < quantity) return res.status(409).json({ message: 'Insufficient stock' });
+    const [v] = await pool.execute('SELECT id,stock FROM product_variants WHERE id=?', [vid]);
+    if (!v[0] || v[0].stock < qty) return res.status(409).json({ message: 'Insufficient stock' });
     const conn = await pool.getConnection();
     try {
       await conn.beginTransaction();
@@ -64,9 +66,9 @@ router.post('/items', async (req, res, next) => {
       const [c] = await conn.execute('SELECT id FROM carts WHERE user_id=? FOR UPDATE', [req.user.sub]);
       const [existing] = await conn.execute('SELECT id, quantity FROM cart_items WHERE cart_id=? AND variant_id=?', [
         c[0].id,
-        variantId,
+        vid,
       ]);
-      const newQty = (existing[0]?.quantity || 0) + quantity;
+      const newQty = (existing[0]?.quantity || 0) + qty;
       if (newQty > 10) {
         await conn.rollback();
         return res.status(400).json({ message: 'Maximum 10 items per variant' });
@@ -80,8 +82,8 @@ router.post('/items', async (req, res, next) => {
       } else {
         await conn.execute('INSERT INTO cart_items (cart_id,variant_id,quantity) VALUES (?,?,?)', [
           c[0].id,
-          variantId,
-          quantity,
+          vid,
+          qty,
         ]);
       }
       await conn.commit();

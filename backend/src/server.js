@@ -15,6 +15,13 @@ import bannerRoutes from './routes/banner.routes.js';
 import couponRoutes from './routes/coupon.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 import paymentRoutes from './routes/payment.routes.js';
+import { applyCloudinaryConfig } from './config/cloudinary.js';
+import { cloudinaryConfigured } from './utils/cloudinary-sign.js';
+import contentRoutes from './routes/content.routes.js';
+import instagramRoutes from './routes/instagram.routes.js';
+import { runStartupMigrations } from './utils/ensure-db.js';
+
+applyCloudinaryConfig();
 
 if (!process.env.JWT_ACCESS_SECRET) {
   console.error('JWT_ACCESS_SECRET is required');
@@ -35,6 +42,8 @@ app.use('/api/v1/cart', rateLimit({ windowMs: 60 * 1000, max: 120 }), cartRoutes
 app.use('/api/v1/orders', orderRoutes);
 app.use('/api/v1/addresses', addressRoutes);
 app.use('/api/v1/banners', bannerRoutes);
+app.use('/api/v1/content', contentRoutes);
+app.use('/api/v1/instagram', instagramRoutes);
 app.use('/api/v1/coupons', couponRoutes);
 app.use('/api/v1/admin', adminRoutes);
 app.use('/api/v1/payments', paymentRoutes);
@@ -57,4 +66,19 @@ app.use((err, _req, res, _next) => {
 });
 
 const port = Number(process.env.PORT || 5000);
-app.listen(port, () => console.log(`QELMORA API listening on ${port}`));
+
+try {
+  await runStartupMigrations();
+} catch (e) {
+  console.error('Database migration failed:', e.message);
+  process.exit(1);
+}
+
+app.listen(port, () => {
+  console.log(`QELMORA API listening on ${port}`);
+  if (!cloudinaryConfigured()) {
+    console.warn('Cloudinary: CLOUDINARY_* missing in .env — admin uploads will fail until configured.');
+  } else {
+    console.log(`Cloudinary: ready (cloud ${process.env.CLOUDINARY_CLOUD_NAME})`);
+  }
+});

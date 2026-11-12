@@ -37,6 +37,7 @@ CREATE TABLE categories (
   slug VARCHAR(120) NOT NULL UNIQUE,
   description TEXT NULL,
   image_url VARCHAR(1000) NULL,
+  media_type ENUM('image','video') NOT NULL DEFAULT 'image',
   sort_order INT NOT NULL DEFAULT 0,
   is_active BOOLEAN NOT NULL DEFAULT TRUE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

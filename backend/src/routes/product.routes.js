@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { pool } from '../config/db.js';
 import { requireAuth, requireAdmin } from '../middleware/auth.js';
-import cloudinary from '../config/cloudinary.js';
+import { cloudinaryConfigErrorResponse, createUploadSignature } from '../utils/cloudinary-sign.js';
 
 const router = Router();
 
@@ -131,16 +131,10 @@ router.get('/:slug', async (req, res, next) => {
 });
 
 router.post('/admin/cloudinary-signature', requireAuth, requireAdmin, (req, res) => {
-  const timestamp = Math.round(Date.now() / 1000);
+  const err = cloudinaryConfigErrorResponse();
+  if (err) return res.status(err.status).json(err.body);
   const folder = req.body?.folder || 'qelmora/products';
-  const signature = cloudinary.utils.api_sign_request({ timestamp, folder }, process.env.CLOUDINARY_API_SECRET);
-  res.json({
-    timestamp,
-    folder,
-    signature,
-    cloudName: process.env.CLOUDINARY_CLOUD_NAME,
-    apiKey: process.env.CLOUDINARY_API_KEY,
-  });
+  res.json(createUploadSignature(folder));
 });
 
 async function saveProduct(conn, productId, body, isUpdate = false) {
@@ -210,8 +204,13 @@ router.post('/admin', requireAuth, requireAdmin, async (req, res, next) => {
     res.status(201).json({ id, message: 'Product created' });
   } catch (e) {
     await conn.rollback();
-    const status = e.status || 500;
-    res.status(status).json({ message: e.message });
+    let status = e.status || 500;
+    let message = e.message;
+    if (e.code === 'ER_DUP_ENTRY') {
+      status = 409;
+      message = 'A product with this slug or SKU already exists.';
+    }
+    res.status(status).json({ message });
   } finally {
     conn.release();
   }
@@ -226,8 +225,13 @@ router.put('/admin/:id', requireAuth, requireAdmin, async (req, res, next) => {
     res.json({ id, message: 'Product updated' });
   } catch (e) {
     await conn.rollback();
-    const status = e.status || 500;
-    res.status(status).json({ message: e.message });
+    let status = e.status || 500;
+    let message = e.message;
+    if (e.code === 'ER_DUP_ENTRY') {
+      status = 409;
+      message = 'A product with this slug or SKU already exists.';
+    }
+    res.status(status).json({ message });
   } finally {
     conn.release();
   }

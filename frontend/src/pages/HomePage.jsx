@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight, Play } from 'lucide-react';
 import { api } from '../api/client';
+import { CategoryCollectionCards } from '../components/CategoryCollectionCards';
 import { ProductGrid } from '../components/ProductGrid';
 import { Newsletter } from '../components/Newsletter';
 export default function HomePage() {
@@ -36,6 +37,21 @@ export default function HomePage() {
     queryFn: async () => (await api.get('/banners?placement=collection')).data,
   });
 
+  const { data: brandStory } = useQuery({
+    queryKey: ['content', 'brand_story'],
+    queryFn: async () => (await api.get('/content/brand_story')).data,
+  });
+
+  const { data: instagramMeta } = useQuery({
+    queryKey: ['content', 'instagram'],
+    queryFn: async () => (await api.get('/content/instagram')).data,
+  });
+
+  const { data: instagramFeed } = useQuery({
+    queryKey: ['instagram'],
+    queryFn: async () => (await api.get('/instagram')).data,
+  });
+
   const promoItem = promo?.items?.[0];
   const collectionItem = collectionBanner?.items?.[0];
 
@@ -56,9 +72,9 @@ export default function HomePage() {
             <img src={hero.secureUrl} alt={hero.title} className="absolute inset-0 h-full w-full object-cover" />
           )
         ) : (
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_20%,#3d342c_0%,#151311_45%,#090909_80%)]" />
+          <div className="hero-fallback absolute inset-0 bg-[radial-gradient(ellipse_at_70%_20%,#3d342c_0%,#151311_45%,#090909_80%)]" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-black/20" />
+        <div className="hero-scrim absolute inset-0 bg-gradient-to-t from-black via-black/55 to-black/20" />
         <div className="relative mx-auto w-full max-w-7xl px-5 pb-16 pt-32 md:px-8 md:pb-24">
           <p className="animate-fade-up text-[10px] uppercase tracking-[0.45em] text-q-accent-soft">
             {hero?.subtitle || 'Autumn / Winter campaign'}
@@ -102,23 +118,12 @@ export default function HomePage() {
       <section className="bg-[#0d0d0d] py-20">
         <div className="mx-auto max-w-7xl px-5 md:px-8">
           <p className="text-center text-[10px] uppercase tracking-[0.4em] text-stone-500">Shop by category</p>
-          <div className="mt-10 grid gap-4 md:grid-cols-3">
-            {(categories?.items || []).filter((c) => !['new-arrivals'].includes(c.slug)).map((cat) => (
-              <Link
-                key={cat.id}
-                to={`/shop/${cat.slug}`}
-                className="group relative flex min-h-[220px] items-end overflow-hidden border border-white/10 bg-[#141210] p-6 transition hover:border-q-accent/40"
-              >
-                {cat.image_url && (
-                  <img src={cat.image_url} alt="" className="absolute inset-0 h-full w-full object-cover opacity-50 transition group-hover:scale-105" />
-                )}
-                <div className="relative">
-                  <p className="text-[10px] uppercase tracking-[0.3em] text-q-accent">Category</p>
-                  <h3 className="font-display mt-2 text-3xl font-light">{cat.name}</h3>
-                </div>
-              </Link>
-            ))}
-          </div>
+          <CategoryCollectionCards
+            items={categories?.items}
+            slugs={['men', 'women']}
+            columns={2}
+            className="mt-10"
+          />
         </div>
       </section>
 
@@ -174,33 +179,69 @@ export default function HomePage() {
       </section>
 
       <section className="border-y border-white/10 bg-[#0a0a0a]">
-        <div className="mx-auto grid max-w-7xl gap-8 px-5 py-20 md:grid-cols-2 md:px-8">
-          <p className="text-[10px] uppercase tracking-[0.35em] text-q-accent">Brand story</p>
+        <div className="mx-auto grid max-w-7xl gap-8 px-5 py-20 md:grid-cols-2 md:items-center md:px-8">
+          <div className="relative min-h-[200px] overflow-hidden">
+            <p className="text-[10px] uppercase tracking-[0.35em] text-q-accent md:absolute md:left-0 md:top-0">
+              {brandStory?.eyebrow || 'Brand story'}
+            </p>
+            {brandStory?.imageUrl &&
+              (brandStory.mediaType === 'video' ? (
+                <video
+                  src={brandStory.imageUrl}
+                  className="mt-8 w-full object-cover md:mt-14 md:max-h-[320px]"
+                  muted
+                  loop
+                  playsInline
+                  autoPlay
+                />
+              ) : (
+                <img src={brandStory.imageUrl} alt="" className="mt-8 w-full object-cover md:mt-14 md:max-h-[320px]" />
+              ))}
+          </div>
           <div>
             <p className="font-display text-3xl font-light leading-snug text-stone-200 md:text-4xl">
-              QELMORA began with a refusal — to chase trends, to shout, to compromise on the stitch.
+              {brandStory?.headline ||
+                'QELMORA began with a refusal — to chase trends, to shout, to compromise on the stitch.'}
             </p>
             <p className="mt-6 text-sm leading-8 text-stone-500">
-              We make fewer pieces, with better fiber, for people who treat clothing as identity, not ornament. Every
-              release is a chapter — yours to wear in.
+              {brandStory?.body ||
+                'We make fewer pieces, with better fiber, for people who treat clothing as identity, not ornament. Every release is a chapter — yours to wear in.'}
             </p>
-            <Link to="/about" className="mt-6 inline-block text-xs uppercase tracking-[0.25em] text-q-accent hover:text-q-accent-soft">
-              Read the full story →
+            <Link
+              to={brandStory?.ctaLink || '/about'}
+              className="mt-6 inline-block text-xs uppercase tracking-[0.25em] text-q-accent hover:text-q-accent-soft"
+            >
+              {brandStory?.ctaLabel || 'Read the full story'} →
             </Link>
           </div>
         </div>
       </section>
 
       <section className="overflow-hidden py-16">
-        <p className="mb-8 text-center text-[10px] uppercase tracking-[0.4em] text-stone-600">@qelmora on Instagram</p>
+        <p className="mb-8 text-center text-[10px] uppercase tracking-[0.4em] text-stone-600">
+          {instagramMeta?.eyebrow || '@qelmora on Instagram'}
+        </p>
         <div className="relative flex overflow-hidden">
           <div className="marquee-track flex shrink-0 gap-4 pr-4">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="h-48 w-36 shrink-0 bg-[#1c1a18] md:h-56 md:w-44" />
+            {(instagramFeed?.items?.length ? [...instagramFeed.items, ...instagramFeed.items] : []).map((post, i) => (
+              <a
+                key={`${post.id}-${i}`}
+                href={instagramMeta?.ctaLink || 'https://instagram.com'}
+                target="_blank"
+                rel="noreferrer"
+                className="block h-48 w-36 shrink-0 overflow-hidden bg-[#1c1a18] md:h-56 md:w-44"
+              >
+                {post.resourceType === 'video' ? (
+                  <video src={post.secureUrl} className="h-full w-full object-cover" muted loop playsInline autoPlay />
+                ) : (
+                  <img src={post.secureUrl} alt="" className="h-full w-full object-cover" loading="lazy" />
+                )}
+              </a>
             ))}
-            {[...Array(8)].map((_, i) => (
-              <div key={`b-${i}`} className="h-48 w-36 shrink-0 bg-[#1c1a18] md:h-56 md:w-44" />
-            ))}
+            {!instagramFeed?.items?.length &&
+              [...Array(16)].map((_, i) => (
+                <div key={i} className="h-48 w-36 shrink-0 bg-[#1c1a18] md:h-56 md:w-44" />
+              ))}
           </div>
         </div>
       </section>

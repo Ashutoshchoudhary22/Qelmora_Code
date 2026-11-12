@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { Link, Outlet, useLocation, useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../api/client';
+import { AddressForm } from '../components/AddressForm';
 import { ProtectedRoute } from '../components/ProtectedRoute';
+import { useAuth } from '../context/AuthContext';
 import { formatInr } from '../lib/money';
 
 function AccountNav() {
@@ -68,16 +70,8 @@ export function ProfileSection() {
 
 export function AddressesSection() {
   const qc = useQueryClient();
+  const { user } = useAuth();
   const { data } = useQuery({ queryKey: ['addresses'], queryFn: async () => (await api.get('/addresses')).data });
-  const [form, setForm] = useState({ fullName: '', phone: '', line1: '', city: '', state: '', postalCode: '' });
-
-  const add = useMutation({
-    mutationFn: () => api.post('/addresses', { ...form, isDefault: true }),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['addresses'] });
-      setForm({ fullName: '', phone: '', line1: '', city: '', state: '', postalCode: '' });
-    },
-  });
 
   return (
     <div className="grid gap-12 lg:grid-cols-2">
@@ -94,19 +88,12 @@ export function AddressesSection() {
       </ul>
       <div>
         <h2 className="text-[10px] uppercase tracking-widest text-stone-500">Add address</h2>
-        <div className="mt-4 space-y-3">
-          {['fullName', 'phone', 'line1', 'city', 'state', 'postalCode'].map((k) => (
-            <input
-              key={k}
-              value={form[k]}
-              onChange={(e) => setForm({ ...form, [k]: e.target.value })}
-              placeholder={k.replace(/([A-Z])/g, ' $1')}
-              className="input-field"
-            />
-          ))}
-          <button type="button" className="btn-primary w-full" onClick={() => add.mutate()}>
-            Save address
-          </button>
+        <div className="mt-4">
+          <AddressForm
+            initialFullName={user?.name || ''}
+            isDefault
+            onSuccess={() => qc.invalidateQueries({ queryKey: ['addresses'] })}
+          />
         </div>
       </div>
     </div>

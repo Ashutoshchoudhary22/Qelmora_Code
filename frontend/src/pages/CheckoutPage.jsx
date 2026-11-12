@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../api/client';
+import { AddressForm } from '../components/AddressForm';
 import { ProtectedRoute } from '../components/ProtectedRoute';
+import { useAuth } from '../context/AuthContext';
 import { formatInr } from '../lib/money';
 
 function loadRazorpay() {
@@ -19,15 +21,29 @@ function loadRazorpay() {
 function CheckoutForm() {
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const { user } = useAuth();
   const [paymentMethod, setPaymentMethod] = useState('cod');
   const [addressId, setAddressId] = useState('');
+  const [showAddAddress, setShowAddAddress] = useState(false);
   const [error, setError] = useState('');
 
   const { data: cart } = useQuery({ queryKey: ['cart'], queryFn: async () => (await api.get('/cart')).data });
-  const { data: addresses } = useQuery({
+  const { data: addresses, isLoading: loadingAddresses } = useQuery({
     queryKey: ['addresses'],
     queryFn: async () => (await api.get('/addresses')).data,
   });
+
+  const items = addresses?.items || [];
+
+  useEffect(() => {
+    if (!items.length || addressId) return;
+    const preferred = items.find((a) => a.isDefault) || items[0];
+    if (preferred) setAddressId(String(preferred.id));
+  }, [items, addressId]);
+
+  useEffect(() => {
+    if (items.length === 0) setShowAddAddress(true);
+  }, [items.length]);
 
   const placeCod = useMutation({
     mutationFn: () => api.post('/orders', { addressId: Number(addressId), paymentMethod: 'cod' }),
@@ -82,35 +98,87 @@ function CheckoutForm() {
     else payOnline();
   }
 
-  const items = addresses?.items || [];
+  function onAddressCreated(created) {
+    qc.invalidateQueries({ queryKey: ['addresses'] });
+    if (created?.id) setAddressId(String(created.id));
+    setShowAddAddress(false);
+    setError('');
+  }
 
   return (
     <form onSubmit={submit} className="grid gap-12 lg:grid-cols-[1fr_340px]">
       <div className="space-y-8">
         <section>
-          <h2 className="text-[10px] uppercase tracking-widest text-stone-500">Delivery address</h2>
-          {items.length === 0 ? (
-            <p className="mt-4 text-sm text-stone-400">
-              Add an address in <a href="/account" className="text-q-accent underline">My Account</a> first.
-            </p>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className="text-[10px] uppercase tracking-widest text-stone-500">Delivery address</h2>
+            {items.length > 0 && !showAddAddress && (
+              <button
+                type="button"
+                onClick={() => setShowAddAddress(true)}
+                className="text-[10px] uppercase tracking-widest text-q-accent hover:underline"
+              >
+                + Add new address
+              </button>
+            )}
+          </div>
+
+          {loadingAddresses ? (
+            <p className="mt-4 text-sm text-stone-500">Loading addresses…</p>
           ) : (
-            <div className="mt-4 space-y-3">
-              {items.map((a) => (
-                <label
-                  key={a.id}
-                  className={`flex cursor-pointer gap-3 border p-4 ${String(addressId) === String(a.id) ? 'border-q-accent' : 'border-white/10'}`}
-                >
-                  <input type="radio" name="addr" value={a.id} checked={String(addressId) === String(a.id)} onChange={() => setAddressId(String(a.id))} />
-                  <div className="text-sm text-stone-300">
-                    <p className="font-medium text-stone-100">{a.fullName}</p>
-                    <p className="mt-1 text-stone-500">
-                      {a.line1}, {a.city}, {a.state} {a.postalCode}
-                    </p>
-                    <p className="text-stone-500">{a.phone}</p>
+            <>
+              {items.length > 0 && (
+                <div className="mt-4 space-y-3">
+                  {items.map((a) => (
+                    <label
+                      key={a.id}
+                      className={`flex cursor-pointer gap-3 border p-4 transition ${
+                        String(addressId) === String(a.id) ? 'border-q-accent' : 'border-white/10'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="addr"
+                        value={a.id}
+                        checked={String(addressId) === String(a.id)}
+                        onChange={() => setAddressId(String(a.id))}
+                        className="mt-1"
+                      />
+                      <div className="text-sm text-stone-300">
+                        <p className="font-medium text-stone-100">
+                          {a.fullName}
+                          {a.isDefault && (
+                            <span className="ml-2 text-[10px] uppercase tracking-wider text-q-accent">Default</span>
+                          )}
+                        </p>
+                        <p className="mt-1 text-stone-500">
+                          {a.line1}
+                          {a.line2 ? `, ${a.line2}` : ''}, {a.city}, {a.state} {a.postalCode}
+                        </p>
+                        <p className="text-stone-500">{a.phone}</p>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              )}
+
+              {showAddAddress && (
+                <div className={`rounded border border-white/10 bg-[#0e0e0e] p-5 ${items.length ? 'mt-6' : 'mt-4'}`}>
+                  <h3 className="text-[10px] uppercase tracking-widest text-stone-500">
+                    {items.length ? 'New delivery address' : 'Add your delivery address'}
+                  </h3>
+                  <p className="mt-2 text-xs text-stone-600">We deliver across India. All fields are required except line 2.</p>
+                  <div className="mt-4">
+                    <AddressForm
+                      initialFullName={user?.name || ''}
+                      isDefault={items.length === 0}
+                      submitLabel="Save & use this address"
+                      onSuccess={onAddressCreated}
+                      onCancel={items.length > 0 ? () => setShowAddAddress(false) : undefined}
+                    />
                   </div>
-                </label>
-              ))}
-            </div>
+                </div>
+              )}
+            </>
           )}
         </section>
 

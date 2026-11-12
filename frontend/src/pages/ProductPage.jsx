@@ -1,15 +1,17 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../api/client';
 import { ProductGrid } from '../components/ProductGrid';
 import { useAuth } from '../context/AuthContext';
+import { useCartDrawer } from '../context/CartDrawerContext';
 import { formatInr } from '../lib/money';
 
 export default function ProductPage() {
   const { slug } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { booting, isAuthenticated } = useAuth();
+  const { openCart } = useCartDrawer();
   const qc = useQueryClient();
   const [size, setSize] = useState('');
   const [color, setColor] = useState('');
@@ -32,20 +34,43 @@ export default function ProductPage() {
     return product?.variants?.find((v) => v.size === size && v.color === color);
   }, [product, size, color]);
 
+  useEffect(() => {
+    if (!product?.variants?.length) return;
+    setSize((s) => s || product.variants[0].size);
+  }, [product]);
+
+  useEffect(() => {
+    if (!product?.variants?.length || !size) return;
+    const forSize = product.variants.filter((v) => v.size === size);
+    if (!forSize.length) return;
+    setColor((c) => (c && forSize.some((v) => v.color === c) ? c : forSize[0].color));
+  }, [product, size]);
+
   const addMutation = useMutation({
     mutationFn: async ({ buyNow }) => {
-      if (!user) throw new Error('login');
-      await api.post('/cart/items', { variantId: variant.id, quantity: qty });
+      if (booting) throw new Error('wait');
+      if (!isAuthenticated) throw new Error('login');
+      if (!variant?.id) throw new Error('variant');
+      await api.post('/cart/items', { variantId: Number(variant.id), quantity: qty });
       if (buyNow) navigate('/checkout');
     },
     onSuccess: (_, { buyNow }) => {
       qc.invalidateQueries({ queryKey: ['cart-summary'] });
       qc.invalidateQueries({ queryKey: ['cart'] });
-      setMsg(buyNow ? 'Proceeding to checkout…' : 'Added to your bag.');
+      if (buyNow) {
+        setMsg('Proceeding to checkout…');
+      } else {
+        setMsg('');
+        openCart();
+      }
     },
     onError: (e) => {
       if (e.message === 'login' || e.response?.status === 401) {
         navigate('/login', { state: { from: `/product/${slug}` } });
+        return;
+      }
+      if (e.message === 'variant') {
+        setMsg('Choose a size and color.');
         return;
       }
       setMsg(e.response?.data?.message || 'Could not add to cart');
@@ -153,18 +178,22 @@ export default function ProductPage() {
             )}
           </div>
 
+          {!isAuthenticated && !booting && (
+            <p className="mt-8 text-sm text-stone-500">Sign in to add items to your bag.</p>
+          )}
+
           <div className="mt-10 flex flex-col gap-3 sm:flex-row">
             <button
               type="button"
-              disabled={!variant || addMutation.isPending}
+              disabled={booting || !variant || addMutation.isPending}
               className="btn-primary flex-1 disabled:opacity-40"
               onClick={() => addMutation.mutate({ buyNow: false })}
             >
-              Add to cart
+              {booting ? 'Loading…' : 'Add to cart'}
             </button>
             <button
               type="button"
-              disabled={!variant || addMutation.isPending}
+              disabled={booting || !variant || addMutation.isPending}
               className="btn-primary btn-accent flex-1 disabled:opacity-40"
               onClick={() => addMutation.mutate({ buyNow: true })}
             >

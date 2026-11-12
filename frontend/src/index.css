@@ -274,6 +274,34 @@ a {
 }
 
 /* —— Admin panel theme (same toggle as storefront) —— */
+.admin-shell {
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.admin-sidebar {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+.admin-sidebar-nav {
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.admin-sidebar-nav::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.admin-main {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
 [data-theme="dark"] .admin-shell {
   color-scheme: dark;
 }

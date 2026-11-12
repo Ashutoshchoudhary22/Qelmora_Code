@@ -1,14 +1,37 @@
 import { Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../api/client';
 import { formatInr } from '../../lib/money';
 import { downloadMedia } from '../../lib/download';
 
 export default function AdminProducts() {
+  const qc = useQueryClient();
   const { data, isLoading } = useQuery({
     queryKey: ['admin-products'],
     queryFn: async () => (await api.get('/products/admin/all')).data,
   });
+
+  const removeProduct = useMutation({
+    mutationFn: (id) => api.delete(`/products/admin/${id}`),
+    onSuccess: (_res, id) => {
+      qc.setQueryData(['admin-products'], (old) => {
+        if (!old?.items) return old;
+        return { ...old, items: old.items.filter((item) => item.id !== id) };
+      });
+      qc.invalidateQueries({ queryKey: ['admin-products'] });
+      qc.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+
+  function onDelete(p) {
+    const ok = window.confirm(
+      `Permanently delete "${p.name}"?\n\nThis removes the product, images, and variants from the admin list. Past orders keep their line items.`
+    );
+    if (!ok) return;
+    removeProduct.mutate(p.id, {
+      onError: (e) => alert(e.response?.data?.message || 'Could not delete product'),
+    });
+  }
 
   return (
     <div>
@@ -55,10 +78,20 @@ export default function AdminProducts() {
                 <td>{p.category || '—'}</td>
                 <td>{formatInr(p.price)}</td>
                 <td>{p.isActive ? 'Active' : 'Hidden'}</td>
-                <td>
-                  <Link to={`/admin/products/${p.id}`} className="text-q-accent text-xs uppercase tracking-widest">
-                    Edit
-                  </Link>
+                <td className="py-3 text-right">
+                  <div className="flex items-center justify-end gap-4">
+                    <Link to={`/admin/products/${p.id}`} className="text-q-accent text-xs uppercase tracking-widest">
+                      Edit
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => onDelete(p)}
+                      disabled={removeProduct.isPending}
+                      className="text-xs uppercase tracking-widest text-red-400/90 transition hover:text-red-300 disabled:opacity-50"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

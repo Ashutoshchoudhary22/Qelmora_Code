@@ -38,15 +38,15 @@ function SidebarNav({ onNavigate }) {
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <>
-      <div className="admin-sidebar-head border-b border-white/10 px-5 py-6">
+    <div className="flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden">
+      <div className="admin-sidebar-head shrink-0 border-b border-white/10 px-5 py-4">
         <Link to="/" className="admin-brand font-display text-xl tracking-[0.22em]">
           QELMORA
         </Link>
         <p className="mt-2 text-[10px] uppercase tracking-[0.35em] text-q-accent">Admin studio</p>
       </div>
 
-      <nav className="flex-1 space-y-1 px-3 py-5">
+      <nav className="admin-sidebar-nav min-h-0 flex-1 space-y-0.5 overflow-x-hidden overflow-y-auto px-3 py-3">
         {links.map(({ to, label, icon: Icon, end }) => (
           <NavLink
             key={to}
@@ -54,7 +54,7 @@ function SidebarNav({ onNavigate }) {
             end={end}
             onClick={onNavigate}
             className={({ isActive }) =>
-              `admin-nav-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition ${isActive ? 'admin-nav-link-active' : ''}`
+              `admin-nav-link flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition ${isActive ? 'admin-nav-link-active' : ''}`
             }
           >
             <Icon size={18} strokeWidth={1.5} className="shrink-0 opacity-80" />
@@ -63,7 +63,7 @@ function SidebarNav({ onNavigate }) {
         ))}
       </nav>
 
-      <div className="admin-sidebar-foot border-t border-white/10 p-4">
+      <div className="admin-sidebar-foot shrink-0 border-t border-white/10 p-4">
         <button
           type="button"
           onClick={toggleTheme}
@@ -92,7 +92,7 @@ function SidebarNav({ onNavigate }) {
           </button>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
@@ -102,11 +102,9 @@ export default function AdminLayout() {
 
   return (
     <AdminRoute>
-      <div className="admin-shell admin-canvas flex min-h-screen bg-[#080808] text-stone-100">
-        <aside className="admin-sidebar hidden w-64 shrink-0 flex-col border-r border-white/10 bg-[#0c0c0c] lg:flex">
-          <div className="flex min-h-screen flex-col">
-            <SidebarNav />
-          </div>
+      <div className="admin-shell admin-canvas flex h-screen max-h-[100dvh] overflow-hidden bg-[#080808] text-stone-100">
+        <aside className="admin-sidebar fixed inset-y-0 left-0 z-30 hidden h-[100dvh] w-64 flex flex-col overflow-hidden border-r border-white/10 bg-[#0c0c0c] lg:flex">
+          <SidebarNav />
         </aside>
 
         {mobileOpen && (
@@ -117,7 +115,7 @@ export default function AdminLayout() {
               aria-label="Close menu"
               onClick={() => setMobileOpen(false)}
             />
-            <aside className="admin-sidebar relative flex h-full w-[min(100%,17rem)] flex-col bg-[#0c0c0c] shadow-2xl">
+            <aside className="admin-sidebar relative flex h-full w-[min(100%,17rem)] flex-col overflow-hidden bg-[#0c0c0c] shadow-2xl">
               <button
                 type="button"
                 className="absolute right-3 top-4 text-stone-400"
@@ -131,8 +129,8 @@ export default function AdminLayout() {
           </div>
         )}
 
-        <div className="flex min-w-0 flex-1 flex-col">
-          <header className="admin-topbar flex items-center justify-between gap-3 border-b border-white/10 bg-[#0a0a0a]/90 px-4 py-3 backdrop-blur lg:px-8">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col lg:pl-64">
+          <header className="admin-topbar flex shrink-0 items-center justify-between gap-3 border-b border-white/10 bg-[#0a0a0a]/90 px-4 py-3 backdrop-blur lg:px-8">
             <button
               type="button"
               className="text-stone-300 lg:hidden"
@@ -154,7 +152,7 @@ export default function AdminLayout() {
               {theme === 'dark' ? 'Light' : 'Dark'}
             </button>
           </header>
-          <main className="flex-1 overflow-auto px-4 py-8 lg:px-10 lg:py-10">
+          <main className="admin-main min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-4 py-8 lg:px-10 lg:py-10">
             <div className="mx-auto max-w-5xl">
               <Outlet />
             </div>

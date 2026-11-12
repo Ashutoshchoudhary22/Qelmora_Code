@@ -238,11 +238,21 @@ router.put('/admin/:id', requireAuth, requireAdmin, async (req, res, next) => {
 });
 
 router.delete('/admin/:id', requireAuth, requireAdmin, async (req, res, next) => {
+  const conn = await pool.getConnection();
   try {
-    await pool.execute('UPDATE products SET is_active=0 WHERE id=?', [req.params.id]);
-    res.json({ message: 'Product deactivated' });
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id < 1) return res.status(400).json({ message: 'Invalid product id' });
+    const [existing] = await conn.execute('SELECT id, name FROM products WHERE id=? LIMIT 1', [id]);
+    if (!existing[0]) return res.status(404).json({ message: 'Product not found' });
+    await conn.beginTransaction();
+    await conn.execute('DELETE FROM products WHERE id=?', [id]);
+    await conn.commit();
+    res.json({ message: 'Product deleted', id });
   } catch (e) {
+    await conn.rollback();
     next(e);
+  } finally {
+    conn.release();
   }
 });
 

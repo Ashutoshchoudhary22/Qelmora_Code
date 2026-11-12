@@ -302,6 +302,16 @@ a {
   -webkit-overflow-scrolling: touch;
 }
 
+[data-theme="light"] .account-panel {
+  background: #ffffff !important;
+  border-color: rgb(0 0 0 / 0.1);
+}
+
+[data-theme="light"] .account-page .rounded-lg.border-white\/10.bg-black\/20 {
+  background: #fafaf9 !important;
+  border-color: rgb(0 0 0 / 0.08);
+}
+
 [data-theme="dark"] .admin-shell {
   color-scheme: dark;
 }

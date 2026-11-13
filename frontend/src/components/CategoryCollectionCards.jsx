@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-const DEFAULT_SLUGS = ['men', 'women', 'new-arrivals'];
+const DEFAULT_SLUGS = ['men', 'women'];
 
 function mediaUrl(cat) {
   return cat.imageUrl || cat.image_url;

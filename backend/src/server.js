@@ -18,6 +18,7 @@ import paymentRoutes from './routes/payment.routes.js';
 import { applyCloudinaryConfig } from './config/cloudinary.js';
 import { cloudinaryConfigured } from './utils/cloudinary-sign.js';
 import contentRoutes from './routes/content.routes.js';
+import contactRoutes from './routes/contact.routes.js';
 import instagramRoutes from './routes/instagram.routes.js';
 import { runStartupMigrations } from './utils/ensure-db.js';
 
@@ -43,6 +44,7 @@ app.use('/api/v1/orders', orderRoutes);
 app.use('/api/v1/addresses', addressRoutes);
 app.use('/api/v1/banners', bannerRoutes);
 app.use('/api/v1/content', contentRoutes);
+app.use('/api/v1/contact', rateLimit({ windowMs: 15 * 60 * 1000, max: 20 }), contactRoutes);
 app.use('/api/v1/instagram', instagramRoutes);
 app.use('/api/v1/coupons', couponRoutes);
 app.use('/api/v1/admin', adminRoutes);

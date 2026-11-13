@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../api/client';
 import { MediaAssetCard } from '../../components/admin/MediaAssetCard';
 import { uploadToCloudinary } from '../../lib/cloudinary';
+import { UploadSizeHint } from '../../components/admin/UploadSizeHint';
 
 const SECTION_KEY = 'instagram';
 
@@ -110,6 +111,7 @@ export default function AdminInstagram() {
           {uploading ? 'Uploading…' : 'Add images / videos'}
           <input type="file" multiple accept="image/*,video/*" className="hidden" disabled={uploading} onChange={onFiles} />
         </label>
+        <UploadSizeHint variant="instagram" video className="mt-2" />
         <button type="button" className="btn-primary w-full text-[10px]" onClick={saveAll}>
           Save title & link
         </button>

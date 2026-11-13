@@ -29,6 +29,10 @@ import AdminBrandStory from './pages/admin/AdminBrandStory';
 import AdminInstagram from './pages/admin/AdminInstagram';
 import AdminStaticPages from './pages/admin/AdminStaticPages';
 import AdminLoginBanner from './pages/admin/AdminLoginBanner';
+import AdminShopOffers from './pages/admin/AdminShopOffers';
+import AdminContactInbox from './pages/admin/AdminContactInbox';
+import AdminHomeShopByCategory from './pages/admin/AdminHomeShopByCategory';
+import AdminNowhereElse from './pages/admin/AdminNowhereElse';
 
 export default function App() {
   return (
@@ -63,10 +67,14 @@ export default function App() {
         <Route path="products/:id" element={<AdminProductForm />} />
         <Route path="orders" element={<AdminOrders />} />
         <Route path="categories" element={<AdminCategories />} />
+        <Route path="home-shop-by-category" element={<AdminHomeShopByCategory />} />
+        <Route path="nowhere-else" element={<AdminNowhereElse />} />
         <Route path="brand-story" element={<AdminBrandStory />} />
         <Route path="instagram" element={<AdminInstagram />} />
         <Route path="static-pages" element={<AdminStaticPages />} />
         <Route path="login-banner" element={<AdminLoginBanner />} />
+        <Route path="shop-offers" element={<AdminShopOffers />} />
+        <Route path="contact-inbox" element={<AdminContactInbox />} />
         <Route path="banners" element={<AdminBanners />} />
       </Route>
 

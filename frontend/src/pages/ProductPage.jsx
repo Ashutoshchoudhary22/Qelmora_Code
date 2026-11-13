@@ -24,6 +24,35 @@ export default function ProductPage() {
     queryFn: async () => (await api.get(`/products/${slug}`)).data,
   });
 
+  const categorySlug = product?.categorySlug;
+
+  const { data: moreInCategory, isLoading: loadingMore } = useQuery({
+    queryKey: ['products', 'you-may-like', categorySlug, slug],
+    enabled: Boolean(product && slug),
+    queryFn: async () => {
+      const params = new URLSearchParams({ limit: '12' });
+      if (categorySlug) params.set('category', categorySlug);
+      const res = await api.get(`/products?${params}`);
+      const items = (res.data?.items || []).filter((p) => p.slug !== slug);
+      return { items: items.slice(0, 8) };
+    },
+  });
+
+  const youMayLikeItems = useMemo(() => {
+    if (product?.related?.length) return product.related;
+    return moreInCategory?.items || [];
+  }, [product?.related, moreInCategory?.items]);
+
+  const { data: teeProducts } = useQuery({
+    queryKey: ['products', 'tees', categorySlug, slug],
+    enabled: Boolean(categorySlug && product),
+    queryFn: async () => {
+      const res = await api.get(`/products?category=${categorySlug}&search=shirt&limit=12`);
+      const items = (res.data?.items || []).filter((p) => p.slug !== slug);
+      return { items: items.slice(0, 8) };
+    },
+  });
+
   const sizes = useMemo(() => [...new Set(product?.variants?.map((v) => v.size) || [])], [product]);
   const colors = useMemo(() => {
     const list = product?.variants?.filter((v) => !size || v.size === size) || [];
@@ -216,12 +245,36 @@ export default function ProductPage() {
         </div>
       </div>
 
-      {product.related?.length > 0 && (
-        <section className="mt-24">
-          <h2 className="font-display text-3xl font-light">You may also like</h2>
+      <section className="mt-24 border-t border-white/10 pt-16">
+        <p className="text-[10px] uppercase tracking-[0.35em] text-q-accent">Curated for you</p>
+        <h2 className="font-display mt-2 text-3xl font-light">You may like</h2>
+        <div className="mt-8">
+          {loadingMore && !youMayLikeItems.length ? (
+            <p className="text-sm text-stone-500">Loading…</p>
+          ) : (
+            <ProductGrid
+              items={youMayLikeItems}
+              empty="Publish more active products in admin to fill this row."
+            />
+          )}
+        </div>
+      </section>
+
+      {teeProducts?.items?.length > 0 && (
+        <section className="mt-20 border-t border-white/10 pt-16">
+          <p className="text-[10px] uppercase tracking-[0.35em] text-stone-500">Shop the edit</p>
+          <h2 className="font-display mt-2 text-3xl font-light">T-shirts</h2>
           <div className="mt-8">
-            <ProductGrid items={product.related} />
+            <ProductGrid items={teeProducts.items} />
           </div>
+          {categorySlug && (
+            <Link
+              to={`/shop/${categorySlug}?q=shirt`}
+              className="mt-8 inline-block text-[10px] uppercase tracking-widest text-stone-500 hover:text-q-accent"
+            >
+              View all T-shirts →
+            </Link>
+          )}
         </section>
       )}
     </main>

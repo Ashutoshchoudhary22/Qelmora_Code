@@ -10,8 +10,7 @@ const links = [
   { to: '/', label: 'Home' },
   { to: '/shop/men', label: 'Men' },
   { to: '/shop/women', label: 'Women' },
-  { to: '/shop/new-arrivals', label: 'New Arrivals' },
-  { to: '/collections', label: 'Collections' },
+  { to: '/collections', label: 'Nowhere Else' },
   { to: '/about', label: 'About Us' },
   { to: '/contact', label: 'Contact' },
 ];

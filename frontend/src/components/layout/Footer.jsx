@@ -25,13 +25,18 @@ export function Footer() {
               </Link>
             </li>
             <li>
-              <Link to="/shop/new-arrivals" className="hover:text-stone-200">
-                New Arrivals
+              <Link to="/shop/men#new-arrivals" className="hover:text-stone-200">
+                Men — New arrivals
+              </Link>
+            </li>
+            <li>
+              <Link to="/shop/women#new-arrivals" className="hover:text-stone-200">
+                Women — New arrivals
               </Link>
             </li>
             <li>
               <Link to="/collections" className="hover:text-stone-200">
-                Collections
+                Nowhere Else
               </Link>
             </li>
           </ul>

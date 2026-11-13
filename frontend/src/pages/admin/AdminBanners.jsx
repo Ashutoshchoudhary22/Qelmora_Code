@@ -4,6 +4,7 @@ import { Upload } from 'lucide-react';
 import { api } from '../../api/client';
 import { MediaAssetCard } from '../../components/admin/MediaAssetCard';
 import { uploadToCloudinary } from '../../lib/cloudinary';
+import { UploadSizeHint, bannerPlacementSize } from '../../components/admin/UploadSizeHint';
 
 export default function AdminBanners() {
   const qc = useQueryClient();
@@ -174,7 +175,14 @@ export default function AdminBanners() {
               <option value="promo">Promo</option>
               <option value="collection">Collection</option>
               <option value="announcement">Announcement</option>
+              <option value="shop_men">Shop — Men offers</option>
+              <option value="shop_women">Shop — Women offers</option>
+              <option value="shop_trending_men">Shop — Men trending categories</option>
+              <option value="shop_trending_women">Shop — Women trending categories</option>
+              <option value="home_shop_by_category">Home — Shop by category</option>
+              <option value="page_nowhere_else">Page — Nowhere Else</option>
             </select>
+            <UploadSizeHint variant={bannerPlacementSize(form.placement)} video />
             <input
               className="input-field"
               placeholder="CTA label (optional)"

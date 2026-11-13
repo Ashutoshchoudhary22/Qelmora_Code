@@ -110,12 +110,18 @@ router.get('/:slug', async (req, res, next) => {
       'SELECT id,sku,size,color,stock,price_override AS priceOverride FROM product_variants WHERE product_id=? ORDER BY size,color',
       [product.id]
     );
-    const [related] = await pool.execute(
-      `SELECT p.slug,p.name,p.price,p.compare_at_price AS compareAtPrice,
-        (SELECT secure_url FROM product_media pm WHERE pm.product_id=p.id ORDER BY sort_order,id LIMIT 1) AS image
-       FROM products p WHERE p.is_active=1 AND p.category_id <=> ? AND p.id<>? ORDER BY p.is_featured DESC LIMIT 4`,
-      [product.category_id, product.id]
-    );
+    const categoryId = product.category_id;
+    const [related] = categoryId
+      ? await pool.execute(
+          `SELECT p.slug,p.name,p.price,p.compare_at_price AS compareAtPrice,p.is_new_arrival AS isNewArrival,
+            (SELECT secure_url FROM product_media pm WHERE pm.product_id=p.id ORDER BY sort_order,id LIMIT 1) AS image
+           FROM products p
+           WHERE p.is_active=1 AND p.id<>? AND p.category_id=?
+           ORDER BY p.is_featured DESC, p.is_new_arrival DESC, p.created_at DESC
+           LIMIT 8`,
+          [product.id, categoryId]
+        )
+      : [[]];
     res.json({
       ...product,
       compareAtPrice: product.compare_at_price,

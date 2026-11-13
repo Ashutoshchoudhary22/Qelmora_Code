@@ -5,6 +5,7 @@ import { api } from '../../api/client';
 import { MediaAssetCard } from '../../components/admin/MediaAssetCard';
 import { useAuth } from '../../context/AuthContext';
 import { uploadToCloudinary } from '../../lib/cloudinary';
+import { UploadSizeHint } from '../../components/admin/UploadSizeHint';
 
 const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 const COLORS = ['Black', 'White', 'Stone', 'Amber'];
@@ -200,6 +201,10 @@ export default function AdminProductForm() {
             </option>
           ))}
         </select>
+        <p className="text-[10px] leading-relaxed text-stone-600">
+          Men or Women — sets shop placement, You may like &amp; T-shirts on the product page (same gender only), and
+          homepage New arrivals / Best sellers.
+        </p>
         <label className="flex items-center gap-2 text-sm text-stone-400">
           <input type="checkbox" checked={form.isFeatured} onChange={(e) => setForm({ ...form, isFeatured: e.target.checked })} />
           Featured
@@ -211,6 +216,7 @@ export default function AdminProductForm() {
         <div>
           <p className="text-[10px] uppercase tracking-widest text-stone-500">Media (Cloudinary)</p>
           <p className="mt-1 text-xs text-stone-600">Upload → preview here → save product to store URLs in database.</p>
+          <UploadSizeHint variant="product" video className="mt-2" />
           <label className="btn-primary mt-3 inline-flex cursor-pointer text-[10px]">
             Add files
             <input type="file" multiple accept="image/*,video/*" onChange={onFiles} className="hidden" />

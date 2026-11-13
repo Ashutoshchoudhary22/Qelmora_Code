@@ -102,7 +102,7 @@ CREATE TABLE homepage_banners (
   resource_type ENUM('image','video') NOT NULL DEFAULT 'image',
   secure_url VARCHAR(1000) NOT NULL,
   public_id VARCHAR(255) NULL,
-  placement ENUM('hero','promo','collection','announcement') NOT NULL DEFAULT 'hero',
+  placement ENUM('hero','promo','collection','announcement','shop_men','shop_women','shop_new_arrivals','shop_trending_men','shop_trending_women','home_shop_by_category','page_nowhere_else') NOT NULL DEFAULT 'hero',
   sort_order INT NOT NULL DEFAULT 0,
   is_active BOOLEAN NOT NULL DEFAULT TRUE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

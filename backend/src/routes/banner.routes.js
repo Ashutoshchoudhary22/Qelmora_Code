@@ -33,14 +33,36 @@ const bannerSchema = z.object({
   resourceType: z.enum(['image', 'video']),
   secureUrl: z.string().url(),
   publicId: z.string().optional().nullable(),
-  placement: z.enum(['hero', 'promo', 'collection', 'announcement']).optional(),
+  placement: z
+    .enum([
+      'hero',
+      'promo',
+      'collection',
+      'announcement',
+      'shop_men',
+      'shop_women',
+      'shop_new_arrivals',
+      'shop_trending_men',
+      'shop_trending_women',
+      'home_shop_by_category',
+      'page_nowhere_else',
+    ])
+    .optional(),
   sortOrder: z.number().int().optional(),
   isActive: z.boolean().optional(),
 });
 
-router.get('/admin', requireAuth, requireAdmin, async (_req, res, next) => {
+router.get('/admin', requireAuth, requireAdmin, async (req, res, next) => {
   try {
-    const [items] = await pool.execute(`SELECT * FROM homepage_banners ORDER BY placement, sort_order`);
+    const placement = req.query.placement;
+    let sql = 'SELECT * FROM homepage_banners';
+    const params = [];
+    if (placement) {
+      sql += ' WHERE placement=?';
+      params.push(String(placement));
+    }
+    sql += ' ORDER BY placement, sort_order, id';
+    const [items] = await pool.execute(sql, params);
     res.json({ items });
   } catch (e) {
     next(e);

@@ -5,7 +5,9 @@ export default function AdminStaticPages() {
     <div className="space-y-8">
       <div>
         <h1 className="font-display text-3xl font-light">About & Contact</h1>
-        <p className="mt-2 text-sm text-stone-500">One place to edit copy and hero images for /about and /contact.</p>
+        <p className="mt-2 text-sm text-stone-500">
+          Edit /about and /contact copy, images, and contact form email line. Messages appear in Contact inbox.
+        </p>
       </div>
       <div className="grid gap-8 lg:grid-cols-2">
         <StaticPageEditor sectionKey="about" pageTitle="About us" pagePath="/about" />

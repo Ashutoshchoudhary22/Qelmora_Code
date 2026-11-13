@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../api/client';
 import { MediaAssetCard } from './MediaAssetCard';
 import { uploadToCloudinary } from '../../lib/cloudinary';
+import { UploadSizeHint } from './UploadSizeHint';
 
 export function StaticPageEditor({ sectionKey, pageTitle, pagePath }) {
   const qc = useQueryClient();
@@ -10,6 +11,8 @@ export function StaticPageEditor({ sectionKey, pageTitle, pagePath }) {
     eyebrow: '',
     headline: '',
     body: '',
+    ctaLabel: '',
+    ctaLink: '',
     imageUrl: '',
     mediaType: 'image',
   });
@@ -27,6 +30,8 @@ export function StaticPageEditor({ sectionKey, pageTitle, pagePath }) {
       eyebrow: data.eyebrow || '',
       headline: data.headline || '',
       body: data.body || '',
+      ctaLabel: data.ctaLabel || '',
+      ctaLink: data.ctaLink || '',
       imageUrl: data.imageUrl || '',
       mediaType: data.mediaType || 'image',
     });
@@ -65,6 +70,8 @@ export function StaticPageEditor({ sectionKey, pageTitle, pagePath }) {
         eyebrow: form.eyebrow.trim(),
         headline: form.headline.trim(),
         body: form.body.trim() || null,
+        ctaLabel: form.ctaLabel.trim() || null,
+        ctaLink: form.ctaLink.trim() || null,
         imageUrl: form.imageUrl || null,
         mediaType: form.mediaType || 'image',
       });
@@ -102,6 +109,22 @@ export function StaticPageEditor({ sectionKey, pageTitle, pagePath }) {
           value={form.body}
           onChange={(e) => setForm({ ...form, body: e.target.value })}
         />
+        {sectionKey === 'contact' && (
+          <>
+            <input
+              className="input-field"
+              placeholder="Form intro (e.g. Fill the form or email us on)"
+              value={form.ctaLabel}
+              onChange={(e) => setForm({ ...form, ctaLabel: e.target.value })}
+            />
+            <input
+              className="input-field"
+              placeholder="Help email (shown on form)"
+              value={form.ctaLink}
+              onChange={(e) => setForm({ ...form, ctaLink: e.target.value })}
+            />
+          </>
+        )}
       </div>
 
       {form.imageUrl ? (
@@ -122,6 +145,7 @@ export function StaticPageEditor({ sectionKey, pageTitle, pagePath }) {
         {uploading ? 'Uploading…' : form.imageUrl ? 'Replace image / video' : 'Upload image / video'}
         <input type="file" accept="image/*,video/*" className="hidden" disabled={uploading} onChange={onFile} />
       </label>
+      <UploadSizeHint variant="portrait" video className="mt-2" />
 
       <button type="button" className="btn-primary mt-4 block w-full text-[10px]" onClick={submit} disabled={save.isPending}>
         {save.isPending ? 'Saving…' : `Save ${pageTitle}`}

@@ -248,7 +248,7 @@ export function OrdersList() {
       ) : !data?.items?.length ? (
         <div className="mt-8 rounded-lg border border-dashed border-white/15 p-8 text-center">
           <p className="text-stone-500">No orders yet.</p>
-          <Link to="/shop/new-arrivals" className="btn-primary btn-accent mt-6 inline-flex">
+          <Link to="/shop/men" className="btn-primary btn-accent mt-6 inline-flex">
             Start shopping
           </Link>
         </div>

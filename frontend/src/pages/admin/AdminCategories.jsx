@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../api/client';
 import { MediaAssetCard } from '../../components/admin/MediaAssetCard';
+import { UploadSizeHint } from '../../components/admin/UploadSizeHint';
 import { uploadToCloudinary } from '../../lib/cloudinary';
 
 export default function AdminCategories() {
@@ -20,7 +21,7 @@ export default function AdminCategories() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['admin-categories'] });
       qc.invalidateQueries({ queryKey: ['categories'] });
-      setMsg('Saved — check homepage, /collections, and shop.');
+      setMsg('Saved — used as fallback when placement tiles are empty.');
     },
     onError: (e) => setMsg(e.response?.data?.message || 'Save failed'),
   });
@@ -57,7 +58,8 @@ export default function AdminCategories() {
       <div>
         <h1 className="font-display text-3xl font-light">Category media</h1>
         <p className="mt-2 max-w-xl text-sm text-stone-500">
-          Men, Women & New Arrivals — homepage, /collections, and shop links. Upload image or video via Cloudinary.
+          Men & Women product categories — fallback images when homepage / Nowhere Else admin tiles are empty. For custom
+          tiles use Admin → Shop by category and Nowhere Else.
         </p>
       </div>
 
@@ -96,6 +98,7 @@ export default function AdminCategories() {
                   onChange={(e) => onFile(cat, e)}
                 />
               </label>
+              <UploadSizeHint variant="categoryCard" video className="mt-2" />
             </div>
           ))}
         </div>

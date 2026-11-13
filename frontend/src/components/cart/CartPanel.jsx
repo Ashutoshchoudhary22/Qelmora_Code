@@ -72,7 +72,7 @@ export function CartPanel({ onClose, compact = false }) {
       <div className={compact ? 'px-6 py-8' : ''}>
         <p className="text-sm text-stone-600">Your bag is empty.</p>
         <Link
-          to="/shop/new-arrivals"
+          to="/shop/men"
           onClick={onClose}
           className="mt-6 inline-flex w-full items-center justify-center border border-stone-900 px-4 py-3 text-[11px] font-medium uppercase tracking-widest text-stone-900"
         >

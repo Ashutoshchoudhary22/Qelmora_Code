@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../api/client';
 import { MediaAssetCard } from '../../components/admin/MediaAssetCard';
 import { uploadToCloudinary } from '../../lib/cloudinary';
+import { UploadSizeHint } from '../../components/admin/UploadSizeHint';
 
 const SECTION_KEY = 'brand_story';
 
@@ -143,6 +144,7 @@ export default function AdminBrandStory() {
           {uploading ? 'Uploading…' : form.imageUrl ? 'Replace media' : 'Upload image / video'}
           <input type="file" accept="image/*,video/*" className="hidden" disabled={uploading} onChange={onFile} />
         </label>
+        <UploadSizeHint variant="wide" video className="mt-2" />
       </div>
 
       <button type="button" className="btn-primary btn-accent w-full sm:w-auto" onClick={submit} disabled={save.isPending}>

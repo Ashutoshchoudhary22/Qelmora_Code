@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../api/client';
 import { MediaAssetCard } from './MediaAssetCard';
 import { uploadToCloudinary } from '../../lib/cloudinary';
+import { UploadSizeHint } from './UploadSizeHint';
 
 export function LoginBannerEditor() {
   const qc = useQueryClient();
@@ -99,6 +100,7 @@ export function LoginBannerEditor() {
             {uploading ? 'Uploading…' : form.imageUrl ? 'Replace image / video' : 'Upload banner image / video'}
             <input type="file" accept="image/*,video/*" className="hidden" disabled={uploading} onChange={onFile} />
           </label>
+          <UploadSizeHint variant="loginSplit" video className="mt-2" />
         </div>
 
         {form.imageUrl ? (
@@ -110,7 +112,7 @@ export function LoginBannerEditor() {
             onRemove={() => setForm((f) => ({ ...f, imageUrl: '', mediaType: 'image' }))}
           />
         ) : (
-          <p className="text-sm text-stone-600">No banner yet — upload to show on login.</p>
+          <UploadSizeHint variant="loginSplit" video />
         )}
       </div>
 

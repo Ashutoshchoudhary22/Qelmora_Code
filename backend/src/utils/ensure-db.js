@@ -3,6 +3,8 @@ import { pool } from '../config/db.js';
 let categoryMediaReady = false;
 let siteSectionsReady = false;
 let instagramReady = false;
+let bannerPlacementReady = false;
+let contactMessagesReady = false;
 
 export async function ensureCategoryMediaColumn() {
   if (categoryMediaReady) return;
@@ -72,9 +74,9 @@ export async function ensureSiteSectionsTable() {
       'contact',
       'Contact',
       'Client care',
-      'hello@qelmora.com · Mon–Sat, 10am–7pm IST\nBandra Kurla Complex, Mumbai, India',
-      null,
-      null,
+      'Mon–Sat, 10am–7pm IST\nBandra Kurla Complex, Mumbai, India',
+      'Fill the form or email us on',
+      'hello@qelmora.com',
     ]
   );
   await pool.execute(
@@ -111,8 +113,39 @@ export async function ensureInstagramTable() {
   instagramReady = true;
 }
 
+export async function ensureBannerPlacementEnum() {
+  if (bannerPlacementReady) return;
+  try {
+    await pool.execute(
+      `ALTER TABLE homepage_banners MODIFY placement ENUM('hero','promo','collection','announcement','shop_men','shop_women','shop_new_arrivals','shop_trending_men','shop_trending_women','home_shop_by_category','page_nowhere_else') NOT NULL DEFAULT 'hero'`
+    );
+    console.log('Database: extended homepage_banners.placement (shop offers)');
+  } catch (e) {
+    if (e.code !== 'ER_BAD_FIELD_ERROR' && e.code !== 'ER_PARSE_ERROR') throw e;
+  }
+  bannerPlacementReady = true;
+}
+
+export async function ensureContactMessagesTable() {
+  if (contactMessagesReady) return;
+  await pool.execute(`
+    CREATE TABLE IF NOT EXISTS contact_messages (
+      id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(120) NOT NULL,
+      email VARCHAR(190) NOT NULL,
+      phone VARCHAR(30) NULL,
+      message TEXT NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      INDEX idx_contact_created (created_at)
+    ) ENGINE=InnoDB
+  `);
+  contactMessagesReady = true;
+}
+
 export async function runStartupMigrations() {
   await ensureCategoryMediaColumn();
   await ensureSiteSectionsTable();
   await ensureInstagramTable();
+  await ensureBannerPlacementEnum();
+  await ensureContactMessagesTable();
 }

@@ -123,6 +123,55 @@ a {
 
 .auth-panel .input-field:-webkit-autofill,
 .auth-panel .input-field:-webkit-autofill:hover,
+.contact-input {
+  width: 100%;
+  border: 1px solid #78716c;
+  background: #ffffff;
+  padding: 0.85rem 1rem;
+  font-size: 0.875rem;
+  color: #1c1917;
+  caret-color: #1c1917;
+  outline: none;
+}
+
+.contact-input::placeholder {
+  color: #a8a29e;
+}
+
+.contact-input:focus {
+  border-color: var(--color-q-accent);
+}
+
+.contact-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #1c1917;
+  background: #1c1917;
+  padding: 0.9rem 2rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #fafaf9;
+  transition: background 0.2s, color 0.2s;
+}
+
+.contact-submit:hover:not(:disabled) {
+  background: var(--color-q-accent);
+  border-color: var(--color-q-accent);
+  color: #090909;
+}
+
+.contact-submit:disabled {
+  opacity: 0.5;
+}
+
+[data-theme="light"] .contact-panel .contact-input {
+  background: #fff;
+  color: #1c1917;
+}
+
 .auth-panel .input-field:-webkit-autofill:focus {
   -webkit-text-fill-color: #1c1917;
   box-shadow: 0 0 0 1000px #ffffff inset;
@@ -310,6 +359,41 @@ a {
 [data-theme="light"] .account-page .rounded-lg.border-white\/10.bg-black\/20 {
   background: #fafaf9 !important;
   border-color: rgb(0 0 0 / 0.08);
+}
+
+[data-theme="light"] .shop-offer-band {
+  background: #f5f5f4 !important;
+  border-color: rgb(0 0 0 / 0.08);
+}
+
+.shop-offer-marquee-slide {
+  width: calc(100vw - 2.5rem);
+  max-width: calc(80rem - 4rem);
+}
+
+@media (min-width: 640px) {
+  .shop-offer-marquee-slide {
+    width: calc((min(100vw, 80rem) - 4rem) / 3);
+    max-width: calc((80rem - 4rem) / 3);
+  }
+}
+
+.shop-offer-marquee-track {
+  animation: shop-offer-marquee var(--shop-offer-marquee-duration, 22s) linear infinite;
+  will-change: transform;
+}
+
+.shop-offer-marquee-shell:hover .shop-offer-marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes shop-offer-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 [data-theme="dark"] .admin-shell {

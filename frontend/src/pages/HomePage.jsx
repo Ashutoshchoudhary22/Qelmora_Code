@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowUpRight, Play } from 'lucide-react';
 import { api } from '../api/client';
 import { CategoryCollectionCards } from '../components/CategoryCollectionCards';
+import { CollectionPlacementGrid } from '../components/CollectionPlacementGrid';
 import { ProductGrid } from '../components/ProductGrid';
 import { Newsletter } from '../components/Newsletter';
 export default function HomePage() {
@@ -12,20 +13,25 @@ export default function HomePage() {
   });
   const hero = heroBanners?.items?.[0];
 
-  const { data: newArrivals, isLoading: loadingNew } = useQuery({
-    queryKey: ['products', 'new'],
-    queryFn: async () => (await api.get('/products?newArrival=1&limit=8')).data,
+  const { data: newMen, isLoading: loadingNewMen } = useQuery({
+    queryKey: ['products', 'new', 'men'],
+    queryFn: async () => (await api.get('/products?newArrival=1&category=men&limit=4')).data,
   });
-
-  const { data: bestSellers, isLoading: loadingBest } = useQuery({
-    queryKey: ['products', 'featured'],
-    queryFn: async () => (await api.get('/products?featured=1&limit=8')).data,
+  const { data: newWomen, isLoading: loadingNewWomen } = useQuery({
+    queryKey: ['products', 'new', 'women'],
+    queryFn: async () => (await api.get('/products?newArrival=1&category=women&limit=4')).data,
   });
 
   const { data: categories } = useQuery({
     queryKey: ['categories'],
     queryFn: async () => (await api.get('/categories')).data,
   });
+
+  const { data: homeCategoryTiles } = useQuery({
+    queryKey: ['banners', 'home_shop_by_category'],
+    queryFn: async () => (await api.get('/banners?placement=home_shop_by_category')).data,
+  });
+  const hasHomeCategoryTiles = (homeCategoryTiles?.items || []).length > 0;
 
   const { data: promo } = useQuery({
     queryKey: ['banners', 'promo'],
@@ -92,7 +98,7 @@ export default function HomePage() {
             Elevated streetwear and ritual-ready essentials — cut with precision, finished for the long road.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
-            <Link to={hero?.ctaLink || '/shop/new-arrivals'} className="btn-primary">
+            <Link to={hero?.ctaLink || '/shop/men'} className="btn-primary">
               {hero?.ctaLabel || 'Explore collection'} <ArrowUpRight size={15} />
             </Link>
             <Link to="/about" className="btn-primary border-stone-600 text-stone-300 hover:border-stone-200">
@@ -103,38 +109,48 @@ export default function HomePage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-5 py-20 md:px-8">
-        <div className="mb-10 flex items-end justify-between gap-4">
+        <p className="text-[10px] uppercase tracking-[0.35em] text-q-accent">Just landed</p>
+        <h2 className="font-display mt-2 text-4xl font-light">New arrivals</h2>
+        <div className="mt-14 space-y-16">
           <div>
-            <p className="text-[10px] uppercase tracking-[0.35em] text-q-accent">Just landed</p>
-            <h2 className="font-display mt-2 text-4xl font-light">New arrivals</h2>
+            <div className="mb-8 flex items-end justify-between gap-4">
+              <h3 className="font-display text-2xl font-light">Men</h3>
+              <Link to="/shop/men#new-arrivals" className="text-[10px] uppercase tracking-widest text-stone-500 hover:text-q-accent">
+                View all men
+              </Link>
+            </div>
+            {loadingNewMen ? <p className="text-stone-500">Loading…</p> : <ProductGrid items={newMen?.items} />}
           </div>
-          <Link to="/shop/new-arrivals" className="text-[10px] uppercase tracking-widest text-stone-500 hover:text-q-accent">
-            View all
-          </Link>
+          <div>
+            <div className="mb-8 flex items-end justify-between gap-4">
+              <h3 className="font-display text-2xl font-light">Women</h3>
+              <Link to="/shop/women#new-arrivals" className="text-[10px] uppercase tracking-widest text-stone-500 hover:text-q-accent">
+                View all women
+              </Link>
+            </div>
+            {loadingNewWomen ? <p className="text-stone-500">Loading…</p> : <ProductGrid items={newWomen?.items} />}
+          </div>
         </div>
-        {loadingNew ? <p className="text-stone-500">Loading…</p> : <ProductGrid items={newArrivals?.items} />}
       </section>
 
       <section className="bg-[#0d0d0d] py-20">
         <div className="mx-auto max-w-7xl px-5 md:px-8">
           <p className="text-center text-[10px] uppercase tracking-[0.4em] text-stone-500">Shop by category</p>
-          <CategoryCollectionCards
-            items={categories?.items}
-            slugs={['men', 'women']}
-            columns={2}
-            className="mt-10"
-          />
+          {hasHomeCategoryTiles ? (
+            <CollectionPlacementGrid
+              placement="home_shop_by_category"
+              columns={2}
+              className="mt-10"
+            />
+          ) : (
+            <CategoryCollectionCards
+              items={categories?.items}
+              slugs={['men', 'women']}
+              columns={2}
+              className="mt-10"
+            />
+          )}
         </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-5 py-20 md:px-8">
-        <div className="mb-10 flex items-end justify-between">
-          <div>
-            <p className="text-[10px] uppercase tracking-[0.35em] text-q-accent">Curated</p>
-            <h2 className="font-display mt-2 text-4xl font-light">Best sellers</h2>
-          </div>
-        </div>
-        {loadingBest ? <p className="text-stone-500">Loading…</p> : <ProductGrid items={bestSellers?.items} />}
       </section>
 
       <section className="relative mx-auto max-w-7xl overflow-hidden px-5 py-8 md:px-8">

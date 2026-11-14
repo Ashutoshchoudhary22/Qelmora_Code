@@ -51,7 +51,7 @@ export default function ShopPage() {
   return (
     <>
       {offerPlacement && <ShopOfferBanners placement={offerPlacement} />}
-      <main className="mx-auto max-w-7xl px-5 py-14 md:px-8 md:py-20">
+      <main className="site-container py-14 md:py-20">
         <p className="text-[10px] uppercase tracking-[0.4em] text-q-accent">QELMORA / Shop</p>
         <h1 className="font-display mt-3 text-5xl font-light">{title}</h1>
         <p className="mt-4 max-w-lg text-sm text-stone-500">

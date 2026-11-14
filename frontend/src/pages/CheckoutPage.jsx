@@ -213,7 +213,7 @@ function CheckoutForm() {
 export default function CheckoutPage() {
   return (
     <ProtectedRoute>
-      <main className="mx-auto max-w-7xl px-5 py-14 md:px-8">
+      <main className="site-container py-14">
         <h1 className="font-display text-4xl font-light">Checkout</h1>
         <div className="mt-10">
           <CheckoutForm />

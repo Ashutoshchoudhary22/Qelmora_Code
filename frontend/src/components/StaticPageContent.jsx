@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../api/client';
 
-export function StaticPageContent({ sectionKey, defaultEyebrow, defaultHeadline, defaultBody, maxWidth = 'max-w-3xl' }) {
+export function StaticPageContent({ sectionKey, defaultEyebrow, defaultHeadline, defaultBody }) {
   const { data, isLoading } = useQuery({
     queryKey: ['content', sectionKey],
     queryFn: async () => (await api.get(`/content/${sectionKey}`)).data,
@@ -9,7 +9,7 @@ export function StaticPageContent({ sectionKey, defaultEyebrow, defaultHeadline,
 
   if (isLoading) {
     return (
-      <main className={`mx-auto ${maxWidth} px-5 py-20 md:px-8`}>
+      <main className="site-container py-20">
         <p className="text-stone-500">Loading…</p>
       </main>
     );
@@ -18,7 +18,7 @@ export function StaticPageContent({ sectionKey, defaultEyebrow, defaultHeadline,
   const bodyParagraphs = (data?.body || defaultBody || '').split('\n').filter(Boolean);
 
   return (
-    <main className={`mx-auto ${maxWidth} px-5 py-20 md:px-8`}>
+    <main className="site-container py-20">
       <div className="grid gap-10 md:grid-cols-2 md:items-start">
         <div>
           <p className="text-[10px] uppercase tracking-[0.4em] text-q-accent">{data?.eyebrow || defaultEyebrow}</p>

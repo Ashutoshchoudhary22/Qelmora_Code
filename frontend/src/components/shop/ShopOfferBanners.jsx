@@ -83,7 +83,7 @@ function ShopOfferStepCarousel({ items }) {
 
   return (
     <div
-      className="relative mx-auto max-w-7xl px-5 md:px-8"
+      className="site-container relative w-full"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >

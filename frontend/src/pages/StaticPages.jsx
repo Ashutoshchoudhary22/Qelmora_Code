@@ -24,7 +24,7 @@ export function ContactPage() {
 
   if (isLoading) {
     return (
-      <main className="mx-auto max-w-5xl px-5 py-20 md:px-8">
+      <main className="site-container py-20">
         <p className="text-stone-500">Loading…</p>
       </main>
     );
@@ -35,7 +35,7 @@ export function ContactPage() {
     .filter(Boolean);
 
   return (
-    <main className="mx-auto max-w-5xl px-5 py-16 md:px-8 md:py-20">
+    <main className="site-container py-16 md:py-20">
       <div className="grid gap-12 lg:grid-cols-2 lg:items-start">
         <div>
           <p className="text-[10px] uppercase tracking-[0.4em] text-q-accent">{data?.eyebrow || 'Contact'}</p>
@@ -74,7 +74,7 @@ export function CollectionsPage() {
   const hasNowhereTiles = (nowhereTiles?.items || []).length > 0;
 
   return (
-    <main className="mx-auto max-w-7xl px-5 py-20 md:px-8">
+    <main className="site-container py-20">
       <p className="text-[10px] uppercase tracking-[0.4em] text-q-accent">Exclusive to QELMORA</p>
       <h1 className="font-display mt-4 text-5xl font-light">Nowhere else</h1>
       <p className="mt-4 max-w-xl text-sm leading-8 text-stone-500">

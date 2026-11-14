@@ -233,6 +233,15 @@ a {
   border-color: transparent;
 }
 
+/* Full-width storefront layout (large screens); hero stays edge-to-edge separately */
+.site-container {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 2.5vw, 2.75rem);
+}
+
 /* Top offset below fixed nav; media extends up so no blank strip in light theme */
 .home-hero {
   --hero-offset: 220px;

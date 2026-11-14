@@ -115,7 +115,7 @@ export default function ProductPage() {
   const compare = product.compareAtPrice ?? product.compare_at_price;
 
   return (
-    <main className="mx-auto max-w-7xl px-5 py-12 md:px-8 md:py-16">
+    <main className="site-container py-12 md:py-16">
       <Link to="/" className="text-[10px] uppercase tracking-widest text-stone-500">
         ← Home
       </Link>

@@ -14,7 +14,7 @@ export default function CartPage() {
 
   return (
     <ProtectedRoute>
-      <main className="mx-auto max-w-7xl px-5 py-14 md:px-8">
+      <main className="site-container py-14">
         <p className="text-sm text-stone-500">Opening your bag…</p>
       </main>
     </ProtectedRoute>

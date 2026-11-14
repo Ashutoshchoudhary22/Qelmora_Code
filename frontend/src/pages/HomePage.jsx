@@ -98,7 +98,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-5 py-20 md:px-8">
+      <section className="site-container py-20">
         <p className="text-[10px] uppercase tracking-[0.35em] text-q-accent">Just landed</p>
         <h2 className="font-display mt-2 text-4xl font-light">New arrivals</h2>
         <div className="mt-14 space-y-16">
@@ -124,7 +124,7 @@ export default function HomePage() {
       </section>
 
       <section className="bg-[#0d0d0d] py-20">
-        <div className="mx-auto max-w-7xl px-5 md:px-8">
+        <div className="site-container">
           <p className="text-center text-[10px] uppercase tracking-[0.4em] text-stone-500">Shop by category</p>
           {hasHomeCategoryTiles ? (
             <CollectionPlacementGrid
@@ -143,7 +143,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="relative mx-auto max-w-7xl overflow-hidden px-5 py-8 md:px-8">
+      <section className="site-container relative overflow-hidden py-8">
         <div className="relative min-h-[320px] border border-white/10">
           {promoItem?.secureUrl && (
             <img src={promoItem.secureUrl} alt="" className="absolute inset-0 h-full w-full object-cover opacity-60" />
@@ -161,7 +161,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-10 px-5 py-20 md:grid-cols-2 md:items-center md:px-8">
+      <section className="site-container grid gap-10 py-20 md:grid-cols-2 md:items-center">
         <div className="relative aspect-[4/5] overflow-hidden bg-[#1a1816]">
           {collectionItem?.secureUrl ? (
             <img src={collectionItem.secureUrl} alt="" className="h-full w-full object-cover" />
@@ -185,7 +185,7 @@ export default function HomePage() {
       </section>
 
       <section className="border-y border-white/10 bg-[#0a0a0a]">
-        <div className="mx-auto grid max-w-7xl gap-8 px-5 py-20 md:grid-cols-2 md:items-center md:px-8">
+        <div className="site-container grid gap-8 py-20 md:grid-cols-2 md:items-center">
           <div className="relative min-h-[200px] overflow-hidden">
             <p className="text-[10px] uppercase tracking-[0.35em] text-q-accent md:absolute md:left-0 md:top-0">
               {brandStory?.eyebrow || 'Brand story'}

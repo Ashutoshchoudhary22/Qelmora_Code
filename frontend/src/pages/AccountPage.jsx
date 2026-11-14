@@ -79,7 +79,7 @@ export function AccountLayout() {
 
   return (
     <ProtectedRoute>
-      <main className="account-page mx-auto max-w-6xl px-5 py-12 md:px-8 md:py-16">
+      <main className="account-page site-container py-12 md:py-16">
         <p className="text-[10px] uppercase tracking-[0.4em] text-q-accent">Account</p>
         <h1 className="font-display mt-2 text-4xl font-light md:text-5xl">
           {firstName ? `Hello, ${firstName}` : 'My account'}

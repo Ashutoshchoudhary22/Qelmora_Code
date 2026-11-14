@@ -112,7 +112,7 @@ export function Navbar({ heroOverlay = false, inHomeShell = false }) {
             : 'sticky top-0 border-b-0 bg-black/80 backdrop-blur-xl'
       }`}
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 md:px-8">
+      <div className="site-container flex items-center justify-between gap-4 py-4">
         <Link to="/" className="font-display text-2xl font-medium tracking-[0.28em] text-stone-50 md:text-[1.65rem]">
           QELMORA
         </Link>

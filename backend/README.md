@@ -4,8 +4,9 @@ Express REST API under `/api/v1`.
 
 ## Scripts
 
-- `npm run dev` — nodemon
+- `npm run dev` — nodemon (on start: creates DB/tables from `database/*.sql` if missing)
 - `npm start` — production
+- `node scripts/setup-db.js` — manual schema + seed (same as auto-init on boot)
 
 ## Environment
 

@@ -1,4 +1,5 @@
 import { pool } from '../config/db.js';
+import { ensureDatabaseSchema } from '../db/schema-init.js';
 
 let categoryMediaReady = false;
 let siteSectionsReady = false;
@@ -143,6 +144,7 @@ export async function ensureContactMessagesTable() {
 }
 
 export async function runStartupMigrations() {
+  await ensureDatabaseSchema();
   await ensureCategoryMediaColumn();
   await ensureSiteSectionsTable();
   await ensureInstagramTable();

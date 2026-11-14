@@ -10,7 +10,9 @@ router.get('/', async (req, res, next) => {
   try {
     const placement = req.query.placement;
     let sql = `SELECT id, title, subtitle, cta_label AS ctaLabel, cta_link AS ctaLink,
-      resource_type AS resourceType, secure_url AS secureUrl, placement, sort_order AS sortOrder
+      resource_type AS resourceType, secure_url AS secureUrl, public_id AS publicId,
+      mobile_resource_type AS mobileResourceType, mobile_secure_url AS mobileSecureUrl, mobile_public_id AS mobilePublicId,
+      placement, sort_order AS sortOrder
       FROM homepage_banners WHERE is_active=1`;
     const params = [];
     if (placement) {
@@ -33,6 +35,9 @@ const bannerSchema = z.object({
   resourceType: z.enum(['image', 'video']),
   secureUrl: z.string().url(),
   publicId: z.string().optional().nullable(),
+  mobileResourceType: z.enum(['image', 'video']).optional().nullable(),
+  mobileSecureUrl: z.string().url().optional().nullable(),
+  mobilePublicId: z.string().optional().nullable(),
   placement: z
     .enum([
       'hero',
@@ -73,8 +78,9 @@ router.post('/admin', requireAuth, requireAdmin, async (req, res, next) => {
   try {
     const data = bannerSchema.parse(req.body);
     const [result] = await pool.execute(
-      `INSERT INTO homepage_banners (title, subtitle, cta_label, cta_link, resource_type, secure_url, public_id, placement, sort_order, is_active)
-       VALUES (?,?,?,?,?,?,?,?,?,?)`,
+      `INSERT INTO homepage_banners (title, subtitle, cta_label, cta_link, resource_type, secure_url, public_id,
+        mobile_resource_type, mobile_secure_url, mobile_public_id, placement, sort_order, is_active)
+       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`,
       [
         data.title,
         data.subtitle || null,
@@ -83,6 +89,9 @@ router.post('/admin', requireAuth, requireAdmin, async (req, res, next) => {
         data.resourceType,
         data.secureUrl,
         data.publicId || null,
+        data.mobileResourceType || null,
+        data.mobileSecureUrl || null,
+        data.mobilePublicId || null,
         data.placement || 'hero',
         data.sortOrder ?? 0,
         data.isActive ?? true,
@@ -107,6 +116,9 @@ router.patch('/admin/:id', requireAuth, requireAdmin, async (req, res, next) => 
       resourceType: 'resource_type',
       secureUrl: 'secure_url',
       publicId: 'public_id',
+      mobileResourceType: 'mobile_resource_type',
+      mobileSecureUrl: 'mobile_secure_url',
+      mobilePublicId: 'mobile_public_id',
       placement: 'placement',
       sortOrder: 'sort_order',
       isActive: 'is_active',

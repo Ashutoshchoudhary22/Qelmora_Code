@@ -6,6 +6,7 @@ let siteSectionsReady = false;
 let instagramReady = false;
 let bannerPlacementReady = false;
 let contactMessagesReady = false;
+let bannerMobileReady = false;
 
 export async function ensureCategoryMediaColumn() {
   if (categoryMediaReady) return;
@@ -127,6 +128,22 @@ export async function ensureBannerPlacementEnum() {
   bannerPlacementReady = true;
 }
 
+export async function ensureBannerMobileMediaColumns() {
+  if (bannerMobileReady) return;
+  try {
+    await pool.execute(
+      `ALTER TABLE homepage_banners
+       ADD COLUMN mobile_resource_type ENUM('image','video') NULL AFTER public_id,
+       ADD COLUMN mobile_secure_url VARCHAR(1000) NULL AFTER mobile_resource_type,
+       ADD COLUMN mobile_public_id VARCHAR(255) NULL AFTER mobile_secure_url`
+    );
+    console.log('Database: added homepage_banners mobile media columns');
+  } catch (e) {
+    if (e.code !== 'ER_DUP_FIELDNAME') throw e;
+  }
+  bannerMobileReady = true;
+}
+
 export async function ensureContactMessagesTable() {
   if (contactMessagesReady) return;
   await pool.execute(`
@@ -149,5 +166,6 @@ export async function runStartupMigrations() {
   await ensureSiteSectionsTable();
   await ensureInstagramTable();
   await ensureBannerPlacementEnum();
+  await ensureBannerMobileMediaColumns();
   await ensureContactMessagesTable();
 }

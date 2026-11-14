@@ -23,7 +23,7 @@ export function SiteLayout() {
       <ScrollToTop />
       {isHome ? (
         <div
-          className={`fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow] duration-300 ${
+          className={`site-home-header-shell fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow] duration-300 ${
             heroOverlay ? 'bg-transparent shadow-none' : 'site-header-scrolled-shell bg-black/85 shadow-sm backdrop-blur-xl'
           }`}
         >

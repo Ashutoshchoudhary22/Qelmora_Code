@@ -6,6 +6,7 @@ import { CategoryCollectionCards } from '../components/CategoryCollectionCards';
 import { CollectionPlacementGrid } from '../components/CollectionPlacementGrid';
 import { ProductGrid } from '../components/ProductGrid';
 import { Newsletter } from '../components/Newsletter';
+import { HeroBannerMedia } from '../components/home/HeroBannerMedia';
 export default function HomePage() {
   const { data: heroBanners } = useQuery({
     queryKey: ['banners', 'hero'],
@@ -63,25 +64,14 @@ export default function HomePage() {
 
   return (
     <main>
-      <section className="relative flex min-h-[88vh] items-end overflow-hidden">
+      <section className="home-hero relative flex min-h-[80vh] items-end">
         {hero?.secureUrl ? (
-          hero.resourceType === 'video' ? (
-            <video
-              className="absolute inset-0 h-full w-full object-cover"
-              src={hero.secureUrl}
-              autoPlay
-              muted
-              loop
-              playsInline
-            />
-          ) : (
-            <img src={hero.secureUrl} alt={hero.title} className="absolute inset-0 h-full w-full object-cover" />
-          )
+          <HeroBannerMedia hero={hero} />
         ) : (
-          <div className="hero-fallback absolute inset-0 bg-[radial-gradient(ellipse_at_70%_20%,#3d342c_0%,#151311_45%,#090909_80%)]" />
+          <div className="hero-fallback home-hero-fill z-0 bg-[radial-gradient(ellipse_at_70%_20%,#3d342c_0%,#151311_45%,#090909_80%)]" />
         )}
-        <div className="hero-scrim absolute inset-0 bg-gradient-to-t from-black via-black/55 to-black/20" />
-        <div className="relative mx-auto w-full max-w-7xl px-5 pb-16 pt-32 md:px-8 md:pb-24">
+        <div className="hero-scrim home-hero-fill z-[1] bg-gradient-to-t from-black via-black/55 to-black/20" />
+        <div className="relative z-[2] mx-auto w-full max-w-7xl px-5 pb-16 pt-32 md:px-8 md:pb-24">
           <p className="animate-fade-up text-[10px] uppercase tracking-[0.45em] text-q-accent-soft">
             {hero?.subtitle || 'Autumn / Winter campaign'}
           </p>

@@ -104,11 +104,11 @@ export function Navbar({ heroOverlay = false, inHomeShell = false }) {
 
   return (
     <header
-      className={`site-header z-40 transition-[background-color,border-color,backdrop-filter] duration-300 ${
+      className={`site-header z-40 transition-[background-color,border-color,backdrop-filter,box-shadow] duration-300 ${
         heroOverlay
-          ? 'site-header-hero border-b-0 bg-transparent backdrop-blur-none'
+          ? 'site-header-hero border-b-0 bg-transparent backdrop-blur-none shadow-none'
           : inHomeShell
-            ? 'border-b-0 bg-transparent backdrop-blur-none'
+            ? 'site-header-scrolled-shell border-b border-white/10 bg-black/85 shadow-sm backdrop-blur-xl'
             : 'sticky top-0 border-b-0 bg-black/80 backdrop-blur-xl'
       }`}
     >

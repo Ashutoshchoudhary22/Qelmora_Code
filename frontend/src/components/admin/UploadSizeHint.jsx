@@ -1,7 +1,8 @@
 const HINTS = {
   square: 'Size: 800×800 px (1:1). JPG or WebP, ideally under 500 KB.',
   categoryCard: 'Size: 1200×900 px (4:3) or 900×1125 px (4:5). JPG/WebP, under 600 KB.',
-  hero: 'Size: 1920×1080 px (16:9). JPG/WebP, under 800 KB.',
+  hero: 'Desktop: 1920×1080 px (16:9). JPG/WebP, under 800 KB.',
+  heroMobile: 'Mobile: 1080×1350 px (4:5) or 1080×1920 (9:16). JPG/WebP, under 600 KB.',
   wide: 'Size: 1600×900 px (16:9). JPG/WebP, under 700 KB.',
   portrait: 'Size: 1000×1400 px (3:4). JPG/WebP, under 600 KB.',
   product: 'Size: at least 1200×1200 px (1:1), plain background. JPG/WebP, under 800 KB per file.',

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
-const SCROLL_THRESHOLD = 20;
+const SCROLL_THRESHOLD = 48;
 
 export function useHomeHeaderScroll() {
   const { pathname } = useLocation();

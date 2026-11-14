@@ -1,4 +1,4 @@
-import { Cloud, Download, ExternalLink, Trash2 } from 'lucide-react';
+import { Cloud, Download, ExternalLink, RefreshCw, Trash2 } from 'lucide-react';
 import { downloadMedia } from '../../lib/download';
 
 export function MediaAssetCard({
@@ -7,6 +7,8 @@ export function MediaAssetCard({
   resourceType = 'image',
   label,
   onRemove,
+  onReplace,
+  replaceBusy = false,
   downloadName = 'qelmora-asset',
 }) {
   if (!secureUrl) return null;
@@ -52,6 +54,17 @@ export function MediaAssetCard({
             <ExternalLink size={12} />
             Open
           </a>
+          {onReplace && (
+            <label
+              className={`inline-flex cursor-pointer items-center gap-1 rounded border border-q-accent/40 px-2 py-1 text-[10px] uppercase tracking-wider text-q-accent transition hover:border-q-accent ${
+                replaceBusy ? 'pointer-events-none opacity-50' : ''
+              }`}
+            >
+              <RefreshCw size={12} className={replaceBusy ? 'animate-spin' : ''} />
+              {replaceBusy ? 'Uploading…' : 'Replace'}
+              <input type="file" accept="image/*,video/*" className="hidden" onChange={onReplace} disabled={replaceBusy} />
+            </label>
+          )}
           {onRemove && (
             <button
               type="button"

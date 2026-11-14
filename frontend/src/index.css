@@ -345,8 +345,34 @@ a {
   background: radial-gradient(ellipse at 70% 20%, #e7e5e4 0%, #f5f5f4 45%, #fafaf9 80%) !important;
 }
 
+.home-hero .hero-scrim {
+  background: linear-gradient(
+    to bottom,
+    rgb(255 255 255 / 0.12),
+    rgb(255 255 255 / 0.05) 28%,
+    transparent 52%,
+    rgb(0 0 0 / 0.55) 100%
+  );
+  pointer-events: none;
+}
+
 [data-theme="light"] .home-hero .hero-scrim {
-  background: linear-gradient(to top, rgb(0 0 0 / 0.72), rgb(0 0 0 / 0.28), transparent) !important;
+  background: linear-gradient(
+    to bottom,
+    rgb(255 255 255 / 0.32),
+    rgb(255 255 255 / 0.16) 32%,
+    rgb(255 255 255 / 0.04) 55%,
+    rgb(0 0 0 / 0.35) 100%
+  ) !important;
+}
+
+[data-theme="dark"] .home-hero .hero-scrim {
+  background: linear-gradient(
+    to bottom,
+    rgb(255 255 255 / 0.1),
+    transparent 45%,
+    rgb(0 0 0 / 0.65) 100%
+  ) !important;
 }
 
 /* —— Admin panel theme (same toggle as storefront) —— */

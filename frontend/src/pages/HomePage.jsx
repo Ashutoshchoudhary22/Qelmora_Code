@@ -70,7 +70,7 @@ export default function HomePage() {
         ) : (
           <div className="hero-fallback home-hero-fill z-0 bg-[radial-gradient(ellipse_at_70%_20%,#3d342c_0%,#151311_45%,#090909_80%)]" />
         )}
-        <div className="hero-scrim home-hero-fill z-[1] bg-gradient-to-t from-black via-black/55 to-black/20" />
+        <div className="hero-scrim home-hero-fill z-[1]" aria-hidden />
         <div className="relative z-[2] mx-auto w-full max-w-7xl px-5 pb-16 pt-32 md:px-8 md:pb-24">
           <p className="animate-fade-up text-[10px] uppercase tracking-[0.45em] text-q-accent-soft">
             {hero?.subtitle || 'Autumn / Winter campaign'}

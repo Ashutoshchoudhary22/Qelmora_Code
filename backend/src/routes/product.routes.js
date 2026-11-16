@@ -87,16 +87,21 @@ router.get('/admin/:id', requireAuth, requireAdmin, async (req, res, next) => {
     );
     const [catRows] = await pool.execute('SELECT category_id FROM product_categories WHERE product_id=?', [product.id]);
     const categoryIds = catRows.length
-      ? catRows.map((r) => r.category_id)
+      ? catRows.map((r) => Number(r.category_id))
       : product.category_id
-        ? [product.category_id]
+        ? [Number(product.category_id)]
         : [];
     res.json({
-      ...product,
-      compareAtPrice: product.compare_at_price,
-      isFeatured: product.is_featured,
-      isNewArrival: product.is_new_arrival,
-      isActive: product.is_active,
+      id: Number(product.id),
+      category_id: product.category_id != null ? Number(product.category_id) : null,
+      name: product.name,
+      slug: product.slug,
+      description: product.description,
+      price: Number(product.price),
+      compareAtPrice: product.compare_at_price != null ? Number(product.compare_at_price) : null,
+      isFeatured: Boolean(product.is_featured),
+      isNewArrival: Boolean(product.is_new_arrival),
+      isActive: Boolean(product.is_active),
       categoryIds,
       media,
       variants,
@@ -184,6 +189,8 @@ async function saveProduct(conn, productId, body, isUpdate = false) {
     throw Object.assign(new Error('Valid name, slug and price are required'), { status: 400 });
   if (!Array.isArray(variants) || variants.length === 0)
     throw Object.assign(new Error('At least one variant is required'), { status: 400 });
+  if (!categoryIds.length)
+    throw Object.assign(new Error('Select at least one shop category (Men or Women)'), { status: 400 });
 
   let id = productId;
   if (isUpdate) {

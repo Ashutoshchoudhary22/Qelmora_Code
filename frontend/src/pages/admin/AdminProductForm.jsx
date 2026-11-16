@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../api/client';
 import { MediaAssetCard } from '../../components/admin/MediaAssetCard';
@@ -82,6 +82,7 @@ export default function AdminProductForm() {
   ]);
 
   const shopCategories = (categories?.items || []).filter((c) => c.slug === 'men' || c.slug === 'women');
+  const listedShops = shopCategories.filter((c) => form.categoryIds.includes(String(c.id)));
 
   const { data: existing } = useQuery({
     queryKey: ['admin-product', id],
@@ -259,6 +260,7 @@ export default function AdminProductForm() {
       if (isNew) await api.post('/products/admin', payload);
       else await api.put(`/products/admin/${id}`, payload);
       await qc.invalidateQueries({ queryKey: ['admin-products'] });
+      await qc.invalidateQueries({ queryKey: ['products'] });
       navigate('/admin/products');
     } catch (e) {
       setMsg(e.response?.data?.message || 'Save failed — check name, slug, price, and at least one size/color variant.');
@@ -299,18 +301,37 @@ export default function AdminProductForm() {
               </ChipToggle>
             ))}
           </div>
+          {listedShops.length > 0 && (
+            <p className="mt-3 text-xs text-q-accent">
+              Listed on:{' '}
+              {listedShops.map((c, i) => (
+                <span key={c.id}>
+                  {i > 0 ? ' · ' : null}
+                  <Link to={`/shop/${c.slug}#collection`} className="underline underline-offset-2 hover:text-stone-200">
+                    {c.name} shop
+                  </Link>
+                </span>
+              ))}
+              {form.isActive
+                ? ' — after you save, open the link and check The collection (grid under the Men/Women title).'
+                : ' — turn on Active on storefront below, then save.'}
+            </p>
+          )}
           <p className="mt-2 text-[10px] leading-relaxed text-stone-600">
-            Men and/or Women — product appears in each selected shop. Primary category drives You may like on the product
-            page. Use &quot;New arrival&quot; below for homepage drops (not a category tag).
+            Orange chip = category selected. Save product so the shop page updates (chip alone does not sync until save).
           </p>
         </div>
         <label className="flex items-center gap-2 text-sm text-stone-400">
+          <input type="checkbox" checked={form.isActive} onChange={(e) => setForm({ ...form, isActive: e.target.checked })} />
+          Active on storefront
+        </label>
+        <label className="flex items-center gap-2 text-sm text-stone-400">
           <input type="checkbox" checked={form.isFeatured} onChange={(e) => setForm({ ...form, isFeatured: e.target.checked })} />
-          Featured
+          Featured (shop best sellers + homepage)
         </label>
         <label className="flex items-center gap-2 text-sm text-stone-400">
           <input type="checkbox" checked={form.isNewArrival} onChange={(e) => setForm({ ...form, isNewArrival: e.target.checked })} />
-          New arrival
+          New arrival (shop + homepage band)
         </label>
         <div>
           <p className="text-[10px] uppercase tracking-widest text-stone-500">Media (Cloudinary)</p>

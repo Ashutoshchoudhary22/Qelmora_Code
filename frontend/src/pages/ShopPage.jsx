@@ -26,7 +26,13 @@ export default function ShopPage() {
 
   const shopCategory = category === 'men' || category === 'women' ? category : null;
 
-  const { data: bestSellers, isLoading: loadingBest, error } = useQuery({
+  const { data: collection, isLoading: loadingCollection, error } = useQuery({
+    queryKey: ['products', 'shop-collection', shopCategory],
+    enabled: Boolean(shopCategory),
+    queryFn: async () => (await api.get(`/products?category=${shopCategory}&limit=48`)).data,
+  });
+
+  const { data: bestSellers, isLoading: loadingBest } = useQuery({
     queryKey: ['products', 'shop-best', shopCategory],
     enabled: Boolean(shopCategory),
     queryFn: async () =>
@@ -37,7 +43,7 @@ export default function ShopPage() {
     queryKey: ['products', 'shop-new', shopCategory],
     enabled: Boolean(shopCategory),
     queryFn: async () =>
-      (await api.get(`/products?category=${shopCategory}&newArrival=1&limit=8`)).data,
+      (await api.get(`/products?category=${shopCategory}&newArrival=1&limit=12`)).data,
   });
 
   const title = TITLES[shopCategory] || 'All collections';
@@ -45,18 +51,41 @@ export default function ShopPage() {
   const trendingPlacement =
     shopCategory === 'men' ? 'shop_trending_men' : shopCategory === 'women' ? 'shop_trending_women' : null;
   const shopPath = shopCategory ? `/shop/${shopCategory}` : '/shop/men';
+  const collectionItems = collection?.items || [];
   const newItems = newArrivals?.items || [];
   const bestItems = bestSellers?.items || [];
 
   return (
     <>
-      {offerPlacement && <ShopOfferBanners placement={offerPlacement} />}
+      {offerPlacement && (
+        <div className="not-prose w-full">
+          <ShopOfferBanners placement={offerPlacement} />
+        </div>
+      )}
+
       <main className="site-container py-14 md:py-20">
-        <p className="text-[10px] uppercase tracking-[0.4em] text-q-accent">QELMORA / Shop</p>
-        <h1 className="font-display mt-3 text-5xl font-light">{title}</h1>
-        <p className="mt-4 max-w-lg text-sm text-stone-500">
-          Every piece is sourced from our atelier partners. Inventory updates in real time.
-        </p>
+        {shopCategory && (
+          <section
+            id="collection"
+            className={`scroll-mt-28 border-b border-white/10 pb-14 ${offerPlacement ? 'mt-0' : ''}`}
+          >
+            <p className="text-[10px] uppercase tracking-[0.35em] text-q-accent">In this shop</p>
+            <h2 className="font-display mt-2 text-3xl font-light">The collection</h2>
+            <p className="mt-2 max-w-lg text-xs text-stone-500">
+              Every active product assigned to {title.toLowerCase()} in admin appears here.
+            </p>
+            {loadingCollection && <p className="mt-8 text-stone-500">Loading…</p>}
+            {error && <p className="mt-8 text-stone-500">Unable to load products. Is the API running?</p>}
+            {!loadingCollection && !error && (
+              <div className="mt-8">
+                <ProductGrid
+                  items={collectionItems}
+                  empty={`No active ${title.toLowerCase()} products yet. In admin, select ${title} under Shop categories and save.`}
+                />
+              </div>
+            )}
+          </section>
+        )}
 
         {shopCategory && (loadingNew || newItems.length > 0) && (
           <section id="new-arrivals" className="mt-14 scroll-mt-28 border-b border-white/10 pb-14">
@@ -81,8 +110,7 @@ export default function ShopPage() {
             <p className="text-[10px] uppercase tracking-[0.35em] text-q-accent">Curated</p>
             <h2 className="font-display mt-2 text-3xl font-light">Best sellers</h2>
             {loadingBest && <p className="mt-8 text-stone-500">Loading…</p>}
-            {error && <p className="mt-8 text-stone-500">Unable to load products. Is the API running?</p>}
-            {!loadingBest && !error && (
+            {!loadingBest && (
               <div className="mt-8">
                 <ProductGrid
                   items={bestItems}

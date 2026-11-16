@@ -11,6 +11,19 @@ const TITLES = {
   women: 'Women',
 };
 
+const COLLECTION_COPY = {
+  men: {
+    eyebrow: 'Shop the edit',
+    headline: 'The men’s collection',
+    sub: 'Elevated staples and statement layers — small batches, live inventory. Find your size before it’s gone.',
+  },
+  women: {
+    eyebrow: 'Shop the edit',
+    headline: 'The women’s collection',
+    sub: 'Quiet confidence in every cut — limited pieces, updated in real time. Own the look while stock lasts.',
+  },
+};
+
 export default function ShopPage() {
   const { category } = useParams();
   const navigate = useNavigate();
@@ -52,8 +65,10 @@ export default function ShopPage() {
     shopCategory === 'men' ? 'shop_trending_men' : shopCategory === 'women' ? 'shop_trending_women' : null;
   const shopPath = shopCategory ? `/shop/${shopCategory}` : '/shop/men';
   const collectionItems = collection?.items || [];
+  const collectionTotal = collection?.total ?? collectionItems.length;
   const newItems = newArrivals?.items || [];
   const bestItems = bestSellers?.items || [];
+  const collectionCopy = shopCategory ? COLLECTION_COPY[shopCategory] : null;
 
   return (
     <>
@@ -69,18 +84,27 @@ export default function ShopPage() {
             id="collection"
             className={`scroll-mt-28 border-b border-white/10 pb-14 ${offerPlacement ? 'mt-0' : ''}`}
           >
-            <p className="text-[10px] uppercase tracking-[0.35em] text-q-accent">In this shop</p>
-            <h2 className="font-display mt-2 text-3xl font-light">The collection</h2>
-            <p className="mt-2 max-w-lg text-xs text-stone-500">
-              Every active product assigned to {title.toLowerCase()} in admin appears here.
-            </p>
-            {loadingCollection && <p className="mt-8 text-stone-500">Loading…</p>}
-            {error && <p className="mt-8 text-stone-500">Unable to load products. Is the API running?</p>}
+            {collectionCopy && (
+              <div className="max-w-2xl">
+                <p className="text-[10px] uppercase tracking-[0.4em] text-q-accent">{collectionCopy.eyebrow}</p>
+                <h2 className="font-display mt-3 text-4xl font-light tracking-tight text-stone-50 md:text-5xl">
+                  {collectionCopy.headline}
+                </h2>
+                <p className="mt-4 text-sm leading-relaxed text-stone-400">{collectionCopy.sub}</p>
+                {!loadingCollection && !error && collectionTotal > 0 && (
+                  <p className="mt-4 text-[10px] uppercase tracking-[0.3em] text-stone-500">
+                    {collectionTotal} piece{collectionTotal === 1 ? '' : 's'} available now
+                  </p>
+                )}
+              </div>
+            )}
+            {loadingCollection && <p className="mt-10 text-stone-500">Loading the collection…</p>}
+            {error && <p className="mt-10 text-stone-500">Unable to load products. Is the API running?</p>}
             {!loadingCollection && !error && (
-              <div className="mt-8">
+              <div className="mt-10 md:mt-12">
                 <ProductGrid
                   items={collectionItems}
-                  empty={`No active ${title.toLowerCase()} products yet. In admin, select ${title} under Shop categories and save.`}
+                  empty="Fresh styles are on the way. Join the list below or check back soon."
                 />
               </div>
             )}

@@ -7,6 +7,7 @@ let instagramReady = false;
 let bannerPlacementReady = false;
 let contactMessagesReady = false;
 let bannerMobileReady = false;
+let productCategoriesReady = false;
 
 export async function ensureCategoryMediaColumn() {
   if (categoryMediaReady) return;
@@ -160,6 +161,25 @@ export async function ensureContactMessagesTable() {
   contactMessagesReady = true;
 }
 
+export async function ensureProductCategoriesTable() {
+  if (productCategoriesReady) return;
+  await pool.execute(`
+    CREATE TABLE IF NOT EXISTS product_categories (
+      product_id BIGINT UNSIGNED NOT NULL,
+      category_id BIGINT UNSIGNED NOT NULL,
+      PRIMARY KEY (product_id, category_id),
+      CONSTRAINT fk_pc_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+      CONSTRAINT fk_pc_category FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE,
+      INDEX idx_pc_category (category_id)
+    ) ENGINE=InnoDB
+  `);
+  await pool.execute(`
+    INSERT IGNORE INTO product_categories (product_id, category_id)
+    SELECT id, category_id FROM products WHERE category_id IS NOT NULL
+  `);
+  productCategoriesReady = true;
+}
+
 export async function runStartupMigrations() {
   await ensureDatabaseSchema();
   await ensureCategoryMediaColumn();
@@ -168,4 +188,5 @@ export async function runStartupMigrations() {
   await ensureBannerPlacementEnum();
   await ensureBannerMobileMediaColumns();
   await ensureContactMessagesTable();
+  await ensureProductCategoriesTable();
 }

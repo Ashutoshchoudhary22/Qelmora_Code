@@ -25,7 +25,7 @@ export function cloudinaryConfigErrorResponse() {
   if (!cloudName) missing.push('CLOUDINARY_CLOUD_NAME');
   if (!apiKey) missing.push('CLOUDINARY_API_KEY');
   if (!apiSecret) missing.push('CLOUDINARY_API_SECRET');
-  if (!missing.length) return null;
+  if (!missing.length) return null; 
   return {
     status: 503,
     body: {

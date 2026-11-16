@@ -8,7 +8,42 @@ import { uploadToCloudinary } from '../../lib/cloudinary';
 import { UploadSizeHint } from '../../components/admin/UploadSizeHint';
 
 const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
-const COLORS = ['Black', 'White', 'Stone', 'Amber'];
+const COLOR_PRESETS = ['Black', 'White', 'Stone', 'Amber'];
+
+function colorSkuCode(color) {
+  const parts = String(color)
+    .trim()
+    .replace(/[^a-zA-Z0-9]+/g, ' ')
+    .split(/\s+/)
+    .filter(Boolean);
+  if (!parts.length) return 'CLR';
+  if (parts.length === 1) return parts[0].slice(0, 4).toUpperCase();
+  return parts
+    .map((p) => p[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 4);
+}
+
+function toggleInList(list, value) {
+  return list.includes(value) ? list.filter((x) => x !== value) : [...list, value];
+}
+
+function ChipToggle({ active, children, onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`rounded border px-3 py-1.5 text-[10px] uppercase tracking-widest transition-colors ${
+        active
+          ? 'border-q-accent bg-q-accent/15 text-q-accent'
+          : 'border-stone-700 text-stone-500 hover:border-stone-500 hover:text-stone-300'
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
 
 export default function AdminProductForm() {
   const { id } = useParams();
@@ -31,15 +66,22 @@ export default function AdminProductForm() {
     description: '',
     price: '',
     compareAtPrice: '',
-    categoryId: '',
+    categoryIds: [],
     isFeatured: false,
     isNewArrival: true,
     isActive: true,
   });
   const [media, setMedia] = useState([]);
+  const [selectedSizes, setSelectedSizes] = useState(['M']);
+  const [selectedColors, setSelectedColors] = useState(['Black']);
+  const [paletteColors, setPaletteColors] = useState([...COLOR_PRESETS]);
+  const [newColorName, setNewColorName] = useState('');
+  const [defaultStock, setDefaultStock] = useState(10);
   const [variants, setVariants] = useState([
     { sku: 'QEL-M-BLK', size: 'M', color: 'Black', stock: 10 },
   ]);
+
+  const shopCategories = (categories?.items || []).filter((c) => c.slug === 'men' || c.slug === 'women');
 
   const { data: existing } = useQuery({
     queryKey: ['admin-product', id],
@@ -56,7 +98,12 @@ export default function AdminProductForm() {
       description: existing.description || '',
       price: String(existing.price),
       compareAtPrice: existing.compareAtPrice ? String(existing.compareAtPrice) : '',
-      categoryId: existing.category_id ? String(existing.category_id) : '',
+      categoryIds: (existing.categoryIds?.length
+        ? existing.categoryIds
+        : existing.category_id
+          ? [existing.category_id]
+          : []
+      ).map(String),
       isFeatured: !!existing.isFeatured,
       isNewArrival: !!existing.isNewArrival,
       isActive: !!existing.isActive,
@@ -68,7 +115,21 @@ export default function AdminProductForm() {
         resource_type: m.resourceType,
       }))
     );
-    setVariants(existing.variants || []);
+    const existingVariants = existing.variants || [];
+    setVariants(existingVariants);
+    const fromVariants = [...new Set(existingVariants.map((v) => v.color).filter(Boolean))];
+    if (fromVariants.length) {
+      setSelectedColors(fromVariants);
+      setPaletteColors((prev) => {
+        const next = [...prev];
+        for (const c of fromVariants) {
+          if (!next.some((x) => x.toLowerCase() === c.toLowerCase())) next.push(c);
+        }
+        return next;
+      });
+      const sizes = [...new Set(existingVariants.map((v) => v.size).filter(Boolean))];
+      if (sizes.length) setSelectedSizes(sizes);
+    }
   }, [existing]);
 
   async function onFiles(e) {
@@ -88,14 +149,49 @@ export default function AdminProductForm() {
   }
 
   function generateVariants() {
+    if (!selectedSizes.length || !selectedColors.length) {
+      setMsg('Select at least one size and one color for SKUs.');
+      return;
+    }
     const base = form.slug?.toUpperCase().replace(/-/g, '') || 'QEL';
+    const stock = Number(defaultStock) >= 0 ? Number(defaultStock) : 0;
     const list = [];
-    for (const size of SIZES.slice(0, 4)) {
-      for (const color of COLORS.slice(0, 2)) {
-        list.push({ sku: `${base}-${size}-${color.slice(0, 3).toUpperCase()}`, size, color, stock: 10 });
+    for (const size of selectedSizes) {
+      for (const color of selectedColors) {
+        list.push({
+          sku: `${base}-${size}-${colorSkuCode(color)}`,
+          size,
+          color,
+          stock,
+        });
       }
     }
     setVariants(list);
+    setMsg('');
+  }
+
+  function addCustomColor() {
+    const name = newColorName.trim().replace(/\s+/g, ' ');
+    if (!name) return;
+    const exists = paletteColors.some((c) => c.toLowerCase() === name.toLowerCase());
+    if (!exists) setPaletteColors((p) => [...p, name]);
+    setSelectedColors((s) => (s.some((c) => c.toLowerCase() === name.toLowerCase()) ? s : [...s, name]));
+    setNewColorName('');
+    setMsg('');
+  }
+
+  function removeCustomColor(color) {
+    if (COLOR_PRESETS.includes(color)) return;
+    setPaletteColors((p) => p.filter((c) => c !== color));
+    setSelectedColors((s) => s.filter((c) => c !== color));
+  }
+
+  function toggleCategory(id) {
+    const sid = String(id);
+    setForm((f) => {
+      const next = toggleInList(f.categoryIds, sid);
+      return { ...f, categoryIds: next };
+    });
   }
 
   function slugify(text) {
@@ -121,6 +217,7 @@ export default function AdminProductForm() {
     if (!name) return setMsg('Product name is required.');
     if (!slug) return setMsg('Slug is required (e.g. obsidian-hoodie).');
     if (!Number.isFinite(price) || price <= 0) return setMsg('Enter a valid price greater than 0.');
+    if (!form.categoryIds.length) return setMsg('Select at least one shop category (Men and/or Women).');
     for (const m of media) {
       if (!m.secure_url || !m.public_id) {
         return setMsg('Each uploaded image must finish uploading to Cloudinary before save.');
@@ -129,7 +226,7 @@ export default function AdminProductForm() {
 
     const variantList = ensureVariants(variants, slug).map((v, i) => {
       const base = slug.toUpperCase().replace(/-/g, '') || 'QEL';
-      const sku = v.sku?.trim() || `${base}-${v.size}-${String(v.color).slice(0, 3).toUpperCase()}-${i}`;
+      const sku = v.sku?.trim() || `${base}-${v.size}-${colorSkuCode(v.color)}-${i}`;
       return {
         sku,
         size: v.size,
@@ -144,7 +241,7 @@ export default function AdminProductForm() {
       description: form.description,
       price,
       compareAtPrice: form.compareAtPrice ? Number(form.compareAtPrice) : null,
-      categoryId: form.categoryId ? Number(form.categoryId) : null,
+      categoryIds: form.categoryIds.map(Number),
       isFeatured: form.isFeatured,
       isNewArrival: form.isNewArrival,
       isActive: form.isActive,
@@ -193,18 +290,20 @@ export default function AdminProductForm() {
           <input className="input-field" type="number" placeholder="Price" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
           <input className="input-field" type="number" placeholder="Compare at" value={form.compareAtPrice} onChange={(e) => setForm({ ...form, compareAtPrice: e.target.value })} />
         </div>
-        <select className="input-field" value={form.categoryId} onChange={(e) => setForm({ ...form, categoryId: e.target.value })}>
-          <option value="">Category</option>
-          {(categories?.items || []).filter((c) => c.slug !== 'unisex').map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
-        <p className="text-[10px] leading-relaxed text-stone-600">
-          Men or Women — sets shop placement, You may like &amp; T-shirts on the product page (same gender only), and
-          homepage New arrivals / Best sellers.
-        </p>
+        <div>
+          <p className="text-[10px] uppercase tracking-widest text-stone-500">Shop categories (multi-select)</p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {shopCategories.map((c) => (
+              <ChipToggle key={c.id} active={form.categoryIds.includes(String(c.id))} onClick={() => toggleCategory(c.id)}>
+                {c.name}
+              </ChipToggle>
+            ))}
+          </div>
+          <p className="mt-2 text-[10px] leading-relaxed text-stone-600">
+            Men and/or Women — product appears in each selected shop. Primary category drives You may like on the product
+            page. Use &quot;New arrival&quot; below for homepage drops (not a category tag).
+          </p>
+        </div>
         <label className="flex items-center gap-2 text-sm text-stone-400">
           <input type="checkbox" checked={form.isFeatured} onChange={(e) => setForm({ ...form, isFeatured: e.target.checked })} />
           Featured
@@ -235,15 +334,88 @@ export default function AdminProductForm() {
           </div>
         </div>
         <div>
-          <button type="button" className="btn-primary text-[10px]" onClick={generateVariants}>
-            Generate sample variants
+          <p className="text-[10px] uppercase tracking-widest text-stone-500">SKU variants (multi-select)</p>
+          <p className="mt-1 text-xs text-stone-600">Pick sizes and colors, set default stock, then build SKUs.</p>
+          <div className="mt-3">
+            <p className="text-[10px] uppercase tracking-widest text-stone-600">Sizes</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {SIZES.map((size) => (
+                <ChipToggle
+                  key={size}
+                  active={selectedSizes.includes(size)}
+                  onClick={() => setSelectedSizes((s) => toggleInList(s, size))}
+                >
+                  {size}
+                </ChipToggle>
+              ))}
+            </div>
+          </div>
+          <div className="mt-4">
+            <p className="text-[10px] uppercase tracking-widest text-stone-600">Colors</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {paletteColors.map((color) => {
+                const isPreset = COLOR_PRESETS.includes(color);
+                return (
+                  <span key={color} className="inline-flex items-center gap-1">
+                    <ChipToggle
+                      active={selectedColors.includes(color)}
+                      onClick={() => setSelectedColors((c) => toggleInList(c, color))}
+                    >
+                      {color}
+                    </ChipToggle>
+                    {!isPreset && (
+                      <button
+                        type="button"
+                        className="text-stone-600 hover:text-red-400"
+                        aria-label={`Remove ${color}`}
+                        onClick={() => removeCustomColor(color)}
+                      >
+                        ×
+                      </button>
+                    )}
+                  </span>
+                );
+              })}
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <input
+                className="input-field min-w-[160px] flex-1"
+                placeholder="Add colour name (e.g. Navy, Olive)"
+                value={newColorName}
+                onChange={(e) => setNewColorName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addCustomColor();
+                  }
+                }}
+              />
+              <button type="button" className="btn-primary shrink-0 text-[10px]" onClick={addCustomColor}>
+                Add colour
+              </button>
+            </div>
+            <p className="mt-1 text-[10px] text-stone-600">Type your own name — it is saved on the product variant and used in the SKU.</p>
+          </div>
+          <div className="mt-4 max-w-[140px]">
+            <label className="text-[10px] uppercase tracking-widest text-stone-600">Default stock</label>
+            <input
+              className="input-field mt-1"
+              type="number"
+              min={0}
+              value={defaultStock}
+              onChange={(e) => setDefaultStock(e.target.value)}
+            />
+          </div>
+          <button type="button" className="btn-primary mt-4 text-[10px]" onClick={generateVariants}>
+            Build {selectedSizes.length * selectedColors.length || 0} SKU
+            {selectedSizes.length * selectedColors.length === 1 ? '' : 's'}
           </button>
           <p className="mt-2 text-xs text-stone-500">
-            {variants.length} variant(s) — required for cart/checkout (default M / Black added for new products).
+            {variants.length} variant(s) saved — required for cart/checkout (new products start with M / Black).
           </p>
-          <ul className="mt-3 space-y-1 text-xs text-stone-500">
-            {variants.slice(0, 6).map((v) => (
-              <li key={v.sku}>
+          <ul className="mt-3 max-h-40 space-y-1 overflow-y-auto text-xs text-stone-500">
+            {variants.map((v) => (
+              <li key={`${v.sku}-${v.size}-${v.color}`}>
                 {v.size} · {v.color} · stock {v.stock} · {v.sku}
               </li>
             ))}

@@ -22,8 +22,15 @@ router.get('/', async (req, res, next) => {
       params.push(search);
     }
     if (categorySlug) {
-      where += ' AND c.slug=?';
-      params.push(categorySlug);
+      where += ` AND (
+        c.slug = ?
+        OR EXISTS (
+          SELECT 1 FROM product_categories pc
+          INNER JOIN categories cx ON cx.id = pc.category_id
+          WHERE pc.product_id = p.id AND cx.slug = ?
+        )
+      )`;
+      params.push(categorySlug, categorySlug);
     }
     if (featured) where += ' AND p.is_featured=1';
     if (newArrival) where += ' AND p.is_new_arrival=1';
@@ -78,12 +85,19 @@ router.get('/admin/:id', requireAuth, requireAdmin, async (req, res, next) => {
       `SELECT sku, size, color, stock, price_override AS priceOverride FROM product_variants WHERE product_id=?`,
       [product.id]
     );
+    const [catRows] = await pool.execute('SELECT category_id FROM product_categories WHERE product_id=?', [product.id]);
+    const categoryIds = catRows.length
+      ? catRows.map((r) => r.category_id)
+      : product.category_id
+        ? [product.category_id]
+        : [];
     res.json({
       ...product,
       compareAtPrice: product.compare_at_price,
       isFeatured: product.is_featured,
       isNewArrival: product.is_new_arrival,
       isActive: product.is_active,
+      categoryIds,
       media,
       variants,
     });
@@ -151,12 +165,20 @@ async function saveProduct(conn, productId, body, isUpdate = false) {
     price,
     compareAtPrice = null,
     categoryId = null,
+    categoryIds: rawCategoryIds,
     isFeatured = false,
     isNewArrival = false,
     isActive = true,
     media = [],
     variants = [],
   } = body;
+
+  const categoryIds = Array.isArray(rawCategoryIds)
+    ? [...new Set(rawCategoryIds.map((n) => Number(n)).filter((n) => Number.isInteger(n) && n > 0))]
+  : categoryId != null && categoryId !== ''
+      ? [Number(categoryId)]
+      : [];
+  const primaryCategoryId = categoryIds[0] ?? null;
 
   if (!name || !slug || !Number.isFinite(Number(price)) || Number(price) <= 0)
     throw Object.assign(new Error('Valid name, slug and price are required'), { status: 400 });
@@ -167,7 +189,7 @@ async function saveProduct(conn, productId, body, isUpdate = false) {
   if (isUpdate) {
     await conn.execute(
       `UPDATE products SET category_id=?,name=?,slug=?,description=?,price=?,compare_at_price=?,is_featured=?,is_new_arrival=?,is_active=? WHERE id=?`,
-      [categoryId, name, slug, description, Number(price), compareAtPrice, isFeatured, isNewArrival, isActive, id]
+      [primaryCategoryId, name, slug, description, Number(price), compareAtPrice, isFeatured, isNewArrival, isActive, id]
     );
     await conn.execute('DELETE FROM product_media WHERE product_id=?', [id]);
     await conn.execute('DELETE FROM product_variants WHERE product_id=?', [id]);
@@ -175,9 +197,14 @@ async function saveProduct(conn, productId, body, isUpdate = false) {
     const [result] = await conn.execute(
       `INSERT INTO products (category_id,name,slug,description,price,compare_at_price,is_featured,is_new_arrival,is_active)
        VALUES (?,?,?,?,?,?,?,?,?)`,
-      [categoryId, name, slug, description, Number(price), compareAtPrice, isFeatured, isNewArrival, isActive]
+      [primaryCategoryId, name, slug, description, Number(price), compareAtPrice, isFeatured, isNewArrival, isActive]
     );
     id = result.insertId;
+  }
+
+  await conn.execute('DELETE FROM product_categories WHERE product_id=?', [id]);
+  for (const cid of categoryIds) {
+    await conn.execute('INSERT INTO product_categories (product_id, category_id) VALUES (?,?)', [id, cid]);
   }
 
   for (const m of media) {

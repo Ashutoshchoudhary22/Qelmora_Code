@@ -29,12 +29,12 @@ export function CategoryCollectionCards({ items, slugs = DEFAULT_SLUGS, columns 
         <Link
           key={card.slug}
           to={`/shop/${card.slug}`}
-          className="group relative flex min-h-[220px] items-end overflow-hidden border border-white/10 bg-[#141210] p-6 transition hover:border-q-accent/40"
+          className="group relative aspect-[4/5] w-full overflow-hidden border border-white/10 bg-[#141210] transition hover:border-q-accent/40"
         >
           {card.mediaUrl && card.mediaType === 'video' ? (
             <video
               src={card.mediaUrl}
-              className="absolute inset-0 h-full w-full object-cover opacity-55 transition group-hover:scale-105"
+              className="absolute inset-0 h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.03]"
               muted
               loop
               playsInline
@@ -45,13 +45,17 @@ export function CategoryCollectionCards({ items, slugs = DEFAULT_SLUGS, columns 
               <img
                 src={card.mediaUrl}
                 alt=""
-                className="absolute inset-0 h-full w-full object-cover opacity-50 transition group-hover:scale-105"
+                className="absolute inset-0 h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.03]"
               />
             )
           )}
-          <div className="relative">
+          <div
+            className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-black/10"
+            aria-hidden
+          />
+          <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
             <p className="text-[10px] uppercase tracking-[0.3em] text-q-accent">Category</p>
-            <h3 className="font-display mt-2 text-3xl font-light">{card.name}</h3>
+            <h3 className="font-display mt-2 text-3xl font-light text-stone-50">{card.name}</h3>
           </div>
         </Link>
       ))}

@@ -2,18 +2,19 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../api/client';
 
-function Tile({ banner, fallbackShop }) {
+function Tile({ banner, fallbackShop, imageFit = 'cover' }) {
+  const mediaFit = imageFit === 'contain' ? 'object-contain object-center' : 'object-cover object-center';
   const url = banner.secureUrl;
   const link = banner.ctaLink?.trim() || fallbackShop;
   const isExternal = link.startsWith('http');
   const label = banner.title?.trim() || 'Explore';
 
   const card = (
-    <div className="group relative flex min-h-[220px] items-end overflow-hidden border border-white/10 bg-[#141210] p-6 transition hover:border-q-accent/40">
+    <div className="group relative aspect-[4/5] w-full overflow-hidden border border-white/10 bg-[#141210] transition hover:border-q-accent/40">
       {banner.resourceType === 'video' ? (
         <video
           src={url}
-          className="absolute inset-0 h-full w-full object-cover opacity-55 transition duration-500 group-hover:scale-105"
+          className={`absolute inset-0 h-full w-full ${mediaFit} transition duration-500 group-hover:scale-[1.03]`}
           muted
           loop
           playsInline
@@ -23,14 +24,18 @@ function Tile({ banner, fallbackShop }) {
         <img
           src={url}
           alt={label}
-          className="absolute inset-0 h-full w-full object-cover opacity-50 transition duration-500 group-hover:scale-105"
+          className={`absolute inset-0 h-full w-full ${mediaFit} transition duration-500 group-hover:scale-[1.03]`}
           loading="lazy"
         />
       )}
-      <div className="relative">
+      <div
+        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-black/10"
+        aria-hidden
+      />
+      <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
         <p className="text-[10px] uppercase tracking-[0.3em] text-q-accent">Category</p>
-        <h3 className="font-display mt-2 text-3xl font-light">{label}</h3>
-        {banner.subtitle && <p className="mt-1 text-xs text-stone-400">{banner.subtitle}</p>}
+        <h3 className="font-display mt-2 text-3xl font-light text-stone-50">{label}</h3>
+        {banner.subtitle && <p className="mt-1 text-xs text-stone-300">{banner.subtitle}</p>}
       </div>
     </div>
   );
@@ -55,6 +60,7 @@ export function CollectionPlacementGrid({
   columns = 2,
   className = '',
   emptyMessage = 'No tiles yet.',
+  imageFit = 'cover',
 }) {
   const { data, isLoading } = useQuery({
     queryKey: ['banners', placement],
@@ -71,7 +77,7 @@ export function CollectionPlacementGrid({
   return (
     <div className={`grid gap-4 ${gridCols} ${className}`}>
       {items.map((b) => (
-        <Tile key={b.id} banner={b} fallbackShop={fallbackShop} />
+        <Tile key={b.id} banner={b} fallbackShop={fallbackShop} imageFit={imageFit} />
       ))}
     </div>
   );

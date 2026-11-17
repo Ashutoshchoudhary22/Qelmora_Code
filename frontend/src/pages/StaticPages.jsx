@@ -9,6 +9,7 @@ export function AboutPage() {
   return (
     <StaticPageContent
       sectionKey="about"
+      compactImage
       defaultEyebrow="About us"
       defaultHeadline="The QELMORA edit"
       defaultBody="Founded on the belief that luxury is restraint, QELMORA designs modular wardrobes for people who travel light and dress with intent. We partner with mills in Gujarat and Tamil Nadu, finish in small batches, and release only what we would wear ourselves."
@@ -34,28 +35,56 @@ export function ContactPage() {
     .split('\n')
     .filter(Boolean);
 
+  const helpEmail = (data?.ctaLink || 'hello@qelmora.com').replace(/^mailto:/i, '');
+  const metaLabels = ['Studio hours', 'Visit us'];
+
   return (
-    <main className="site-container py-16 md:py-20">
-      <div className="grid gap-12 lg:grid-cols-2 lg:items-start">
-        <div>
+    <main className="site-container py-14 md:py-20">
+      <div className="contact-page mx-auto max-w-5xl">
+        <header className="max-w-3xl">
           <p className="text-[10px] uppercase tracking-[0.4em] text-q-accent">{data?.eyebrow || 'Contact'}</p>
-          <h1 className="font-display mt-4 text-4xl font-light md:text-5xl">{data?.headline || 'Client care'}</h1>
-          <div className="mt-8 space-y-3 text-sm leading-8 text-stone-500">
-            {bodyParagraphs.map((p) => (
-              <p key={p.slice(0, 32)}>{p}</p>
+          <h1 className="font-display mt-4 text-4xl font-light tracking-tight md:text-5xl">
+            {data?.headline || 'Client care'}
+          </h1>
+          <p className="mt-4 max-w-xl text-sm leading-relaxed text-stone-500">
+            Questions on fit, delivery, or your order — we&apos;re here Mon–Sat.
+          </p>
+
+          <ul className="mt-10 grid gap-8 border-t border-white/10 pt-10 sm:grid-cols-2 lg:grid-cols-3">
+            {bodyParagraphs.map((p, i) => (
+              <li key={p.slice(0, 32)}>
+                <p className="text-[10px] uppercase tracking-[0.32em] text-stone-500">{metaLabels[i] || 'Details'}</p>
+                <p className="mt-2 text-sm leading-relaxed text-stone-400">{p}</p>
+              </li>
             ))}
-          </div>
+            <li>
+              <p className="text-[10px] uppercase tracking-[0.32em] text-stone-500">Direct line</p>
+              <a
+                href={`mailto:${helpEmail}`}
+                className="mt-2 inline-block text-sm text-q-accent underline-offset-4 hover:underline"
+              >
+                {helpEmail}
+              </a>
+            </li>
+          </ul>
+        </header>
+
+        <div
+          className={`mt-12 grid gap-8 md:items-start ${data?.imageUrl ? 'md:grid-cols-[340px_minmax(0,1fr)] lg:grid-cols-[400px_minmax(0,1fr)] lg:gap-10' : ''}`}
+        >
           {data?.imageUrl && (
-            <div className="mt-10 overflow-hidden border border-white/10 bg-[#141210]">
+            <div className="mx-auto w-full max-w-[340px] shrink-0 overflow-hidden border border-white/10 bg-[#141210] md:mx-0 lg:max-w-[400px]">
               {data.mediaType === 'video' ? (
-                <video src={data.imageUrl} className="aspect-[4/5] w-full object-cover" muted loop playsInline controls />
+                <video src={data.imageUrl} className="aspect-[3/4] w-full object-cover" muted loop playsInline controls />
               ) : (
-                <img src={data.imageUrl} alt="" className="aspect-[4/5] w-full object-cover" />
+                <img src={data.imageUrl} alt="" className="aspect-[3/4] w-full object-cover" />
               )}
             </div>
           )}
+          <div className="contact-panel min-w-0 border border-white/10 p-6 md:p-8 lg:p-10">
+            <ContactForm formIntro={data?.ctaLabel} helpEmail={helpEmail} hideEmailLink />
+          </div>
         </div>
-        <ContactForm formIntro={data?.ctaLabel} helpEmail={data?.ctaLink} />
       </div>
     </main>
   );
@@ -87,7 +116,8 @@ export function CollectionsPage() {
         <CollectionPlacementGrid
           placement="page_nowhere_else"
           columns={2}
-          className="mt-12"
+          imageFit="contain"
+          className="mt-12 gap-6 md:gap-8"
           emptyMessage="Add tiles in Admin → Nowhere Else."
         />
       ) : (

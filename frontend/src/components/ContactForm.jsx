@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { api } from '../api/client';
 
-export function ContactForm({ formIntro, helpEmail }) {
+export function ContactForm({ formIntro, helpEmail, hideEmailLink = false }) {
   const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' });
   const [err, setErr] = useState('');
 
@@ -28,19 +28,26 @@ export function ContactForm({ formIntro, helpEmail }) {
     send.mutate();
   }
 
-  const intro = formIntro || 'Fill the form or email us on';
-  const email = helpEmail || 'hello@qelmora.com';
+  const email = (helpEmail || 'hello@qelmora.com').replace(/^mailto:/i, '');
+  const intro = hideEmailLink
+    ? 'Tell us what you need — we typically reply within one business day.'
+    : formIntro || 'Send a message';
 
   return (
-    <div className="contact-panel">
-      <p className="text-[11px] uppercase tracking-[0.12em] text-stone-600">
-        {intro}{' '}
-        <a href={`mailto:${email}`} className="font-medium text-stone-800 underline-offset-2 hover:underline">
-          {email}
-        </a>
+    <div>
+      <p className="text-[10px] uppercase tracking-[0.35em] text-q-accent">Get in touch</p>
+      <p className="mt-3 max-w-md text-sm leading-relaxed text-stone-500">
+        {hideEmailLink ? intro : `${intro} — or email ${email} directly.`}
       </p>
+      {!hideEmailLink && (
+        <p className="mt-2 text-xs text-stone-500">
+          <a href={`mailto:${email}`} className="text-stone-600 underline-offset-2 hover:text-q-accent hover:underline">
+            {email}
+          </a>
+        </p>
+      )}
 
-      <form onSubmit={submit} className="mt-8 space-y-4">
+      <form onSubmit={submit} className={`space-y-4 ${hideEmailLink ? 'mt-8' : 'mt-6'}`}>
         <div className="grid gap-4 sm:grid-cols-2">
           <input
             className="contact-input"
@@ -74,9 +81,9 @@ export function ContactForm({ formIntro, helpEmail }) {
           required
           minLength={3}
         />
-        {err && <p className="text-sm text-red-600">{err}</p>}
-        {send.isSuccess && <p className="text-sm text-stone-600">Message sent. We will reply soon.</p>}
-        <button type="submit" disabled={send.isPending} className="contact-submit w-full sm:w-auto">
+        {err && <p className="text-sm text-red-500/90">{err}</p>}
+        {send.isSuccess && <p className="text-sm text-q-accent">Message sent — we will reply soon.</p>}
+        <button type="submit" disabled={send.isPending} className="contact-submit mt-2 w-full">
           {send.isPending ? 'Sending…' : 'Send message'}
         </button>
       </form>

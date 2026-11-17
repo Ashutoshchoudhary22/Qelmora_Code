@@ -1,7 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../api/client';
 
-export function StaticPageContent({ sectionKey, defaultEyebrow, defaultHeadline, defaultBody }) {
+export function StaticPageContent({
+  sectionKey,
+  defaultEyebrow,
+  defaultHeadline,
+  defaultBody,
+  compactImage = false,
+}) {
   const { data, isLoading } = useQuery({
     queryKey: ['content', sectionKey],
     queryFn: async () => (await api.get(`/content/${sectionKey}`)).data,
@@ -30,7 +36,11 @@ export function StaticPageContent({ sectionKey, defaultEyebrow, defaultHeadline,
           </div>
         </div>
         {data?.imageUrl && (
-          <div className="overflow-hidden border border-white/10 bg-[#141210]">
+          <div
+            className={`overflow-hidden border border-white/10 bg-[#141210] ${
+              compactImage ? 'mx-auto w-full max-w-[240px] sm:max-w-[280px] md:ml-auto md:max-w-[300px]' : 'w-full'
+            }`}
+          >
             {data.mediaType === 'video' ? (
               <video src={data.imageUrl} className="aspect-[4/5] w-full object-cover" muted loop playsInline controls />
             ) : (

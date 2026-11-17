@@ -33,6 +33,7 @@ import AdminShopOffers from './pages/admin/AdminShopOffers';
 import AdminContactInbox from './pages/admin/AdminContactInbox';
 import AdminHomeShopByCategory from './pages/admin/AdminHomeShopByCategory';
 import AdminNowhereElse from './pages/admin/AdminNowhereElse';
+import AdminTrendingCategories from './pages/admin/AdminTrendingCategories';
 
 export default function App() {
   return (
@@ -74,6 +75,7 @@ export default function App() {
         <Route path="static-pages" element={<AdminStaticPages />} />
         <Route path="login-banner" element={<AdminLoginBanner />} />
         <Route path="shop-offers" element={<AdminShopOffers />} />
+        <Route path="trending-categories" element={<AdminTrendingCategories />} />
         <Route path="contact-inbox" element={<AdminContactInbox />} />
         <Route path="banners" element={<AdminBanners />} />
       </Route>

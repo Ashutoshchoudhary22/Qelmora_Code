@@ -74,7 +74,7 @@ export function TrendingCategories({ placement, shopPath, genderLabel }) {
         </div>
       ) : (
         <p className="mt-8 text-sm text-stone-600">
-          Add category tiles in Admin → Shop page content → Trending categories ({genderLabel || 'men or women'}).
+          Add category tiles in Admin → Trending categories ({genderLabel || 'men or women'}).
         </p>
       )}
     </section>

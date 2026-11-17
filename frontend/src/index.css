@@ -382,6 +382,22 @@ a {
   ) !important;
 }
 
+.home-brand-story-media {
+  box-shadow: 0 20px 44px rgb(0 0 0 / 0.14);
+}
+
+[data-theme="light"] .home-brand-story-media {
+  box-shadow: 0 16px 40px rgb(28 25 23 / 0.08);
+}
+
+.home-promo-band {
+  box-shadow: 0 24px 48px rgb(0 0 0 / 0.12);
+}
+
+[data-theme="light"] .home-promo-band {
+  box-shadow: 0 20px 50px rgb(28 25 23 / 0.08);
+}
+
 [data-theme="dark"] .home-hero .hero-scrim {
   background: linear-gradient(
     to bottom,

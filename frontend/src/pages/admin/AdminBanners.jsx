@@ -6,6 +6,8 @@ import { MediaAssetCard } from '../../components/admin/MediaAssetCard';
 import { uploadToCloudinary } from '../../lib/cloudinary';
 import { UploadSizeHint, bannerPlacementSize } from '../../components/admin/UploadSizeHint';
 
+const CORE_PLACEMENTS = new Set(['hero', 'promo', 'collection', 'announcement']);
+
 export default function AdminBanners() {
   const qc = useQueryClient();
   const [uploading, setUploading] = useState(false);
@@ -140,7 +142,7 @@ export default function AdminBanners() {
     }
   }
 
-  const items = data?.items || [];
+  const items = (data?.items || []).filter((b) => CORE_PLACEMENTS.has(b.placement));
   const sizeVariant = bannerPlacementSize(form.placement);
 
   function UploadSlot({ label, hint, url, type, pid, uploadingFlag, onChange, onClear, replaceBusy }) {
@@ -176,9 +178,10 @@ export default function AdminBanners() {
     <div className="space-y-12">
       <div>
         <h1 className="font-display text-3xl font-light">Banners & homepage media</h1>
-        <p className="mt-2 max-w-xl text-sm text-stone-500">
-          Upload desktop and mobile assets (hero uses mobile below <code className="text-stone-400">md</code> breakpoint).
-          Use <strong className="font-medium text-stone-400">Replace</strong> on a live banner to swap media without deleting the row.
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-stone-500">
+          Hero, promo, collection, and announcement only. Shop offers, trending categories, shop by category, and Nowhere
+          Else each have their own admin module. Hero uses mobile assets below the <code className="text-stone-400">md</code>{' '}
+          breakpoint. Replace on a live card swaps media without deleting the row.
         </p>
         {err && <p className="mt-3 text-sm text-red-400/90">{err}</p>}
       </div>
@@ -295,12 +298,6 @@ export default function AdminBanners() {
             <option value="promo">Promo</option>
             <option value="collection">Collection</option>
             <option value="announcement">Announcement</option>
-            <option value="shop_men">Shop — Men offers</option>
-            <option value="shop_women">Shop — Women offers</option>
-            <option value="shop_trending_men">Shop — Men trending categories</option>
-            <option value="shop_trending_women">Shop — Women trending categories</option>
-            <option value="home_shop_by_category">Home — Shop by category</option>
-            <option value="page_nowhere_else">Page — Nowhere Else</option>
           </select>
           <input
             className="input-field"

@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../api/client';
 import { ProductGrid } from '../components/ProductGrid';
 import { ShopOfferBanners } from '../components/shop/ShopOfferBanners';
 import { TrendingCategories } from '../components/shop/TrendingCategories';
+import { ViewAllLink } from '../components/shop/ViewAllLink';
 
 const TITLES = {
   men: 'Men',
@@ -42,21 +43,21 @@ export default function ShopPage() {
   const { data: collection, isLoading: loadingCollection, error } = useQuery({
     queryKey: ['products', 'shop-collection', shopCategory],
     enabled: Boolean(shopCategory),
-    queryFn: async () => (await api.get(`/products?category=${shopCategory}&limit=48`)).data,
+    queryFn: async () => (await api.get(`/products?category=${shopCategory}&limit=4`)).data,
   });
 
   const { data: bestSellers, isLoading: loadingBest } = useQuery({
     queryKey: ['products', 'shop-best', shopCategory],
     enabled: Boolean(shopCategory),
     queryFn: async () =>
-      (await api.get(`/products?category=${shopCategory}&featured=1&limit=12`)).data,
+      (await api.get(`/products?category=${shopCategory}&featured=1&limit=4`)).data,
   });
 
   const { data: newArrivals, isLoading: loadingNew } = useQuery({
     queryKey: ['products', 'shop-new', shopCategory],
     enabled: Boolean(shopCategory),
     queryFn: async () =>
-      (await api.get(`/products?category=${shopCategory}&newArrival=1&limit=12`)).data,
+      (await api.get(`/products?category=${shopCategory}&newArrival=1&limit=4`)).data,
   });
 
   const title = TITLES[shopCategory] || 'All collections';
@@ -67,7 +68,9 @@ export default function ShopPage() {
   const collectionItems = collection?.items || [];
   const collectionTotal = collection?.total ?? collectionItems.length;
   const newItems = newArrivals?.items || [];
+  const newTotal = newArrivals?.total ?? newItems.length;
   const bestItems = bestSellers?.items || [];
+  const bestTotal = bestSellers?.total ?? bestItems.length;
   const collectionCopy = shopCategory ? COLLECTION_COPY[shopCategory] : null;
 
   return (
@@ -85,16 +88,25 @@ export default function ShopPage() {
             className={`scroll-mt-28 border-b border-white/10 pb-14 ${offerPlacement ? 'mt-0' : ''}`}
           >
             {collectionCopy && (
-              <div className="max-w-2xl">
-                <p className="text-[10px] uppercase tracking-[0.4em] text-q-accent">{collectionCopy.eyebrow}</p>
-                <h2 className="font-display mt-3 text-4xl font-light tracking-tight text-stone-50 md:text-5xl">
-                  {collectionCopy.headline}
-                </h2>
-                <p className="mt-4 text-sm leading-relaxed text-stone-400">{collectionCopy.sub}</p>
-                {!loadingCollection && !error && collectionTotal > 0 && (
-                  <p className="mt-4 text-[10px] uppercase tracking-[0.3em] text-stone-500">
-                    {collectionTotal} piece{collectionTotal === 1 ? '' : 's'} available now
-                  </p>
+              <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0 max-w-2xl flex-1">
+                  <p className="text-[10px] uppercase tracking-[0.4em] text-q-accent">{collectionCopy.eyebrow}</p>
+                  <h2 className="font-display mt-3 text-4xl font-light tracking-tight text-stone-50 md:text-5xl">
+                    {collectionCopy.headline}
+                  </h2>
+                  <p className="mt-4 text-sm leading-relaxed text-stone-400">{collectionCopy.sub}</p>
+                  {!loadingCollection && !error && collectionTotal > 0 && (
+                    <p className="mt-4 text-[10px] uppercase tracking-[0.3em] text-stone-500">
+                      {collectionTotal} piece{collectionTotal === 1 ? '' : 's'} available now
+                    </p>
+                  )}
+                </div>
+                {!loadingCollection && !error && (
+                  <ViewAllLink
+                    to={`/shop/${shopCategory}/all`}
+                    total={collectionTotal}
+                    className="self-start sm:mt-1"
+                  />
                 )}
               </div>
             )}
@@ -113,8 +125,15 @@ export default function ShopPage() {
 
         {shopCategory && (loadingNew || newItems.length > 0) && (
           <section id="new-arrivals" className="mt-14 scroll-mt-28 border-b border-white/10 pb-14">
-            <p className="text-[10px] uppercase tracking-[0.35em] text-q-accent">Just landed</p>
-            <h2 className="font-display mt-2 text-3xl font-light">New arrivals</h2>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.35em] text-q-accent">Just landed</p>
+                <h2 className="font-display mt-2 text-3xl font-light">New arrivals</h2>
+              </div>
+              {!loadingNew && (
+                <ViewAllLink to={`/shop/${shopCategory}/new-arrivals`} total={newTotal} className="self-start" />
+              )}
+            </div>
             {loadingNew ? (
               <p className="mt-8 text-stone-500">Loading new pieces…</p>
             ) : (
@@ -131,8 +150,15 @@ export default function ShopPage() {
 
         {shopCategory && (
           <section id="best-sellers" className="mt-14 scroll-mt-28">
-            <p className="text-[10px] uppercase tracking-[0.35em] text-q-accent">Curated</p>
-            <h2 className="font-display mt-2 text-3xl font-light">Best sellers</h2>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.35em] text-q-accent">Curated</p>
+                <h2 className="font-display mt-2 text-3xl font-light">Best sellers</h2>
+              </div>
+              {!loadingBest && (
+                <ViewAllLink to={`/shop/${shopCategory}/best-sellers`} total={bestTotal} className="self-start" />
+              )}
+            </div>
             {loadingBest && <p className="mt-8 text-stone-500">Loading…</p>}
             {!loadingBest && (
               <div className="mt-8">

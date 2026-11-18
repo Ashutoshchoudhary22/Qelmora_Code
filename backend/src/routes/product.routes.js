@@ -5,35 +5,175 @@ import { cloudinaryConfigErrorResponse, createUploadSignature } from '../utils/c
 
 const router = Router();
 
+const SIZE_ORDER = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+
+const PRICE_BUCKET_IDS = ['400_699', '700_999', '1000_1499', '1500_above', 'under399'];
+
+function priceBucketSql(bucketId) {
+  switch (bucketId) {
+    case 'under399':
+      return 'p.price < 399';
+    case '400_699':
+      return 'p.price >= 400 AND p.price <= 699';
+    case '700_999':
+      return 'p.price >= 700 AND p.price <= 999';
+    case '1000_1499':
+      return 'p.price >= 1000 AND p.price <= 1499';
+    case '1500_above':
+      return 'p.price >= 1500';
+    default:
+      return null;
+  }
+}
+
+function parsePriceBuckets(raw) {
+  return parseCsvQuery(raw, 8).filter((id) => PRICE_BUCKET_IDS.includes(id));
+}
+
+function parseCsvQuery(raw, max = 24) {
+  if (!raw) return [];
+  return String(raw)
+  .split(',')
+  .map((s) => s.trim().slice(0, 40))
+  .filter(Boolean)
+  .slice(0, max);
+}
+
+function productListOrder(sort) {
+  switch (sort) {
+    case 'price_asc':
+      return 'p.price ASC, p.created_at DESC';
+    case 'price_desc':
+      return 'p.price DESC, p.created_at DESC';
+    case 'name_asc':
+      return 'p.name ASC';
+    default:
+      return 'p.is_featured DESC, p.is_new_arrival DESC, p.created_at DESC';
+  }
+}
+
+function buildProductListQuery(req, { applyPriceFilter = true } = {}) {
+  const categorySlug = req.query.category;
+  const featured = req.query.featured === '1';
+  const newArrival = req.query.newArrival === '1';
+  const search = `%${String(req.query.search || '').slice(0, 80)}%`;
+  const sizes = parseCsvQuery(req.query.sizes);
+  const colors = parseCsvQuery(req.query.colors);
+  const prices = applyPriceFilter ? parsePriceBuckets(req.query.prices) : [];
+  const sort = String(req.query.sort || 'newest').slice(0, 20);
+
+  let where = 'p.is_active=1';
+  const params = [];
+  if (search !== '%%') {
+    where += ' AND p.name LIKE ?';
+    params.push(search);
+  }
+  if (categorySlug) {
+    where += ` AND (
+      c.slug = ?
+      OR EXISTS (
+        SELECT 1 FROM product_categories pc
+        INNER JOIN categories cx ON cx.id = pc.category_id
+        WHERE pc.product_id = p.id AND cx.slug = ?
+      )
+    )`;
+    params.push(categorySlug, categorySlug);
+  }
+  if (featured) where += ' AND p.is_featured=1';
+  if (newArrival) where += ' AND p.is_new_arrival=1';
+
+  if (sizes.length) {
+    const placeholders = sizes.map(() => '?').join(',');
+    where += ` AND EXISTS (
+      SELECT 1 FROM product_variants pv
+      WHERE pv.product_id = p.id AND pv.stock > 0 AND pv.size IN (${placeholders})
+    )`;
+    params.push(...sizes);
+  }
+  if (colors.length) {
+    const placeholders = colors.map(() => '?').join(',');
+    where += ` AND EXISTS (
+      SELECT 1 FROM product_variants pv
+      WHERE pv.product_id = p.id AND pv.stock > 0 AND pv.color IN (${placeholders})
+    )`;
+    params.push(...colors);
+  }
+
+  if (prices.length) {
+    const clauses = prices.map((id) => priceBucketSql(id)).filter(Boolean);
+    if (clauses.length) where += ` AND (${clauses.join(' OR ')})`;
+  }
+
+  return { where, params, sort: productListOrder(sort) };
+}
+
+router.get('/facets', async (req, res, next) => {
+  try {
+    const { where, params } = buildProductListQuery(req);
+    const baseFrom = `FROM products p LEFT JOIN categories c ON c.id=p.category_id`;
+
+    const [sizeRows] = await pool.execute(
+      `SELECT pv.size AS value, COUNT(DISTINCT p.id) AS count
+       ${baseFrom}
+       INNER JOIN product_variants pv ON pv.product_id = p.id AND pv.stock > 0 AND pv.size IS NOT NULL AND pv.size <> ''
+       WHERE ${where}
+       GROUP BY pv.size`,
+      params
+    );
+    const [colorRows] = await pool.execute(
+      `SELECT pv.color AS value, COUNT(DISTINCT p.id) AS count
+       ${baseFrom}
+       INNER JOIN product_variants pv ON pv.product_id = p.id AND pv.stock > 0 AND pv.color IS NOT NULL AND pv.color <> ''
+       WHERE ${where}
+       GROUP BY pv.color`,
+      params
+    );
+
+    const sizes = sizeRows
+      .map((r) => ({ value: r.value, count: Number(r.count) }))
+      .sort((a, b) => {
+        const ai = SIZE_ORDER.indexOf(a.value);
+        const bi = SIZE_ORDER.indexOf(b.value);
+        if (ai === -1 && bi === -1) return String(a.value).localeCompare(String(b.value));
+        if (ai === -1) return 1;
+        if (bi === -1) return -1;
+        return ai - bi;
+      });
+    const colors = colorRows
+      .map((r) => ({ value: r.value, count: Number(r.count) }))
+      .sort((a, b) => String(a.value).localeCompare(String(b.value)));
+
+    const { where: whereNoPrice, params: paramsNoPrice } = buildProductListQuery(req, { applyPriceFilter: false });
+    const prices = [];
+    for (const bucketId of PRICE_BUCKET_IDS) {
+      const clause = priceBucketSql(bucketId);
+      if (!clause) continue;
+      const [priceRows] = await pool.execute(
+        `SELECT COUNT(*) AS count ${baseFrom} WHERE ${whereNoPrice} AND (${clause})`,
+        paramsNoPrice
+      );
+      prices.push({ id: bucketId, count: Number(priceRows[0]?.count ?? 0) });
+    }
+
+    const [countRows] = await pool.execute(`SELECT COUNT(*) AS total ${baseFrom} WHERE ${where}`, params);
+
+    res.json({
+      sizes,
+      colors,
+      prices,
+      total: Number(countRows[0]?.total ?? 0),
+    });
+  } catch (e) {
+    next(e);
+  }
+});
+
 router.get('/', async (req, res, next) => {
   try {
     const page = Math.max(1, Number(req.query.page) || 1);
     const limit = Math.min(48, Math.max(1, Number(req.query.limit) || 12));
     const offset = (page - 1) * limit;
-    const search = `%${String(req.query.search || '').slice(0, 80)}%`;
-    const categorySlug = req.query.category;
-    const featured = req.query.featured === '1';
-    const newArrival = req.query.newArrival === '1';
-
-    let where = 'p.is_active=1';
-    const params = [];
-    if (search !== '%%') {
-      where += ' AND p.name LIKE ?';
-      params.push(search);
-    }
-    if (categorySlug) {
-      where += ` AND (
-        c.slug = ?
-        OR EXISTS (
-          SELECT 1 FROM product_categories pc
-          INNER JOIN categories cx ON cx.id = pc.category_id
-          WHERE pc.product_id = p.id AND cx.slug = ?
-        )
-      )`;
-      params.push(categorySlug, categorySlug);
-    }
-    if (featured) where += ' AND p.is_featured=1';
-    if (newArrival) where += ' AND p.is_new_arrival=1';
+    const { where, params, sort } = buildProductListQuery(req);
 
     const [countRows] = await pool.execute(
       `SELECT COUNT(*) AS total FROM products p LEFT JOIN categories c ON c.id=p.category_id WHERE ${where}`,
@@ -48,7 +188,7 @@ router.get('/', async (req, res, next) => {
         (SELECT secure_url FROM product_media pm WHERE pm.product_id=p.id AND pm.resource_type='image' ORDER BY sort_order,id LIMIT 1) AS image
        FROM products p LEFT JOIN categories c ON c.id=p.category_id
        WHERE ${where}
-       ORDER BY p.is_featured DESC, p.is_new_arrival DESC, p.created_at DESC LIMIT ? OFFSET ?`,
+       ORDER BY ${sort} LIMIT ? OFFSET ?`,
       [...params, limit, offset]
     );
     res.json({ items, page, limit, total, pages: Math.ceil(total / limit) || 1 });

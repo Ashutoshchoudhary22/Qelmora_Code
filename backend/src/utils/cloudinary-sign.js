@@ -16,7 +16,7 @@ export function getCloudinaryConfig() {
 export function cloudinaryConfigured() {
   const { cloudName, apiKey, apiSecret } = getCloudinaryConfig();
   return Boolean(cloudName && apiKey && apiSecret);
-}
+} 
 
 /** @returns {null | { status: number, body: object }} */
 export function cloudinaryConfigErrorResponse() {

@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 import { SiteLayout } from './components/layout/SiteLayout';
 import HomePage from './pages/HomePage';
 import ShopPage from './pages/ShopPage';
+import ShopBandPage from './pages/ShopBandPage';
 import ProductPage from './pages/ProductPage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
@@ -45,6 +46,7 @@ export default function App() {
 
       <Route element={<SiteLayout />}>
         <Route index element={<HomePage />} />
+        <Route path="shop/:category/:band" element={<ShopBandPage />} />
         <Route path="shop/:category" element={<ShopPage />} />
         <Route path="product/:slug" element={<ProductPage />} />
         <Route path="cart" element={<CartPage />} />

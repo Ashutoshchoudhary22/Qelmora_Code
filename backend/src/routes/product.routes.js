@@ -202,6 +202,17 @@ router.get('/admin/all', requireAuth, requireAdmin, async (req, res, next) => {
     const [items] = await pool.execute(
       `SELECT p.id,p.name,p.slug,p.price,p.is_active AS isActive,p.is_featured AS isFeatured,p.is_new_arrival AS isNewArrival,
         c.name AS category,
+        IFNULL(
+          (SELECT GROUP_CONCAT(DISTINCT c2.name ORDER BY c2.name SEPARATOR ',')
+           FROM product_categories pc
+           JOIN categories c2 ON c2.id = pc.category_id
+           WHERE pc.product_id = p.id),
+          c.name
+        ) AS categoryNames,
+        (SELECT GROUP_CONCAT(DISTINCT c2.slug ORDER BY c2.slug SEPARATOR ',')
+         FROM product_categories pc
+         JOIN categories c2 ON c2.id = pc.category_id
+         WHERE pc.product_id = p.id) AS categorySlugs,
         (SELECT secure_url FROM product_media pm WHERE pm.product_id=p.id ORDER BY sort_order,id LIMIT 1) AS image
        FROM products p LEFT JOIN categories c ON c.id=p.category_id ORDER BY p.created_at DESC LIMIT 200`
     );

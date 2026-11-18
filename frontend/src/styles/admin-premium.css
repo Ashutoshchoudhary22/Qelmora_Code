@@ -1754,3 +1754,10 @@ html[data-theme="light"] .admin-quick-actions .font-display {
   background-position: center;
   border: 1px solid #ebe3d8;
 }
+
+.admin-account-tile-card {
+  border-radius: 1rem;
+  border: 1px solid #ebe3d8;
+  background: #fffefb;
+  padding: 1rem 1.1rem;
+}

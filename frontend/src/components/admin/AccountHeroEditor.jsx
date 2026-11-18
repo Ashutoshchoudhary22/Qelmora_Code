@@ -1,11 +1,21 @@
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { AlignLeft, Check, CloudUpload, Image, X } from 'lucide-react';
 import { api } from '../../api/client';
+import { AdminOfferTileCard } from './AdminOfferTileCard';
 import { MediaAssetCard } from './MediaAssetCard';
 import { uploadToCloudinary } from '../../lib/cloudinary';
 import { UploadSizeHint } from './UploadSizeHint';
 
-export function AccountHeroEditor() {
+const HERO_GUIDELINES = [
+  { label: 'Size', value: '1600×520 px or wider (3:1)' },
+  { label: 'Format', value: 'JPG, PNG, or WebP' },
+  { label: 'File size', value: 'Under 700 KB' },
+  { label: 'Layout', value: 'Right-weighted so left text stays readable' },
+];
+
+export function AccountHeroEditor({ variant = 'default' }) {
+  const premium = variant === 'premium';
   const qc = useQueryClient();
   const [form, setForm] = useState({
     headline: 'Profile header background',
@@ -54,6 +64,16 @@ export function AccountHeroEditor() {
     }
   }
 
+  function resetForm() {
+    if (!data) return;
+    setForm({
+      headline: data.headline || 'Profile header background',
+      imageUrl: data.imageUrl || '',
+      mediaType: data.mediaType || 'image',
+    });
+    setMsg('');
+  }
+
   async function submit() {
     if (!form.imageUrl) return setMsg('Upload a background image (required).');
     setMsg('');
@@ -71,7 +91,106 @@ export function AccountHeroEditor() {
     }
   }
 
-  if (isLoading) return <p className="text-stone-500">Loading account hero…</p>;
+  if (isLoading) {
+    return <p className={premium ? 'admin-product-hint' : 'text-stone-500'}>Loading account hero…</p>;
+  }
+
+  if (premium) {
+    return (
+      <div className="admin-shop-category-form-row">
+        <section className="admin-product-card">
+          <div className="admin-product-card-head">
+            <span className="admin-product-card-head-icon">
+              <Image size={16} />
+            </span>
+            <span className="min-w-0 flex-1">
+              Profile hero background
+              <span className="admin-product-hint mt-0.5 block font-normal normal-case tracking-normal">
+                Background on{' '}
+                <a href="/account" target="_blank" rel="noreferrer" className="text-[#c97a35] underline underline-offset-2">
+                  /account
+                </a>
+                . Customer name, email, and phone still come from their profile.
+              </span>
+            </span>
+          </div>
+
+          <div className="admin-product-fields">
+            <div>
+              <label className="admin-field-label" htmlFor="account-hero-label">
+                Internal label (admin only)
+              </label>
+              <div className="admin-field-icon-wrap">
+                <AlignLeft className="admin-field-icon" size={16} />
+                <input
+                  id="account-hero-label"
+                  className="admin-product-input"
+                  placeholder="Internal label (admin only)"
+                  value={form.headline}
+                  onChange={(e) => setForm({ ...form, headline: e.target.value })}
+                />
+              </div>
+            </div>
+          </div>
+
+          {form.imageUrl ? (
+            <div className="mt-4 max-w-[280px]">
+              <AdminOfferTileCard
+                secureUrl={form.imageUrl}
+                resourceType={form.mediaType}
+                downloadName="account-hero"
+                onRemove={() => setForm((f) => ({ ...f, imageUrl: '', mediaType: 'image' }))}
+              />
+            </div>
+          ) : (
+            <p className="admin-product-hint mt-4">No background yet — upload required before save.</p>
+          )}
+
+          <label className="admin-offer-upload-btn mt-4">
+            <CloudUpload size={18} />
+            {uploading ? 'Uploading…' : form.imageUrl ? 'Replace Background' : 'Upload Background Image'}
+            <input type="file" accept="image/*" className="hidden" disabled={uploading} onChange={onFile} />
+          </label>
+          <p className="admin-product-hint mt-2">1600×900 px (16:9) or wider lifestyle shot. JPG/WebP, under 700 KB</p>
+
+          <div className="admin-product-actions mt-6">
+            <button type="button" className="admin-btn-add" onClick={submit} disabled={save.isPending}>
+              <Check size={16} />
+              {save.isPending ? 'Saving…' : 'Save Account Hero'}
+            </button>
+            <button type="button" className="admin-btn-cancel" onClick={resetForm}>
+              <X size={16} />
+              Reset
+            </button>
+          </div>
+          {msg && (
+            <p
+              className={`admin-product-hint mt-3 ${msg.includes('failed') || msg.includes('required') || msg.includes('Upload') ? 'admin-product-msg' : 'text-[#15803d]'}`}
+            >
+              {msg}
+            </p>
+          )}
+        </section>
+
+        <aside className="admin-shop-category-guidelines">
+          <h3 className="text-sm font-semibold text-stone-900">Image guidelines</h3>
+          <ul className="admin-guidelines-list">
+            {HERO_GUIDELINES.map((row) => (
+              <li key={row.label}>
+                <span>{row.label}</span>
+                <span>{row.value}</span>
+              </li>
+            ))}
+          </ul>
+          <div
+            className="admin-guidelines-thumb"
+            style={{ backgroundImage: 'url(/profile/QELMORA-admin.png)' }}
+            aria-hidden
+          />
+        </aside>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-xl border border-white/10 bg-[#0e0e0e] p-5 lg:p-6">
@@ -92,10 +211,7 @@ export function AccountHeroEditor() {
             {uploading ? 'Uploading…' : form.imageUrl ? 'Replace background' : 'Upload background image'}
             <input type="file" accept="image/*" className="hidden" disabled={uploading} onChange={onFile} />
           </label>
-          <UploadSizeHint
-            variant="wide"
-            className="mt-2"
-          />
+          <UploadSizeHint variant="wide" className="mt-2" />
           <p className="text-[10px] leading-relaxed text-stone-600">
             Recommended: 1600×520 px or wider (3:1). Lifestyle / product shot, right-weighted so text on the left stays readable.
           </p>

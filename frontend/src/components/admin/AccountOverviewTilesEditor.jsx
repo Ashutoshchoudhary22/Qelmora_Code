@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Check, CloudUpload, Layers, Link2, Plus, SlidersHorizontal } from 'lucide-react';
 import { api } from '../../api/client';
 import { ACCOUNT_TILE_ICON_OPTIONS, accountTileIcon } from '../../lib/accountTileIcons';
+import { AdminOfferTileCard } from './AdminOfferTileCard';
 import { MediaAssetCard } from './MediaAssetCard';
 import { uploadToCloudinary } from '../../lib/cloudinary';
 
@@ -19,7 +21,8 @@ function emptyTile(sortOrder = 0) {
   };
 }
 
-export function AccountOverviewTilesEditor() {
+export function AccountOverviewTilesEditor({ variant = 'default' }) {
+  const premium = variant === 'premium';
   const qc = useQueryClient();
   const [tiles, setTiles] = useState([]);
   const [msg, setMsg] = useState('');
@@ -99,90 +102,196 @@ export function AccountOverviewTilesEditor() {
     }
   }
 
-  if (isLoading) return <p className="text-stone-500">Loading overview cards…</p>;
+  if (isLoading) {
+    return <p className={premium ? 'admin-product-hint' : 'text-stone-500'}>Loading overview cards…</p>;
+  }
 
-  return (
-    <div className="rounded-xl border border-white/10 bg-[#0e0e0e] p-5 lg:p-6">
-      <p className="text-sm text-stone-500">
-        Dark shortcut cards on <span className="text-stone-300">/account</span> — title, description, link, icon, and optional
-        watermark image per card.
-      </p>
+  const tileList = (
+    <ul className={premium ? 'mt-4 flex flex-col gap-4' : 'mt-6 space-y-6'}>
+      {tiles.map((tile, index) => {
+        const Icon = accountTileIcon(tile.iconKey);
+        const inputCls = premium ? 'admin-product-input admin-product-input--plain' : 'input-field';
+        const cardCls = premium
+          ? 'admin-account-tile-card'
+          : 'rounded-lg border border-white/10 bg-black/30 p-4 md:p-5';
 
-      <ul className="mt-6 space-y-6">
-        {tiles.map((tile, index) => {
-          const Icon = accountTileIcon(tile.iconKey);
-          return (
-            <li key={tile.id ?? `new-${index}`} className="rounded-lg border border-white/10 bg-black/30 p-4 md:p-5">
-              <div className="flex items-center justify-between gap-3">
-                <span className="flex items-center gap-2 text-sm text-stone-300">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-md border border-q-accent/40 bg-q-accent/10 text-q-accent">
-                    <Icon size={16} />
-                  </span>
-                  Card {index + 1}
+        return (
+          <li key={tile.id ?? `new-${index}`} className={cardCls}>
+            <div className="flex items-center justify-between gap-3">
+              <span className="flex items-center gap-2 text-sm text-stone-800">
+                <span className="admin-product-card-head-icon !h-9 !w-9">
+                  <Icon size={16} className="text-[#92400e]" />
                 </span>
-                <label className="flex items-center gap-2 text-xs text-stone-500">
+                Card {index + 1}
+              </span>
+              <label className={premium ? 'admin-product-check' : 'flex items-center gap-2 text-xs text-stone-500'}>
+                <input
+                  type="checkbox"
+                  checked={tile.isActive}
+                  onChange={(e) => updateTile(index, { isActive: e.target.checked })}
+                />
+                Visible
+              </label>
+            </div>
+
+            <div className={`mt-4 grid gap-3 md:grid-cols-2 ${premium ? 'admin-product-fields' : ''}`}>
+              {premium ? (
+                <>
+                  <div>
+                    <label className="admin-field-label">Title</label>
+                    <input
+                      className={inputCls}
+                      placeholder="Title"
+                      value={tile.title}
+                      onChange={(e) => updateTile(index, { title: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <label className="admin-field-label">Link path</label>
+                    <div className="admin-field-icon-wrap">
+                      <Link2 className="admin-field-icon" size={16} />
+                      <input
+                        className="admin-product-input"
+                        placeholder="e.g. /account/orders"
+                        value={tile.linkPath}
+                        onChange={(e) => updateTile(index, { linkPath: e.target.value })}
+                      />
+                    </div>
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="admin-field-label">Description</label>
+                    <input
+                      className={inputCls}
+                      placeholder="Short description"
+                      value={tile.description}
+                      onChange={(e) => updateTile(index, { description: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <label className="admin-field-label">Icon</label>
+                    <select
+                      className={`${inputCls} w-full rounded-xl border border-[#e7dcd0] bg-[#fffefb] px-3 py-2.5 text-sm`}
+                      value={tile.iconKey}
+                      onChange={(e) => updateTile(index, { iconKey: e.target.value })}
+                    >
+                      {ACCOUNT_TILE_ICON_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="admin-field-label">Sort order</label>
+                    <div className="admin-field-icon-wrap">
+                      <SlidersHorizontal className="admin-field-icon" size={16} />
+                      <input
+                        className="admin-product-input"
+                        type="number"
+                        min={0}
+                        max={99}
+                        placeholder="0"
+                        value={tile.sortOrder}
+                        onChange={(e) => updateTile(index, { sortOrder: Number(e.target.value) })}
+                      />
+                    </div>
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="admin-field-label">Tile key (optional)</label>
+                    <input
+                      className={inputCls}
+                      placeholder="help, collections…"
+                      value={tile.tileKey}
+                      onChange={(e) => updateTile(index, { tileKey: e.target.value })}
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
                   <input
-                    type="checkbox"
-                    checked={tile.isActive}
-                    onChange={(e) => updateTile(index, { isActive: e.target.checked })}
+                    className="input-field"
+                    placeholder="Title"
+                    value={tile.title}
+                    onChange={(e) => updateTile(index, { title: e.target.value })}
                   />
-                  Visible
+                  <input
+                    className="input-field"
+                    placeholder="Link path (e.g. /account/orders)"
+                    value={tile.linkPath}
+                    onChange={(e) => updateTile(index, { linkPath: e.target.value })}
+                  />
+                  <input
+                    className="input-field md:col-span-2"
+                    placeholder="Short description"
+                    value={tile.description}
+                    onChange={(e) => updateTile(index, { description: e.target.value })}
+                  />
+                  <select
+                    className="input-field"
+                    value={tile.iconKey}
+                    onChange={(e) => updateTile(index, { iconKey: e.target.value })}
+                  >
+                    {ACCOUNT_TILE_ICON_OPTIONS.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    className="input-field"
+                    type="number"
+                    min={0}
+                    max={99}
+                    placeholder="Sort order"
+                    value={tile.sortOrder}
+                    onChange={(e) => updateTile(index, { sortOrder: Number(e.target.value) })}
+                  />
+                  <input
+                    className="input-field md:col-span-2"
+                    placeholder="Tile key (optional, for styling: help, collections…)"
+                    value={tile.tileKey}
+                    onChange={(e) => updateTile(index, { tileKey: e.target.value })}
+                  />
+                </>
+              )}
+            </div>
+
+            <div className="mt-4 flex flex-wrap items-start gap-4">
+              {premium ? (
+                <label className="admin-offer-upload-btn !w-auto text-[11px]">
+                  <CloudUpload size={16} />
+                  {uploadingId === index ? 'Uploading…' : tile.imageUrl ? 'Replace Watermark' : 'Watermark (optional)'}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    disabled={uploadingId === index}
+                    onChange={(e) => onTileImage(index, e)}
+                  />
                 </label>
-              </div>
-
-              <div className="mt-4 grid gap-3 md:grid-cols-2">
-                <input
-                  className="input-field"
-                  placeholder="Title"
-                  value={tile.title}
-                  onChange={(e) => updateTile(index, { title: e.target.value })}
-                />
-                <input
-                  className="input-field"
-                  placeholder="Link path (e.g. /account/orders)"
-                  value={tile.linkPath}
-                  onChange={(e) => updateTile(index, { linkPath: e.target.value })}
-                />
-                <input
-                  className="input-field md:col-span-2"
-                  placeholder="Short description"
-                  value={tile.description}
-                  onChange={(e) => updateTile(index, { description: e.target.value })}
-                />
-                <select
-                  className="input-field"
-                  value={tile.iconKey}
-                  onChange={(e) => updateTile(index, { iconKey: e.target.value })}
-                >
-                  {ACCOUNT_TILE_ICON_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-                <input
-                  className="input-field"
-                  type="number"
-                  min={0}
-                  max={99}
-                  placeholder="Sort order"
-                  value={tile.sortOrder}
-                  onChange={(e) => updateTile(index, { sortOrder: Number(e.target.value) })}
-                />
-                <input
-                  className="input-field md:col-span-2"
-                  placeholder="Tile key (optional, for styling: help, collections…)"
-                  value={tile.tileKey}
-                  onChange={(e) => updateTile(index, { tileKey: e.target.value })}
-                />
-              </div>
-
-              <div className="mt-4 flex flex-wrap items-start gap-4">
+              ) : (
                 <label className="btn-primary btn-accent inline-flex cursor-pointer text-[10px]">
                   {uploadingId === index ? 'Uploading…' : tile.imageUrl ? 'Replace watermark' : 'Watermark image (optional)'}
-                  <input type="file" accept="image/*" className="hidden" disabled={uploadingId === index} onChange={(e) => onTileImage(index, e)} />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    disabled={uploadingId === index}
+                    onChange={(e) => onTileImage(index, e)}
+                  />
                 </label>
-                {tile.imageUrl && (
+              )}
+              {tile.imageUrl &&
+                (premium ? (
+                  <div className="w-full max-w-[200px]">
+                    <AdminOfferTileCard
+                      secureUrl={tile.imageUrl}
+                      resourceType="image"
+                      downloadName={`account-tile-${index + 1}`}
+                      onRemove={() => updateTile(index, { imageUrl: '' })}
+                    />
+                  </div>
+                ) : (
                   <div className="w-full max-w-[200px]">
                     <MediaAssetCard
                       secureUrl={tile.imageUrl}
@@ -192,19 +301,67 @@ export function AccountOverviewTilesEditor() {
                       onRemove={() => updateTile(index, { imageUrl: '' })}
                     />
                   </div>
-                )}
-              </div>
-            </li>
-          );
-        })}
-      </ul>
+                ))}
+            </div>
+          </li>
+        );
+      })}
+    </ul>
+  );
+
+  if (premium) {
+    return (
+      <section className="admin-product-card">
+        <div className="admin-product-card-head">
+          <span className="admin-product-card-head-icon">
+            <Layers size={16} />
+          </span>
+          <span className="min-w-0 flex-1">
+            Overview shortcut cards
+            <span className="admin-product-hint mt-0.5 block font-normal normal-case tracking-normal">
+              Cards on{' '}
+              <a href="/account" target="_blank" rel="noreferrer" className="text-[#c97a35] underline underline-offset-2">
+                /account
+              </a>
+              — title, description, link, icon, and optional watermark per card.
+            </span>
+          </span>
+        </div>
+
+        {tileList}
+
+        <div className="admin-product-actions mt-6">
+          <button type="button" className="admin-btn-cancel" onClick={() => setTiles((list) => [...list, emptyTile(list.length)])}>
+            <Plus size={16} />
+            Add Card
+          </button>
+          <button type="button" className="admin-btn-add" onClick={submit} disabled={save.isPending}>
+            <Check size={16} />
+            {save.isPending ? 'Saving…' : 'Save All Cards'}
+          </button>
+        </div>
+        {msg && (
+          <p
+            className={`admin-product-hint mt-3 ${msg.includes('failed') || msg.includes('Add at least') ? 'admin-product-msg' : 'text-[#15803d]'}`}
+          >
+            {msg}
+          </p>
+        )}
+      </section>
+    );
+  }
+
+  return (
+    <div className="rounded-xl border border-white/10 bg-[#0e0e0e] p-5 lg:p-6">
+      <p className="text-sm text-stone-500">
+        Dark shortcut cards on <span className="text-stone-300">/account</span> — title, description, link, icon, and optional
+        watermark image per card.
+      </p>
+
+      {tileList}
 
       <div className="mt-4 flex flex-wrap gap-3">
-        <button
-          type="button"
-          className="btn-primary text-[10px]"
-          onClick={() => setTiles((list) => [...list, emptyTile(list.length)])}
-        >
+        <button type="button" className="btn-primary text-[10px]" onClick={() => setTiles((list) => [...list, emptyTile(list.length)])}>
           Add card
         </button>
         <button type="button" className="btn-primary btn-accent text-[10px]" onClick={submit} disabled={save.isPending}>

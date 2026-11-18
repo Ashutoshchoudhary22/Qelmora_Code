@@ -765,7 +765,7 @@ html[data-theme="light"] .account-sidebar-glow--tl {
   left: -1.5rem;
   width: 8.5rem;
   height: 8.5rem;
-  background: rgb(232 149 74 / 0.55);
+  background: rgb(232 149 74 / 0.38);
 }
 
 html[data-theme="light"] .account-sidebar-glow--br {
@@ -773,21 +773,30 @@ html[data-theme="light"] .account-sidebar-glow--br {
   bottom: -0.75rem;
   width: 9rem;
   height: 9rem;
-  background: rgb(201 122 53 / 0.48);
+  background: rgb(201 122 53 / 0.32);
 }
 
 html[data-theme="light"] .account-sidebar-panel {
   position: relative;
   z-index: 1;
-  border-color: rgb(232 149 74 / 0.38) !important;
+  background: linear-gradient(168deg, #fffefb 0%, #faf3e8 48%, #f3e6d6 100%) !important;
+  border-color: rgb(232 149 74 / 0.35) !important;
   box-shadow:
-    0 0 0 1px rgb(232 149 74 / 0.22),
-    0 32px 56px -32px rgb(160 85 28 / 0.55),
-    inset 0 1px 0 rgb(244 201 160 / 0.28) !important;
+    0 0 0 1px rgb(232 149 74 / 0.18),
+    0 20px 48px -32px rgb(232 149 74 / 0.28),
+    inset 0 1px 0 rgb(255 255 255 / 0.85) !important;
 }
 
 html[data-theme="light"] .account-sidebar-panel::after {
-  background: radial-gradient(circle, rgb(232 149 74 / 0.32) 0%, rgb(244 201 160 / 0.12) 45%, transparent 72%);
+  background: radial-gradient(circle, rgb(232 149 74 / 0.2) 0%, rgb(244 201 160 / 0.08) 50%, transparent 72%);
+}
+
+html[data-theme="light"] .account-sidebar-brand h2 {
+  color: #1c1917 !important;
+}
+
+html[data-theme="light"] .account-sidebar-brand p {
+  color: #78716c !important;
 }
 
 html[data-theme="light"] .account-sidebar-brand-icon {
@@ -797,9 +806,13 @@ html[data-theme="light"] .account-sidebar-brand-icon {
     inset 0 1px 0 rgb(255 248 240 / 0.4) !important;
 }
 
+html[data-theme="light"] .account-nav-pill {
+  color: #44403c !important;
+}
+
 html[data-theme="light"] .account-nav-pill:hover {
-  background: rgb(232 149 74 / 0.18) !important;
-  color: #fff7ed !important;
+  background: rgb(232 149 74 / 0.14) !important;
+  color: #92400e !important;
 }
 
 html[data-theme="light"] .account-nav-pill--active {

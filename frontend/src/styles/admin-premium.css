@@ -1761,3 +1761,250 @@ html[data-theme="light"] .admin-quick-actions .font-display {
   background: #fffefb;
   padding: 1rem 1.1rem;
 }
+
+/* —— Dark mode: premium admin pages (products, offers, banners, …) —— */
+html[data-theme="dark"] .admin-shell .admin-product-card,
+html[data-theme="dark"] .admin-shell .admin-shop-category-guidelines,
+html[data-theme="dark"] .admin-shell .admin-products-table-card,
+html[data-theme="dark"] .admin-shell .admin-offer-tile,
+html[data-theme="dark"] .admin-shell .admin-account-tile-card,
+html[data-theme="dark"] .admin-shell .admin-product-preview-card {
+  border-color: rgb(255 255 255 / 0.1);
+  background: linear-gradient(180deg, #1a1816 0%, #121110 100%);
+  box-shadow: 0 18px 48px -36px rgb(0 0 0 / 0.55);
+}
+
+html[data-theme="dark"] .admin-shell .admin-product-card-head,
+html[data-theme="dark"] .admin-shell .admin-products-hero-copy h1,
+html[data-theme="dark"] .admin-shell .admin-product-hero h1 {
+  color: #fafaf9;
+}
+
+html[data-theme="dark"] .admin-shell .admin-products-hero-copy p,
+html[data-theme="dark"] .admin-shell .admin-product-hero p,
+html[data-theme="dark"] .admin-shell .admin-product-hint,
+html[data-theme="dark"] .admin-shell .admin-product-crumb,
+html[data-theme="dark"] .admin-shell .admin-product-crumb a {
+  color: #a8a29e;
+}
+
+html[data-theme="dark"] .admin-shell .admin-product-crumb a:hover {
+  color: #f4c9a0;
+}
+
+html[data-theme="dark"] .admin-shell .admin-product-card-head-icon {
+  background: rgb(232 149 74 / 0.12);
+  border: 1px solid rgb(232 149 74 / 0.28);
+  color: #f4c9a0;
+}
+
+html[data-theme="dark"] .admin-shell .admin-field-label {
+  color: #d6d3d1;
+}
+
+html[data-theme="dark"] .admin-shell .admin-product-input,
+html[data-theme="dark"] .admin-shell .admin-products-search input,
+html[data-theme="dark"] .admin-shell .admin-products-select {
+  border-color: rgb(255 255 255 / 0.12);
+  background: #0f0e0d;
+  color: #fafaf9;
+}
+
+html[data-theme="dark"] .admin-shell .admin-product-input::placeholder,
+html[data-theme="dark"] .admin-shell .admin-products-search input::placeholder {
+  color: #78716c;
+}
+
+html[data-theme="dark"] .admin-shell .admin-field-icon-wrap .admin-field-icon {
+  color: #78716c;
+}
+
+html[data-theme="dark"] .admin-shell .admin-product-textarea-wrap {
+  border-color: rgb(255 255 255 / 0.12);
+  background: #0f0e0d;
+}
+
+html[data-theme="dark"] .admin-shell .admin-product-editor-toolbar {
+  border-color: rgb(255 255 255 / 0.08);
+  background: #141210;
+}
+
+html[data-theme="dark"] .admin-shell .admin-product-editor-toolbar span {
+  color: #a8a29e;
+}
+
+html[data-theme="dark"] .admin-shell .admin-product-textarea {
+  color: #fafaf9;
+}
+
+html[data-theme="dark"] .admin-shell .admin-chip-toggle {
+  border-color: rgb(255 255 255 / 0.14);
+  background: #141210;
+  color: #d6d3d1;
+}
+
+html[data-theme="dark"] .admin-shell .admin-chip-toggle.is-active {
+  border-color: rgb(232 149 74 / 0.5);
+  background: rgb(232 149 74 / 0.14);
+  color: #f4c9a0;
+}
+
+html[data-theme="dark"] .admin-shell .admin-product-check {
+  color: #d6d3d1;
+}
+
+html[data-theme="dark"] .admin-shell .admin-upload-zone {
+  border-color: rgb(232 149 74 / 0.28);
+  background: rgb(0 0 0 / 0.35);
+}
+
+html[data-theme="dark"] .admin-shell .admin-upload-zone p {
+  color: #a8a29e;
+}
+
+html[data-theme="dark"] .admin-shell .admin-btn-cancel {
+  border-color: rgb(255 255 255 / 0.14);
+  background: #141210;
+  color: #e7e5e4;
+}
+
+html[data-theme="dark"] .admin-shell .admin-btn-cancel:hover {
+  border-color: rgb(232 149 74 / 0.45);
+  color: #f4c9a0;
+}
+
+html[data-theme="dark"] .admin-shell .admin-product-preview-thumb {
+  background: #1c1917;
+}
+
+html[data-theme="dark"] .admin-shell .admin-preview-size {
+  border-color: rgb(255 255 255 / 0.14);
+  color: #d6d3d1;
+}
+
+html[data-theme="dark"] .admin-shell .admin-welcome-band {
+  border-bottom-color: rgb(255 255 255 / 0.08);
+}
+
+html[data-theme="dark"] .admin-shell .admin-welcome-band--qelmora .admin-welcome-band-scrim {
+  background: linear-gradient(
+    90deg,
+    rgb(8 8 8 / 0.94) 0%,
+    rgb(8 8 8 / 0.72) 38%,
+    rgb(8 8 8 / 0.4) 58%
+  );
+}
+
+html[data-theme="dark"] .admin-shell .admin-welcome-band-bg {
+  background-color: #141210;
+  opacity: 0.85;
+}
+
+/* Products list table */
+html[data-theme="dark"] .admin-shell .admin-products-table thead th {
+  color: #a8a29e;
+  border-bottom-color: rgb(255 255 255 / 0.08);
+  background: rgb(0 0 0 / 0.25);
+}
+
+html[data-theme="dark"] .admin-shell .admin-products-table tbody td {
+  color: #d6d3d1;
+  border-bottom-color: rgb(255 255 255 / 0.06);
+}
+
+html[data-theme="dark"] .admin-shell .admin-products-table tbody tr:hover td {
+  background: rgb(255 255 255 / 0.03);
+}
+
+html[data-theme="dark"] .admin-shell .admin-products-name,
+html[data-theme="dark"] .admin-shell .admin-products-price {
+  color: #fafaf9;
+}
+
+html[data-theme="dark"] .admin-shell .admin-products-category-pill {
+  border-color: rgb(232 149 74 / 0.28);
+  background: rgb(232 149 74 / 0.08);
+  color: #f4c9a0;
+}
+
+html[data-theme="dark"] .admin-shell .admin-products-view-toggle,
+html[data-theme="dark"] .admin-shell .admin-products-select {
+  border-color: rgb(255 255 255 / 0.12);
+  background: #141210;
+}
+
+html[data-theme="dark"] .admin-shell .admin-products-view-btn {
+  color: #a8a29e;
+}
+
+html[data-theme="dark"] .admin-shell .admin-products-view-btn.is-active {
+  background: rgb(232 149 74 / 0.18);
+  color: #f4c9a0;
+}
+
+html[data-theme="dark"] .admin-shell .admin-products-icon-btn {
+  border-color: rgb(255 255 255 / 0.12);
+  background: #141210;
+}
+
+html[data-theme="dark"] .admin-shell .admin-products-grid-card {
+  border-color: rgb(255 255 255 / 0.1);
+  background: #121110;
+}
+
+/* Offer tiles */
+html[data-theme="dark"] .admin-shell .admin-offer-tile-media {
+  background: #0a0a0a;
+}
+
+html[data-theme="dark"] .admin-shell .admin-offer-tile-toolbar {
+  border-top-color: rgb(255 255 255 / 0.08);
+  background: #161412;
+}
+
+html[data-theme="dark"] .admin-shell .admin-offer-tile-tool-btn {
+  border-color: rgb(255 255 255 / 0.12);
+  background: #121110;
+  color: #d6d3d1;
+}
+
+html[data-theme="dark"] .admin-shell .admin-offer-tile-tool-btn:hover {
+  border-color: rgb(232 149 74 / 0.45);
+  background: rgb(232 149 74 / 0.08);
+}
+
+html[data-theme="dark"] .admin-shell .admin-guidelines-list {
+  color: #a8a29e;
+}
+
+html[data-theme="dark"] .admin-shell .admin-guidelines-list li {
+  border-bottom-color: rgb(255 255 255 / 0.08);
+}
+
+html[data-theme="dark"] .admin-shell .admin-guidelines-list li span:first-child {
+  color: #e7e5e4;
+}
+
+html[data-theme="dark"] .admin-shell .admin-guidelines-thumb {
+  border-color: rgb(255 255 255 / 0.1);
+  opacity: 0.85;
+}
+
+html[data-theme="dark"] .admin-shell .admin-shop-category-guidelines h3,
+html[data-theme="dark"] .admin-shell .text-stone-900 {
+  color: #fafaf9 !important;
+}
+
+html[data-theme="dark"] .admin-shell .text-stone-600,
+html[data-theme="dark"] .admin-shell .text-stone-800 {
+  color: #a8a29e !important;
+}
+
+html[data-theme="dark"] .admin-shell .admin-products-empty {
+  color: #78716c;
+}
+
+html[data-theme="dark"] .admin-shell select.admin-product-input option {
+  background: #121110;
+  color: #fafaf9;
+}

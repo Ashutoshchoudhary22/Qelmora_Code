@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, Play } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, ShoppingBag } from 'lucide-react';
 import { api } from '../api/client';
 import { CategoryCollectionCards } from '../components/CategoryCollectionCards';
 import { CollectionPlacementGrid } from '../components/CollectionPlacementGrid';
@@ -65,35 +65,33 @@ export default function HomePage() {
 
   return (
     <main>
-      <section className="home-hero relative flex min-h-[80vh] items-end">
+      <section className="home-hero relative flex min-h-[min(78vh,44rem)] items-end justify-start">
         {hero?.secureUrl ? (
           <HeroBannerMedia hero={hero} />
         ) : (
           <div className="hero-fallback home-hero-fill z-0 bg-[radial-gradient(ellipse_at_70%_20%,#3d342c_0%,#151311_45%,#090909_80%)]" />
         )}
         <div className="hero-scrim home-hero-fill z-[1]" aria-hidden />
-        <div className="relative z-[2] mx-auto w-full max-w-7xl px-5 pb-16 pt-32 md:px-8 md:pb-24">
-          <p className="animate-fade-up text-[10px] uppercase tracking-[0.45em] text-q-accent-soft">
-            {hero?.subtitle || 'Autumn / Winter campaign'}
+        <div className="home-hero-content site-container relative z-[2] w-full pb-10 pt-0 md:pb-14">
+          <p className="home-hero-kicker animate-fade-up">
+            {hero?.subtitle || 'Premium streetwear'}
           </p>
-          <h1 className="font-display animate-fade-up mt-5 max-w-4xl text-5xl font-light leading-[1.05] tracking-tight text-stone-50 sm:text-7xl md:text-8xl">
-            {hero?.title || (
-              <>
-                Quiet confidence.
-                <br />
-                <span className="italic text-q-accent">Loud identity.</span>
-              </>
-            )}
+          <h1 className="home-hero-title font-display font-semibold animate-fade-up">
+            {hero?.title || 'QELMORA®'}
           </h1>
-          <p className="mt-7 max-w-md text-sm leading-7 text-stone-300">
-            Elevated streetwear and ritual-ready essentials — cut with precision, finished for the long road.
+          <p className="home-hero-tagline animate-fade-up">Elevated essentials for a bold lifestyle</p>
+          <p className="home-hero-desc animate-fade-up">
+            Premium Hoodies • Sweatshirts • T-Shirts &amp; More
           </p>
-          <div className="mt-10 flex flex-wrap gap-4">
-            <Link to={hero?.ctaLink || '/shop/men'} className="btn-primary">
-              {hero?.ctaLabel || 'Explore collection'} <ArrowUpRight size={15} />
+          <div className="home-hero-actions animate-fade-up">
+            <Link to={hero?.ctaLink || '/shop/men'} className="btn-hero-primary">
+              <ShoppingBag size={16} strokeWidth={1.75} aria-hidden />
+              <span>{hero?.ctaLabel || 'Explore collection'}</span>
+              <ArrowRight size={16} strokeWidth={1.75} aria-hidden />
             </Link>
-            <Link to="/about" className="btn-primary border-stone-600 text-stone-300 hover:border-stone-200">
-              Our story <Play size={14} />
+            <Link to="/about" className="btn-hero-secondary">
+              <span>Our story</span>
+              <ArrowRight size={16} strokeWidth={1.75} aria-hidden />
             </Link>
           </div>
         </div>

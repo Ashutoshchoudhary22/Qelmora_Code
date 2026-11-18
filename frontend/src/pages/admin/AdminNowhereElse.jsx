@@ -1,17 +1,34 @@
+import { Sparkles } from 'lucide-react';
 import { ShopOfferPanel } from '../../components/admin/ShopOfferPanel';
+
+const ADMIN_WELCOME_BG = '/profile/QELMORA-admin.png';
 
 export default function AdminNowhereElse() {
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="font-display text-3xl font-light">Nowhere Else page</h1>
-        <p className="mt-2 max-w-2xl text-sm text-stone-500">
-          Tiles on /collections (Nowhere Else). Same add flow as homepage — exclusive capsules, drops, or shop links.
-        </p>
-      </div>
+    <div className="admin-products-page">
+      <header className="admin-welcome-band admin-welcome-band--qelmora">
+        <div className="admin-welcome-band-bg" style={{ backgroundImage: `url(${ADMIN_WELCOME_BG})` }} />
+        <div className="admin-welcome-band-scrim" aria-hidden />
+        <div className="admin-welcome-band-inner admin-products-hero-inner">
+          <div className="admin-products-hero-copy">
+            <span className="admin-product-card-head-icon" aria-hidden>
+              <Sparkles size={20} strokeWidth={1.5} />
+            </span>
+            <div>
+              <h1 className="font-display">Nowhere Else</h1>
+              <p>
+                Tiles on /collections (Nowhere Else). Same add flow as homepage — exclusive capsules, drops, or shop
+                links.
+              </p>
+            </div>
+          </div>
+        </div>
+      </header>
+
       <ShopOfferPanel
+        variant="premium"
         placement="page_nowhere_else"
-        label="Nowhere Else tiles"
+        label="Nowhere Else Tiles"
         previewPath="/collections"
         sizeVariant="categoryCard"
         description="Shown below the page headline. Use sort order for display sequence."

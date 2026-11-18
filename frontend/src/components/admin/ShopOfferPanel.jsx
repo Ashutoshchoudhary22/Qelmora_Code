@@ -16,12 +16,31 @@ import { MediaAssetCard } from './MediaAssetCard';
 import { UploadSizeHint } from './UploadSizeHint';
 import { uploadToCloudinary } from '../../lib/cloudinary';
 
-const PREMIUM_GUIDELINES = [
-  { label: 'Size', value: '1200×1200 px or 600×1125 px' },
-  { label: 'Format', value: 'JPG, PNG, or WebP' },
-  { label: 'File size', value: 'Under 800 KB' },
-  { label: 'Video', value: 'MP4, under 15 MB (optional)' },
-];
+const PREMIUM_GUIDELINES_BY_VARIANT = {
+  categoryCard: [
+    { label: 'Size', value: '1200×1200 px or 600×1125 px' },
+    { label: 'Format', value: 'JPG, PNG, or WebP' },
+    { label: 'File size', value: 'Under 800 KB' },
+    { label: 'Video', value: 'MP4, under 15 MB (optional)' },
+  ],
+  offerTile: [
+    { label: 'Size', value: '800×800 px (1:1)' },
+    { label: 'Format', value: 'JPG, PNG, or WebP' },
+    { label: 'File size', value: 'Under 500 KB' },
+    { label: 'Video', value: 'MP4, under 15 MB (optional)' },
+  ],
+};
+
+function premiumGuidelines(sizeVariant) {
+  return PREMIUM_GUIDELINES_BY_VARIANT[sizeVariant] || PREMIUM_GUIDELINES_BY_VARIANT.categoryCard;
+}
+
+function premiumUploadHint(sizeVariant) {
+  if (sizeVariant === 'offerTile') {
+    return 'Size: 800×800 px (1:1) for shop offer carousel. JPG/WebP, under 500 KB';
+  }
+  return 'Size: 1200×1200 px (1:1) or 600×1125 px (9:16), JPG/WebP, under 800 KB';
+}
 
 const EMPTY_FORM = {
   title: '',
@@ -39,6 +58,7 @@ export function ShopOfferPanel({
   description,
   sizeVariant = 'offerTile',
   variant = 'default',
+  sectionOnly = false,
 }) {
   const qc = useQueryClient();
   const premium = variant === 'premium';
@@ -212,7 +232,7 @@ export function ShopOfferPanel({
         {uploading ? 'Uploading…' : form.secureUrl ? 'Replace Offer Image' : 'Upload Offer Image'}
         <input type="file" accept="image/*,video/*" className="hidden" disabled={uploading} onChange={onFile} />
       </label>
-      <p className="admin-product-hint mt-2">Size: 1200×1200 px (1:1) or 600×1125 px (9:16), JPG/WebP, under 800 KB</p>
+      <p className="admin-product-hint mt-2">{premiumUploadHint(sizeVariant)}</p>
       {form.secureUrl && (
         <div className="mt-4 max-w-[220px]">
           <AdminOfferTileCard
@@ -255,8 +275,9 @@ export function ShopOfferPanel({
   );
 
   if (premium) {
+    const outerClass = sectionOnly ? 'admin-shop-category-body' : 'admin-products-body admin-shop-category-body';
     return (
-      <div className="admin-products-body admin-shop-category-body">
+      <div className={outerClass}>
         <section className="admin-product-card">
           <div className="admin-product-card-head">
             <span className="admin-product-card-head-icon">
@@ -297,7 +318,7 @@ export function ShopOfferPanel({
           <aside className="admin-shop-category-guidelines">
             <h3 className="text-sm font-semibold text-stone-900">Image guidelines</h3>
             <ul className="admin-guidelines-list">
-              {PREMIUM_GUIDELINES.map((row) => (
+              {premiumGuidelines(sizeVariant).map((row) => (
                 <li key={row.label}>
                   <span>{row.label}</span>
                   <span>{row.value}</span>

@@ -13,6 +13,7 @@ import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
 import ResetPasswordPage from './pages/auth/ResetPasswordPage';
 import {
   AccountLayout,
+  AccountOverview,
   ProfileSection,
   AddressesSection,
   OrdersList,
@@ -30,6 +31,7 @@ import AdminBrandStory from './pages/admin/AdminBrandStory';
 import AdminInstagram from './pages/admin/AdminInstagram';
 import AdminStaticPages from './pages/admin/AdminStaticPages';
 import AdminLoginBanner from './pages/admin/AdminLoginBanner';
+import AdminAccountHero from './pages/admin/AdminAccountHero';
 import AdminShopOffers from './pages/admin/AdminShopOffers';
 import AdminContactInbox from './pages/admin/AdminContactInbox';
 import AdminHomeShopByCategory from './pages/admin/AdminHomeShopByCategory';
@@ -57,7 +59,8 @@ export default function App() {
         <Route path="contact" element={<ContactPage />} />
         <Route path="collections" element={<CollectionsPage />} />
         <Route path="account" element={<AccountLayout />}>
-          <Route index element={<ProfileSection />} />
+          <Route index element={<AccountOverview />} />
+          <Route path="profile" element={<ProfileSection />} />
           <Route path="addresses" element={<AddressesSection />} />
           <Route path="orders" element={<OrdersList />} />
           <Route path="orders/:orderNumber" element={<OrderDetailPage />} />
@@ -76,6 +79,7 @@ export default function App() {
         <Route path="instagram" element={<AdminInstagram />} />
         <Route path="static-pages" element={<AdminStaticPages />} />
         <Route path="login-banner" element={<AdminLoginBanner />} />
+        <Route path="account-hero" element={<AdminAccountHero />} />
         <Route path="shop-offers" element={<AdminShopOffers />} />
         <Route path="trending-categories" element={<AdminTrendingCategories />} />
         <Route path="contact-inbox" element={<AdminContactInbox />} />

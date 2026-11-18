@@ -608,6 +608,513 @@ a {
   -webkit-overflow-scrolling: touch;
 }
 
+/* —— Account dashboard (luxury overview) —— */
+.account-dashboard-page {
+  background: linear-gradient(165deg, #faf6f0 0%, #f3ebe1 45%, #efe6dc 100%);
+  color: #1c1917;
+}
+
+.account-dashboard-page .account-breadcrumb {
+  color: #78716c;
+}
+
+.account-dashboard-page .account-breadcrumb strong {
+  color: #292524;
+  font-weight: 600;
+}
+
+.account-sidebar-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 36rem;
+  padding: 1.35rem 1.1rem 1.25rem;
+  border-radius: 1.35rem;
+  background: linear-gradient(165deg, #2a2622 0%, #141210 55%, #0a0908 100%);
+  border: 1px solid rgb(255 255 255 / 0.08);
+  box-shadow: 0 24px 48px -32px rgb(0 0 0 / 0.55);
+  position: relative;
+  overflow: hidden;
+}
+
+.account-sidebar-panel::after {
+  content: "";
+  position: absolute;
+  right: -2rem;
+  bottom: -1rem;
+  width: 9rem;
+  height: 9rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(232 149 74 / 0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.account-sidebar-brand {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 1.75rem;
+}
+
+.account-sidebar-brand-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 0.65rem;
+  background: linear-gradient(135deg, #e8954a, #c97a35);
+  color: #1a1208;
+  box-shadow: 0 8px 20px -10px rgb(232 149 74 / 0.8);
+}
+
+.account-sidebar-brand h2 {
+  margin-top: 0.85rem;
+  font-size: 1.12rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #fafaf9;
+}
+
+.account-sidebar-brand p {
+  margin-top: 0.35rem;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: rgb(214 211 209 / 0.75);
+}
+
+.account-nav-pill {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 0.35rem;
+  padding: 0.72rem 0.95rem;
+  border-radius: 0.85rem;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: rgb(250 250 249 / 0.88);
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+
+.account-nav-pill:hover {
+  background: rgb(255 255 255 / 0.06);
+  color: #fff;
+}
+
+.account-nav-pill--active {
+  background: linear-gradient(90deg, #e8954a 0%, #c2732f 100%);
+  color: #1a1208;
+  box-shadow: 0 10px 24px -14px rgb(232 149 74 / 0.9);
+}
+
+.account-nav-pill--active:hover {
+  color: #1a1208;
+}
+
+.account-sidebar-logout {
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgb(255 255 255 / 0.08);
+}
+
+.account-sidebar-logout button {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.65rem 0.95rem;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: #f87171;
+  transition: color 0.2s;
+}
+
+.account-sidebar-logout button:hover {
+  color: #fca5a5;
+}
+
+html[data-theme="light"] .account-dashboard-page {
+  background: linear-gradient(168deg, #fdfaf6 0%, #f6efe6 42%, #f1e7d9 100%);
+}
+
+html[data-theme="light"] .account-dashboard-page .account-breadcrumb a:hover {
+  color: #c97a35;
+}
+
+.account-sidebar-shell-inner {
+  position: relative;
+}
+
+.account-sidebar-glow {
+  display: none;
+  pointer-events: none;
+}
+
+html[data-theme="light"] .account-sidebar-glow {
+  display: block;
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(38px);
+  z-index: 0;
+}
+
+html[data-theme="light"] .account-sidebar-glow--tl {
+  top: -1.25rem;
+  left: -1.5rem;
+  width: 8.5rem;
+  height: 8.5rem;
+  background: rgb(232 149 74 / 0.55);
+}
+
+html[data-theme="light"] .account-sidebar-glow--br {
+  right: -1.25rem;
+  bottom: -0.75rem;
+  width: 9rem;
+  height: 9rem;
+  background: rgb(201 122 53 / 0.48);
+}
+
+html[data-theme="light"] .account-sidebar-panel {
+  position: relative;
+  z-index: 1;
+  border-color: rgb(232 149 74 / 0.38) !important;
+  box-shadow:
+    0 0 0 1px rgb(232 149 74 / 0.22),
+    0 32px 56px -32px rgb(160 85 28 / 0.55),
+    inset 0 1px 0 rgb(244 201 160 / 0.28) !important;
+}
+
+html[data-theme="light"] .account-sidebar-panel::after {
+  background: radial-gradient(circle, rgb(232 149 74 / 0.32) 0%, rgb(244 201 160 / 0.12) 45%, transparent 72%);
+}
+
+html[data-theme="light"] .account-sidebar-brand-icon {
+  background: linear-gradient(135deg, #f4b06a 0%, #e8954a 48%, #b86d2e 100%) !important;
+  box-shadow:
+    0 12px 28px -10px rgb(232 149 74 / 0.95),
+    inset 0 1px 0 rgb(255 248 240 / 0.4) !important;
+}
+
+html[data-theme="light"] .account-nav-pill:hover {
+  background: rgb(232 149 74 / 0.18) !important;
+  color: #fff7ed !important;
+}
+
+html[data-theme="light"] .account-nav-pill--active {
+  background: linear-gradient(90deg, #f7b872 0%, #e8954a 40%, #c2732f 100%) !important;
+  color: #1a1208 !important;
+  box-shadow:
+    0 14px 32px -12px rgb(232 149 74 / 0.95),
+    inset 0 1px 0 rgb(255 248 240 / 0.45) !important;
+}
+
+html[data-theme="light"] .account-sidebar-logout {
+  border-top-color: rgb(232 149 74 / 0.28) !important;
+}
+
+html[data-theme="light"] .account-nav-mobile .border-transparent.bg-gradient-to-r {
+  box-shadow: 0 10px 24px -12px rgb(232 149 74 / 0.75);
+}
+
+.account-hero-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 12.5rem;
+  border-radius: 1.15rem;
+  border: 1px solid rgb(232 149 74 / 0.2);
+  background: linear-gradient(120deg, #faf6f1 0%, #f3e8dc 55%, #ebe0d4 100%);
+  box-shadow: none;
+}
+
+@media (min-width: 768px) {
+  .account-hero-card {
+    min-height: 13.75rem;
+  }
+}
+
+.account-hero-card-media {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: 92% center;
+  background-repeat: no-repeat;
+}
+
+.account-hero-card-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    rgb(255 255 255 / 0.9) 0%,
+    rgb(255 250 245 / 0.82) 38%,
+    rgb(255 245 236 / 0.45) 58%,
+    transparent 72%
+  );
+  pointer-events: none;
+}
+
+.account-hero-card:not(:has(.account-hero-card-media)) .account-hero-card-scrim {
+  background: linear-gradient(120deg, rgb(255 255 255 / 0.55) 0%, rgb(250 244 236 / 0.35) 100%);
+}
+
+.account-hero-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: inherit;
+  align-items: stretch;
+  padding: 1.35rem 1.25rem 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .account-hero-inner {
+    padding: 1.65rem 1.75rem 1.45rem;
+  }
+}
+
+.account-hero-content {
+  display: flex;
+  width: 100%;
+  max-width: 36rem;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.account-hero-greeting {
+  letter-spacing: -0.01em;
+}
+
+.account-hero-contact {
+  font-size: 0.9rem;
+  color: #57534e;
+}
+
+.account-hero-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.75rem;
+  height: 3.75rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 2px solid rgb(232 149 74 / 0.35);
+  background: linear-gradient(160deg, #fffdf9 0%, #f5e6d4 100%);
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: #92400e;
+  box-shadow: 0 4px 14px -8px rgb(146 64 14 / 0.45);
+}
+
+.account-hero-edit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  width: auto;
+  max-width: 100%;
+  margin-top: 1.25rem;
+  padding: 0.85rem 1.75rem;
+  align-self: flex-start;
+  border-radius: 0.65rem;
+  background: linear-gradient(90deg, #e8954a 0%, #d4843f 48%, #c97a35 100%);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: #1c1208;
+  box-shadow: 0 10px 22px -14px rgb(160 85 28 / 0.65);
+  transition: filter 0.2s, transform 0.2s;
+}
+
+.account-hero-edit:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+
+.account-premium-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 9.5rem;
+  overflow: hidden;
+  padding: 1.15rem 1.15rem 1rem;
+  border-radius: 1rem;
+  border: 1px solid rgb(255 255 255 / 0.08);
+  background: linear-gradient(145deg, #2c2824 0%, #12100e 55%, #0a0908 100%);
+  color: #fafaf9;
+  box-shadow: none;
+  transition: transform 0.25s, border-color 0.25s;
+}
+
+.account-premium-tile::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: radial-gradient(ellipse at 85% 90%, rgb(232 149 74 / 0.12) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+.account-premium-tile:has(.account-tile-watermark)::before {
+  background: linear-gradient(
+    90deg,
+    rgb(15 14 13 / 0.94) 0%,
+    rgb(15 14 13 / 0.72) 34%,
+    rgb(15 14 13 / 0.28) 52%,
+    transparent 68%
+  );
+}
+
+.account-premium-tile:hover {
+  transform: translateY(-2px);
+  border-color: rgb(232 149 74 / 0.35);
+}
+
+.account-tile-icon {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 0.55rem;
+  border: 1px solid rgb(232 149 74 / 0.4);
+  background: rgb(232 149 74 / 0.12);
+  color: #e8954a;
+}
+
+.account-tile-title {
+  position: relative;
+  z-index: 2;
+  margin-top: auto;
+  padding-top: 1.75rem;
+  font-size: 1.02rem;
+  font-weight: 600;
+}
+
+.account-tile-desc {
+  position: relative;
+  z-index: 2;
+  margin-top: 0.35rem;
+  max-width: 14rem;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: rgb(214 211 209 / 0.75);
+}
+
+.account-tile-arrow {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  background: rgb(0 0 0 / 0.35);
+  color: rgb(250 250 249 / 0.9);
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.account-premium-tile:hover .account-tile-arrow {
+  border-color: rgb(232 149 74 / 0.5);
+  background: rgb(232 149 74 / 0.2);
+  color: #f4c9a0;
+}
+
+.account-tile-watermark {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  width: 54%;
+  opacity: 1;
+  background-size: cover;
+  background-position: center right;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, rgb(0 0 0 / 0.35) 18%, #000 38%);
+  mask-image: linear-gradient(to right, transparent 0%, rgb(0 0 0 / 0.35) 18%, #000 38%);
+}
+
+.account-premium-tile:not(:has(.account-tile-watermark))[data-tile="help"]::after,
+.account-premium-tile:not(:has(.account-tile-watermark))[data-tile="collections"]::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  width: 54%;
+  opacity: 0.55;
+  background-size: cover;
+  background-position: center right;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, rgb(0 0 0 / 0.35) 18%, #000 38%);
+  mask-image: linear-gradient(to right, transparent 0%, rgb(0 0 0 / 0.35) 18%, #000 38%);
+}
+
+.account-premium-tile:not(:has(.account-tile-watermark))[data-tile="help"]::after {
+  background-image: url("/banner-4.png");
+}
+
+.account-premium-tile:not(:has(.account-tile-watermark))[data-tile="collections"]::after {
+  background-image: url("/Good%20Things%20Take%20Time%20Hoodie%20Offer.png");
+}
+
+.account-trust-bar {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem 1rem;
+  margin-top: 1.5rem;
+  padding: 1rem 1.15rem;
+  border-radius: 0.85rem;
+  border: 1px solid rgb(0 0 0 / 0.06);
+  background: rgb(255 255 255 / 0.88);
+  box-shadow: 0 8px 24px -20px rgb(0 0 0 / 0.2);
+}
+
+@media (min-width: 768px) {
+  .account-trust-bar {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    padding: 1rem 0;
+  }
+
+  .account-trust-item:not(:last-child) {
+    border-right: 1px solid rgb(0 0 0 / 0.08);
+  }
+}
+
+.account-trust-item {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.35rem 1rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #44403c;
+}
+
+.account-trust-item svg {
+  flex-shrink: 0;
+  color: #78716c;
+}
+
+.account-dashboard-main .account-subpanel {
+  border-radius: 1rem;
+  border: 1px solid rgb(0 0 0 / 0.08);
+  background: rgb(255 255 255 / 0.92);
+  box-shadow: 0 12px 32px -24px rgb(0 0 0 / 0.2);
+}
+
 [data-theme="light"] .account-panel {
   background: #ffffff !important;
   border-color: rgb(0 0 0 / 0.1);

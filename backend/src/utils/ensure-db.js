@@ -8,6 +8,7 @@ let bannerPlacementReady = false;
 let contactMessagesReady = false;
 let bannerMobileReady = false;
 let productCategoriesReady = false;
+let accountOverviewTilesReady = false;
 
 export async function ensureCategoryMediaColumn() {
   if (categoryMediaReady) return;
@@ -95,6 +96,21 @@ export async function ensureSiteSectionsTable() {
       null,
     ]
   );
+  await pool.execute(
+    `INSERT INTO site_sections (section_key, eyebrow, headline, body, cta_label, cta_link, image_url, media_type)
+     VALUES (?,?,?,?,?,?,?,?)
+     ON DUPLICATE KEY UPDATE section_key=section_key`,
+    [
+      'account_hero',
+      'Account',
+      'Profile header background',
+      'Wide lifestyle image behind the hello card on /account.',
+      null,
+      null,
+      null,
+      'image',
+    ]
+  );
   siteSectionsReady = true;
 }
 
@@ -180,6 +196,45 @@ export async function ensureProductCategoriesTable() {
   productCategoriesReady = true;
 }
 
+export async function ensureAccountOverviewTilesTable() {
+  if (accountOverviewTilesReady) return;
+  await pool.execute(`
+    CREATE TABLE IF NOT EXISTS account_overview_tiles (
+      id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+      title VARCHAR(120) NOT NULL,
+      description VARCHAR(500) NOT NULL DEFAULT '',
+      link_path VARCHAR(500) NOT NULL,
+      icon_key VARCHAR(40) NOT NULL DEFAULT 'package',
+      image_url VARCHAR(1000) NULL,
+      tile_key VARCHAR(40) NULL,
+      sort_order INT NOT NULL DEFAULT 0,
+      is_active BOOLEAN NOT NULL DEFAULT TRUE,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      INDEX idx_account_tiles_active_sort (is_active, sort_order)
+    ) ENGINE=InnoDB
+  `);
+  const [countRows] = await pool.execute('SELECT COUNT(*) AS c FROM account_overview_tiles');
+  if (Number(countRows[0]?.c) === 0) {
+    const seeds = [
+      ['My Orders', 'View, modify and track orders', '/account/orders', 'package', null, 'orders', 0],
+      ['My Addresses', 'Edit, add or remove addresses', '/account/addresses', 'map-pin', null, 'addresses', 1],
+      ['My Profile', 'Edit personal info and account details', '/account/profile', 'user', null, 'profile', 2],
+      ['Help & Support', 'Reach out to us', '/contact', 'headphones', null, 'help', 3],
+      ['Our Story', 'The QELMORA chapter', '/about', 'book-open', null, 'story', 4],
+      ['Nowhere Else', 'Exclusive collections', '/collections', 'sparkles', null, 'collections', 5],
+    ];
+    for (const row of seeds) {
+      await pool.execute(
+        `INSERT INTO account_overview_tiles (title, description, link_path, icon_key, image_url, tile_key, sort_order)
+         VALUES (?,?,?,?,?,?,?)`,
+        row
+      );
+    }
+  }
+  accountOverviewTilesReady = true;
+}
+
 export async function runStartupMigrations() {
   await ensureDatabaseSchema();
   await ensureCategoryMediaColumn();
@@ -189,4 +244,5 @@ export async function runStartupMigrations() {
   await ensureBannerMobileMediaColumns();
   await ensureContactMessagesTable();
   await ensureProductCategoriesTable();
+  await ensureAccountOverviewTilesTable();
 }

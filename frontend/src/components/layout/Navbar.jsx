@@ -71,7 +71,7 @@ function AccountMenu({ onNavigate }) {
         >
           <p className="truncate border-b border-stone-100 px-4 py-2 text-[10px] text-stone-500">{user.email}</p>
           <Link to="/account" role="menuitem" className={itemClass} onClick={() => { setMenuOpen(false); onNavigate?.(); }}>
-            My profile
+            My account
           </Link>
           <Link to="/account/orders" role="menuitem" className={itemClass} onClick={() => { setMenuOpen(false); onNavigate?.(); }}>
             Orders

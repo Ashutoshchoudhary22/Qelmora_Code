@@ -5,6 +5,13 @@ import { requireAuth, requireAdmin } from '../middleware/auth.js';
 const router = Router();
 router.use(requireAuth, requireAdmin);
 
+function pctTrend(current, previous) {
+  const c = Number(current) || 0;
+  const p = Number(previous) || 0;
+  if (p === 0) return c > 0 ? 100 : 0;
+  return ((c - p) / p) * 100;
+}
+
 router.get('/analytics', async (_req, res, next) => {
   try {
     const [[orders]] = await pool.query(
@@ -14,15 +21,53 @@ router.get('/analytics', async (_req, res, next) => {
     );
     const [[customers]] = await pool.query(`SELECT COUNT(*) AS total FROM users WHERE role='customer'`);
     const [[products]] = await pool.query(`SELECT COUNT(*) AS total FROM products WHERE is_active=1`);
+
+    const [[orderWindow]] = await pool.query(
+      `SELECT
+        COUNT(CASE WHEN created_at >= NOW() - INTERVAL 30 DAY THEN 1 END) AS ordersCur,
+        COUNT(CASE WHEN created_at >= NOW() - INTERVAL 60 DAY AND created_at < NOW() - INTERVAL 30 DAY THEN 1 END) AS ordersPrev
+       FROM orders`
+    );
+    const [[revenueWindow]] = await pool.query(
+      `SELECT
+        COALESCE(SUM(CASE WHEN created_at >= NOW() - INTERVAL 30 DAY
+          AND payment_status IN ('paid','pending') AND order_status != 'cancelled' THEN total_amount END), 0) AS revenueCur,
+        COALESCE(SUM(CASE WHEN created_at >= NOW() - INTERVAL 60 DAY AND created_at < NOW() - INTERVAL 30 DAY
+          AND payment_status IN ('paid','pending') AND order_status != 'cancelled' THEN total_amount END), 0) AS revenuePrev
+       FROM orders`
+    );
+    const [[customerWindow]] = await pool.query(
+      `SELECT
+        COUNT(CASE WHEN created_at >= NOW() - INTERVAL 30 DAY THEN 1 END) AS customersCur,
+        COUNT(CASE WHEN created_at >= NOW() - INTERVAL 60 DAY AND created_at < NOW() - INTERVAL 30 DAY THEN 1 END) AS customersPrev
+       FROM users WHERE role='customer'`
+    );
+    const [[productWindow]] = await pool.query(
+      `SELECT
+        COUNT(CASE WHEN created_at >= NOW() - INTERVAL 30 DAY AND is_active=1 THEN 1 END) AS productsCur,
+        COUNT(CASE WHEN created_at >= NOW() - INTERVAL 60 DAY AND created_at < NOW() - INTERVAL 30 DAY AND is_active=1 THEN 1 END) AS productsPrev
+       FROM products`
+    );
+
     const [recentOrders] = await pool.execute(
-      `SELECT order_number AS orderNumber, total_amount AS total, order_status AS orderStatus, payment_status AS paymentStatus, created_at AS createdAt
-       FROM orders ORDER BY created_at DESC LIMIT 8`
+      `SELECT o.order_number AS orderNumber, o.total_amount AS total, o.order_status AS orderStatus,
+        o.payment_status AS paymentStatus, o.created_at AS createdAt,
+        u.name AS customerName, u.email AS customerEmail
+       FROM orders o
+       LEFT JOIN users u ON u.id = o.user_id
+       ORDER BY o.created_at DESC LIMIT 8`
     );
     res.json({
       totalOrders: Number(orders.totalOrders),
       revenue: Number(orders.revenue),
       totalCustomers: Number(customers.total),
       totalProducts: Number(products.total),
+      trends: {
+        revenue: pctTrend(revenueWindow.revenueCur, revenueWindow.revenuePrev),
+        orders: pctTrend(orderWindow.ordersCur, orderWindow.ordersPrev),
+        customers: pctTrend(customerWindow.customersCur, customerWindow.customersPrev),
+        products: pctTrend(productWindow.productsCur, productWindow.productsPrev),
+      },
       recentOrders,
     });
   } catch (e) {

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./styles/admin-premium.css";
 
 @theme {
   --color-q-black: #090909;
@@ -1265,7 +1266,7 @@ html[data-theme="light"] .admin-shell [class*="121110"] {
   background: rgb(0 0 0 / 0.04);
 }
 
-html[data-theme="light"] .admin-nav-link-active {
+html[data-theme="light"] .admin-sidebar:not(.admin-sidebar-premium) .admin-nav-link-active {
   color: #78350f;
   background: linear-gradient(90deg, rgb(232 149 74 / 0.28) 0%, rgb(232 149 74 / 0.12) 100%);
   box-shadow: inset 0 0 0 1px rgb(232 149 74 / 0.22);
@@ -1337,7 +1338,7 @@ html[data-theme="light"] .admin-shell [class*="080808"] {
   background: transparent !important;
 }
 
-html[data-theme="light"] .admin-shell [class*="0c0c0c"] {
+html[data-theme="light"] .admin-shell [class*="0c0c0c"]:not(.admin-sidebar-premium) {
   background: linear-gradient(180deg, #fffefb 0%, #faf3e8 100%) !important;
 }
 

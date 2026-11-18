@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
-import { X } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ShoppingBag, Truck, X } from 'lucide-react';
 import { useCartDrawer } from '../../context/CartDrawerContext';
-import { useCartCount } from '../../hooks/useCartCount';
 import { CartPanel } from './CartPanel';
+
+const CART_DRAWER_SILK = '/profile/QELMORA-admin.png';
 
 export function CartDrawer() {
   const { open, closeCart } = useCartDrawer();
-  const { data: cartSummary } = useCartCount();
-  const count = cartSummary?.itemCount || 0;
 
   useEffect(() => {
     if (!open) return undefined;
@@ -34,29 +34,31 @@ export function CartDrawer() {
         onClick={closeCart}
       />
       <aside
-        className="cart-drawer-panel absolute inset-y-0 right-0 flex h-full w-full max-w-[min(100vw,28rem)] flex-col bg-white text-stone-900 shadow-2xl"
+        className="cart-drawer-panel cart-drawer-panel--premium absolute inset-y-0 right-0 flex h-full w-full max-w-[min(100vw,28rem)] flex-col shadow-2xl"
         style={{ animation: 'cartDrawerIn 0.32s ease-out' }}
       >
-        <header className="shrink-0 border-b border-stone-200 px-5 py-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-stone-900">
-              Cart{count > 0 ? ` · ${count}` : ''}
-            </h2>
-            <button
-              type="button"
-              onClick={closeCart}
-              className="rounded p-1 text-stone-600 transition hover:bg-stone-100 hover:text-stone-900"
-              aria-label="Close"
-            >
-              <X size={22} strokeWidth={1.5} />
-            </button>
+        <div className="cart-drawer-silk" style={{ backgroundImage: `url(${CART_DRAWER_SILK})` }} aria-hidden />
+        <div className="cart-drawer-silk-scrim" aria-hidden />
+
+        <header className="cart-drawer-header relative z-[1] shrink-0">
+          <Link to="/" onClick={closeCart} className="cart-drawer-logo font-display">
+            QELMORA
+          </Link>
+          <div className="cart-drawer-title cart-drawer-title--center">
+            <ShoppingBag size={20} strokeWidth={1.5} className="text-[#b8860b]" />
+            <h2>Your Cart</h2>
           </div>
-          <p className="mt-3 bg-stone-900 px-3 py-2 text-center text-[10px] font-medium uppercase tracking-wide text-white">
-            Payments are securely processed in Indian Rupees (INR)
-          </p>
+          <button type="button" onClick={closeCart} className="cart-drawer-close" aria-label="Close">
+            <X size={22} strokeWidth={1.5} />
+          </button>
         </header>
 
-        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+        <h3 className="cart-drawer-ship-banner relative z-[1]">
+          <Truck size={16} strokeWidth={1.75} />
+          Free Shipping on all prepaid orders in India
+        </h3>
+
+        <div className="relative z-[1] flex min-h-0 flex-1 flex-col overflow-hidden">
           <CartPanel compact onClose={closeCart} />
         </div>
       </aside>

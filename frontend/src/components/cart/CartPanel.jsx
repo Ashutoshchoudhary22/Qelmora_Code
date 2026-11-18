@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { Trash2 } from 'lucide-react';
+import { ArrowRight, Lock, Minus, Plus, ShieldCheck, Trash2 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
@@ -9,6 +9,7 @@ export function CartPanel({ onClose, compact = false }) {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { isAuthenticated, booting } = useAuth();
+  const premium = compact;
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['cart'],
@@ -37,15 +38,13 @@ export function CartPanel({ onClose, compact = false }) {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['cart'] }),
   });
 
+  const pad = premium ? 'cart-drawer-pad' : '';
+
   if (!isAuthenticated && !booting) {
     return (
-      <div className={compact ? 'px-6 py-8' : ''}>
+      <div className={pad}>
         <p className="text-sm text-stone-600">Sign in to view your bag.</p>
-        <Link
-          to="/login"
-          onClick={onClose}
-          className="mt-6 inline-flex w-full items-center justify-center bg-stone-900 px-4 py-3 text-[11px] font-medium uppercase tracking-widest text-white"
-        >
+        <Link to="/login" onClick={onClose} className="cart-drawer-btn-checkout mt-6">
           Sign in
         </Link>
       </div>
@@ -53,12 +52,12 @@ export function CartPanel({ onClose, compact = false }) {
   }
 
   if (booting || isLoading) {
-    return <p className={`text-sm text-stone-500 ${compact ? 'px-6 py-10' : ''}`}>Loading bag…</p>;
+    return <p className={`text-sm text-stone-500 ${premium ? 'cart-drawer-pad py-10' : 'px-6 py-10'}`}>Loading bag…</p>;
   }
 
   if (isError) {
     return (
-      <p className={`text-sm text-red-600 ${compact ? 'px-6 py-8' : ''}`}>
+      <p className={`text-sm text-red-600 ${premium ? 'cart-drawer-pad py-8' : 'px-6 py-8'}`}>
         Could not load cart. Try signing in again.
       </p>
     );
@@ -69,13 +68,9 @@ export function CartPanel({ onClose, compact = false }) {
 
   if (!items.length) {
     return (
-      <div className={compact ? 'px-6 py-8' : ''}>
+      <div className={pad}>
         <p className="text-sm text-stone-600">Your bag is empty.</p>
-        <Link
-          to="/shop/men"
-          onClick={onClose}
-          className="mt-6 inline-flex w-full items-center justify-center border border-stone-900 px-4 py-3 text-[11px] font-medium uppercase tracking-widest text-stone-900"
-        >
+        <Link to="/shop/men" onClick={onClose} className="cart-drawer-btn-outline mt-6 inline-flex w-full justify-center">
           Continue shopping
         </Link>
       </div>
@@ -83,135 +78,130 @@ export function CartPanel({ onClose, compact = false }) {
   }
 
   return (
-    <div className={`flex min-h-0 flex-1 flex-col ${compact ? '' : ''}`}>
-      <ul className={`flex-1 overflow-y-auto ${compact ? 'px-5' : ''}`}>
+    <div className="flex min-h-0 flex-1 flex-col">
+      <ul className={`cart-drawer-items flex-1 overflow-y-auto ${premium ? 'cart-drawer-pad-x' : 'px-5'}`}>
         {items.map((item) => (
-          <li key={item.id} className="flex gap-4 border-b border-stone-200 py-5">
-            <Link
-              to={`/product/${item.slug}`}
-              onClick={onClose}
-              className="h-[88px] w-[72px] shrink-0 overflow-hidden bg-stone-100"
-            >
-              {item.image ? (
-                <img src={item.image} alt="" className="h-full w-full object-cover" />
-              ) : (
-                <div className="flex h-full items-center justify-center text-[10px] text-stone-400">No img</div>
-              )}
-            </Link>
-            <div className="min-w-0 flex-1">
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <Link
-                    to={`/product/${item.slug}`}
-                    onClick={onClose}
-                    className="font-medium leading-snug text-stone-900 hover:underline"
-                  >
-                    {item.name}
-                  </Link>
-                  <p className="mt-1 text-xs text-stone-500">
+          <li key={item.id} className={premium ? 'cart-drawer-item-card' : 'flex gap-4 border-b border-stone-200 py-5'}>
+            {premium ? (
+              <div className="cart-drawer-item-inner">
+                <Link to={`/product/${item.slug}`} onClick={onClose} className="cart-drawer-item-thumb">
+                  {item.image ? (
+                    <img src={item.image} alt="" className="h-full w-full object-cover" />
+                  ) : (
+                    <span className="text-[10px] text-stone-400">No img</span>
+                  )}
+                </Link>
+                <div className="cart-drawer-item-body">
+                  <div className="flex items-start justify-between gap-2">
+                    <Link to={`/product/${item.slug}`} onClick={onClose} className="cart-drawer-item-name">
+                      {item.name}
+                    </Link>
+                    <p className="cart-drawer-item-price">{formatInr(item.price)}</p>
+                  </div>
+                  <p className="cart-drawer-item-variant">
                     {item.color} / {item.size}
                   </p>
+                  <div className="cart-drawer-item-actions">
+                    <div className="cart-drawer-qty">
+                      <button
+                        type="button"
+                        onClick={() => updateQty.mutate({ id: item.id, quantity: item.quantity - 1 })}
+                        disabled={item.quantity <= 1 || updateQty.isPending}
+                        aria-label="Decrease quantity"
+                      >
+                        <Minus size={14} />
+                      </button>
+                      <span>{item.quantity}</span>
+                      <button
+                        type="button"
+                        onClick={() => updateQty.mutate({ id: item.id, quantity: item.quantity + 1 })}
+                        disabled={item.quantity >= 10 || updateQty.isPending}
+                        aria-label="Increase quantity"
+                      >
+                        <Plus size={14} />
+                      </button>
+                    </div>
+                    <button
+                      type="button"
+                      className="cart-drawer-remove"
+                      onClick={() => removeItem.mutate(item.id)}
+                      disabled={removeItem.isPending}
+                      aria-label="Remove item"
+                    >
+                      <Trash2 size={16} strokeWidth={1.5} />
+                    </button>
+                  </div>
                 </div>
-                <p className="shrink-0 text-sm font-medium text-stone-900">{formatInr(item.price)}</p>
               </div>
-              <div className="mt-3 flex items-center justify-between gap-2">
-                <div className="inline-flex items-center border border-stone-300 text-sm text-stone-900">
-                  <button
-                    type="button"
-                    className="px-2.5 py-1.5 text-stone-600 hover:bg-stone-100 disabled:opacity-40"
-                    onClick={() => updateQty.mutate({ id: item.id, quantity: item.quantity - 1 })}
-                    disabled={item.quantity <= 1 || updateQty.isPending}
-                    aria-label="Decrease quantity"
-                  >
-                    −
-                  </button>
-                  <span className="min-w-[2rem] px-2 py-1.5 text-center">{item.quantity}</span>
-                  <button
-                    type="button"
-                    className="px-2.5 py-1.5 text-stone-600 hover:bg-stone-100 disabled:opacity-40"
-                    onClick={() => updateQty.mutate({ id: item.id, quantity: item.quantity + 1 })}
-                    disabled={item.quantity >= 10 || updateQty.isPending}
-                    aria-label="Increase quantity"
-                  >
-                    +
-                  </button>
+            ) : (
+              <>
+                <Link to={`/product/${item.slug}`} onClick={onClose} className="h-[88px] w-[72px] shrink-0 overflow-hidden bg-stone-100">
+                  {item.image ? <img src={item.image} alt="" className="h-full w-full object-cover" /> : null}
+                </Link>
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium text-stone-900">{item.name}</p>
                 </div>
-                <button
-                  type="button"
-                  className="text-stone-500 transition hover:text-red-600"
-                  onClick={() => removeItem.mutate(item.id)}
-                  disabled={removeItem.isPending}
-                  aria-label="Remove item"
-                >
-                  <Trash2 size={18} strokeWidth={1.5} />
-                </button>
-              </div>
-            </div>
+              </>
+            )}
           </li>
         ))}
       </ul>
 
-      <div className={`shrink-0 border-t border-stone-200 bg-white ${compact ? 'px-5 pb-6 pt-4' : 'mt-6'}`}>
+      <footer className={`cart-drawer-footer shrink-0 ${premium ? 'cart-drawer-pad' : 'mt-6 border-t border-stone-200 px-5 pb-6 pt-4'}`}>
         <form
-          className="flex gap-2"
+          className="cart-drawer-coupon"
           onSubmit={(e) => {
             e.preventDefault();
             const fd = new FormData(e.currentTarget);
             applyCoupon.mutate(fd.get('code'));
           }}
         >
-          <input
-            name="code"
-            placeholder="Enter coupon code"
-            className="min-w-0 flex-1 border border-stone-300 bg-white px-3 py-2.5 text-sm text-stone-900 placeholder:text-stone-400"
-          />
-          <button
-            type="submit"
-            className="shrink-0 bg-stone-900 px-5 py-2.5 text-[10px] font-semibold uppercase tracking-widest text-white"
-            disabled={applyCoupon.isPending}
-          >
+          <input name="code" placeholder="Enter coupon code" className="cart-drawer-coupon-input" />
+          <button type="submit" className="cart-drawer-btn-apply" disabled={applyCoupon.isPending}>
             Apply
           </button>
         </form>
         {applyCoupon.error?.response?.data?.message && (
-          <p className="mt-2 text-xs text-red-600">{applyCoupon.error.response.data.message}</p>
+          <p className="cart-drawer-msg-error">{applyCoupon.error.response.data.message}</p>
         )}
         {data.couponCode && (
-          <p className="mt-2 text-xs text-stone-600">
-            Code <span className="font-medium">{data.couponCode}</span> applied
+          <p className="cart-drawer-msg-ok">
+            Code <span className="font-semibold">{data.couponCode}</span> applied
           </p>
         )}
 
-        <div className="mt-4 flex justify-between text-sm text-stone-800">
+        <div className="cart-drawer-subtotal">
           <span>Subtotal</span>
-          <span className="font-medium">{formatInr(data.subtotal)}</span>
+          <span className="cart-drawer-subtotal-amt">{formatInr(data.subtotal)}</span>
         </div>
         {data.discount > 0 && (
-          <div className="mt-1 flex justify-between text-xs text-emerald-700">
+          <div className="cart-drawer-discount">
             <span>Includes discount</span>
             <span>−{formatInr(data.discount)}</span>
           </div>
         )}
-        <p className="mt-2 text-[11px] leading-relaxed text-stone-500">
-          Taxes, discounts and shipping calculated at checkout.
-        </p>
-        <p className="mt-3 bg-stone-100 py-2 text-center text-[9px] font-medium uppercase tracking-[0.2em] text-stone-600">
+        <p className="cart-drawer-checkout-note">Taxes, discounts and shipping calculated at checkout.</p>
+
+        <p className="cart-drawer-trust">
+          <ShieldCheck size={14} className="text-[#c9a227]" />
           Free shipping in India · Secured checkout
         </p>
+
         <button
           type="button"
-          className="mt-4 w-full bg-stone-900 py-4 text-[11px] font-semibold uppercase tracking-[0.12em] text-white transition hover:bg-stone-800"
+          className="cart-drawer-btn-checkout"
           onClick={() => {
             onClose?.();
             navigate('/checkout');
           }}
         >
-          Complete order · {formatInr(data.total)}
+          <Lock size={16} strokeWidth={1.75} />
+          <span className="flex-1 text-left">Complete Order</span>
+          <span className="font-semibold">{formatInr(data.total)}</span>
+          <ArrowRight size={18} strokeWidth={1.75} />
         </button>
-        {!compact && itemCount > 0 && (
-          <p className="mt-3 text-center text-xs text-stone-500">{itemCount} item(s) in bag</p>
-        )}
-      </div>
+        {!compact && itemCount > 0 && <p className="mt-3 text-center text-xs text-stone-500">{itemCount} item(s) in bag</p>}
+      </footer>
     </div>
   );
 }

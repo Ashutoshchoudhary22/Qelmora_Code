@@ -7,6 +7,7 @@ import { CollectionPlacementGrid } from '../components/CollectionPlacementGrid';
 import { ProductGrid } from '../components/ProductGrid';
 import { Newsletter } from '../components/Newsletter';
 import { HeroBannerMedia } from '../components/home/HeroBannerMedia';
+import { formatBrandTitle } from '../lib/brand';
 import { HomePromoBand } from '../components/home/HomePromoBand';
 export default function HomePage() {
   const { data: heroBanners } = useQuery({
@@ -77,7 +78,7 @@ export default function HomePage() {
             {hero?.subtitle || 'Premium streetwear'}
           </p>
           <h1 className="home-hero-title font-display font-semibold animate-fade-up">
-            {hero?.title || 'QELMORA®'}
+            {formatBrandTitle(hero?.title, { suffix: '®' })}
           </h1>
           <p className="home-hero-tagline animate-fade-up">Elevated essentials for a bold lifestyle</p>
           <p className="home-hero-desc animate-fade-up">

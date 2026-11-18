@@ -904,6 +904,11 @@ a {
   padding-inline: clamp(1rem, 2.5vw, 2.75rem);
 }
 
+/* QELMORA wordmark — tight spacing so letters don’t read as “QELOMORA” */
+.site-logo-wordmark {
+  letter-spacing: 0.12em;
+}
+
 /* Top offset below fixed nav; media extends up so no blank strip in light theme */
 .home-hero {
   --hero-offset: 220px;

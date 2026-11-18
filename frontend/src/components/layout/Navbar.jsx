@@ -122,7 +122,7 @@ export function Navbar({ heroOverlay = false, inHomeShell = false }) {
       <div className="site-container flex items-center justify-between gap-4 py-4">
         <Link
           to="/"
-          className={`font-display text-2xl font-medium tracking-[0.28em] md:text-[1.65rem] ${
+          className={`site-logo-wordmark font-display text-2xl font-medium md:text-[1.65rem] ${
             heroOverlay ? 'site-header-hero-action text-stone-900 transition hover:text-black' : 'text-stone-50'
           }`}
         >

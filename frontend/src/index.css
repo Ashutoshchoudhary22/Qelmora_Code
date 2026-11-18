@@ -840,6 +840,61 @@ a {
   border-color: transparent;
 }
 
+/* Hero overlay: uniform black nav (same size/weight for every link) */
+.site-header-hero nav .site-nav-link--hero {
+  color: #1c1917 !important;
+  font-size: 11px;
+  font-weight: 600;
+  text-shadow: none;
+}
+
+.site-header-hero nav .site-nav-link--hero:hover {
+  color: #0c0a09 !important;
+}
+
+.site-header-hero .site-header-hero-action,
+.site-header-hero a.font-display {
+  color: #1c1917;
+}
+
+.site-header-hero .site-header-hero-action:hover {
+  color: #0c0a09;
+}
+
+/* Mobile hero: dark bar + white logo/icons (desktop stays transparent + black type) */
+@media (max-width: 1023px) {
+  .site-header-hero {
+    background: rgb(10 10 10 / 0.88) !important;
+    border-color: rgb(255 255 255 / 0.08) !important;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 1px 0 rgb(0 0 0 / 0.35);
+  }
+
+  [data-theme="light"] .site-header-hero {
+    background: rgb(10 10 10 / 0.88) !important;
+    border-color: rgb(255 255 255 / 0.08) !important;
+  }
+
+  .site-header-hero .site-header-hero-action,
+  .site-header-hero a.font-display {
+    color: #fafaf9 !important;
+  }
+
+  .site-header-hero .site-header-hero-action:hover,
+  .site-header-hero a.font-display:hover {
+    color: #ffffff !important;
+  }
+
+  .site-header-hero .site-header-mobile-toggle {
+    color: #fafaf9;
+  }
+
+  .site-header-hero .site-header-mobile-toggle:hover {
+    color: #ffffff;
+  }
+}
+
 /* Full-width storefront layout (large screens); hero stays edge-to-edge separately */
 .site-container {
   box-sizing: border-box;

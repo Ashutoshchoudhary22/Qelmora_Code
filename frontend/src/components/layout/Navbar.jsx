@@ -15,7 +15,10 @@ const links = [
   { to: '/contact', label: 'Contact' },
 ];
 
-function AccountMenu({ onNavigate }) {
+function AccountMenu({ onNavigate, heroOverlay = false }) {
+  const iconActionClass = heroOverlay
+    ? 'site-header-hero-action text-stone-900 transition hover:text-black'
+    : 'text-stone-300 transition hover:text-white';
   const { user, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const wrapRef = useRef(null);
@@ -44,7 +47,7 @@ function AccountMenu({ onNavigate }) {
       <Link
         to="/login"
         onClick={onNavigate}
-        className="hidden text-stone-300 transition hover:text-white sm:block"
+        className={`hidden sm:block ${iconActionClass}`}
         aria-label="Sign in"
       >
         <User size={18} strokeWidth={1.5} />
@@ -57,7 +60,7 @@ function AccountMenu({ onNavigate }) {
       <button
         type="button"
         onClick={() => setMenuOpen((v) => !v)}
-        className="text-stone-300 transition hover:text-white"
+        className={iconActionClass}
         aria-label="Account menu"
         aria-expanded={menuOpen}
         aria-haspopup="true"
@@ -102,6 +105,10 @@ export function Navbar({ heroOverlay = false, inHomeShell = false }) {
   const count = cart?.itemCount || 0;
   const { theme, toggleTheme } = useTheme();
 
+  const heroActionClass = heroOverlay
+    ? 'site-header-hero-action text-stone-900 transition hover:text-black'
+    : 'text-stone-200 transition hover:text-white';
+
   return (
     <header
       className={`site-header z-40 transition-[background-color,border-color,backdrop-filter,box-shadow] duration-300 ${
@@ -113,7 +120,12 @@ export function Navbar({ heroOverlay = false, inHomeShell = false }) {
       }`}
     >
       <div className="site-container flex items-center justify-between gap-4 py-4">
-        <Link to="/" className="font-display text-2xl font-medium tracking-[0.28em] text-stone-50 md:text-[1.65rem]">
+        <Link
+          to="/"
+          className={`font-display text-2xl font-medium tracking-[0.28em] md:text-[1.65rem] ${
+            heroOverlay ? 'site-header-hero-action text-stone-900 transition hover:text-black' : 'text-stone-50'
+          }`}
+        >
           QELMORA
         </Link>
 
@@ -123,7 +135,11 @@ export function Navbar({ heroOverlay = false, inHomeShell = false }) {
               key={l.to}
               to={l.to}
               className={({ isActive }) =>
-                `text-[10px] uppercase tracking-[0.22em] transition ${isActive ? 'text-q-accent' : 'text-stone-400 hover:text-stone-100'}`
+                heroOverlay
+                  ? 'site-nav-link site-nav-link--hero text-[11px] font-semibold uppercase tracking-[0.16em] text-stone-900 transition hover:text-black'
+                  : `text-[11px] font-semibold uppercase tracking-[0.16em] transition ${
+                      isActive ? 'text-q-accent' : 'text-stone-400 hover:text-stone-100'
+                    }`
               }
             >
               {l.label}
@@ -135,16 +151,16 @@ export function Navbar({ heroOverlay = false, inHomeShell = false }) {
           <button
             type="button"
             onClick={toggleTheme}
-            className="text-stone-200 transition hover:text-white"
+            className={heroActionClass}
             aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
           >
             {theme === 'dark' ? <Sun size={18} strokeWidth={1.5} /> : <Moon size={18} strokeWidth={1.5} />}
           </button>
-          <AccountMenu />
+          <AccountMenu heroOverlay={heroOverlay} />
           <button
             type="button"
             onClick={openCart}
-            className="relative text-stone-200 transition hover:text-white"
+            className={`relative ${heroActionClass}`}
             aria-label="Open cart"
           >
             <ShoppingBag size={18} strokeWidth={1.5} />
@@ -155,11 +171,25 @@ export function Navbar({ heroOverlay = false, inHomeShell = false }) {
             )}
           </button>
           {isAdmin && (
-            <Link to="/admin" className="hidden text-[10px] uppercase tracking-widest text-q-accent md:block">
+            <Link
+              to="/admin"
+              className={
+                heroOverlay
+                  ? 'site-header-hero-action hidden text-[11px] font-semibold uppercase tracking-[0.16em] text-stone-900 transition hover:text-black md:block'
+                  : 'hidden text-[10px] uppercase tracking-widest text-q-accent md:block'
+              }
+            >
               Admin
             </Link>
           )}
-          <button type="button" className="text-stone-200 lg:hidden" onClick={() => setOpen((v) => !v)} aria-label="Menu">
+          <button
+            type="button"
+            className={`site-header-mobile-toggle lg:hidden ${
+              heroOverlay ? 'site-header-hero-action transition hover:text-white' : 'text-stone-200 transition hover:text-white'
+            }`}
+            onClick={() => setOpen((v) => !v)}
+            aria-label="Menu"
+          >
             {open ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
@@ -173,7 +203,7 @@ export function Navbar({ heroOverlay = false, inHomeShell = false }) {
                 key={l.to}
                 to={l.to}
                 onClick={() => setOpen(false)}
-                className="text-xs uppercase tracking-[0.25em] text-stone-300"
+                className="text-[13px] font-semibold uppercase tracking-[0.2em] text-stone-300"
               >
                 {l.label}
               </Link>

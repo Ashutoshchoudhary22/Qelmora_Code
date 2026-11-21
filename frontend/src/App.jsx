@@ -31,6 +31,7 @@ import AdminBrandStory from './pages/admin/AdminBrandStory';
 import AdminInstagram from './pages/admin/AdminInstagram';
 import AdminStaticPages from './pages/admin/AdminStaticPages';
 import AdminLoginBanner from './pages/admin/AdminLoginBanner';
+import AdminSiteFooter from './pages/admin/AdminSiteFooter';
 import AdminAccountHero from './pages/admin/AdminAccountHero';
 import AdminShopOffers from './pages/admin/AdminShopOffers';
 import AdminContactInbox from './pages/admin/AdminContactInbox';
@@ -79,6 +80,7 @@ export default function App() {
         <Route path="instagram" element={<AdminInstagram />} />
         <Route path="static-pages" element={<AdminStaticPages />} />
         <Route path="login-banner" element={<AdminLoginBanner />} />
+        <Route path="site-footer" element={<AdminSiteFooter />} />
         <Route path="account-hero" element={<AdminAccountHero />} />
         <Route path="shop-offers" element={<AdminShopOffers />} />
         <Route path="trending-categories" element={<AdminTrendingCategories />} />

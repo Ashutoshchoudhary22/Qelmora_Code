@@ -11,7 +11,7 @@ export function Newsletter() {
   }
 
   return (
-    <section className="border-y border-white/10 bg-[linear-gradient(180deg,#111_0%,#090909_100%)]">
+    <section className="site-newsletter border-y border-white/10">
       <div className="site-container py-20 md:py-24">
         <div className="mx-auto max-w-xl text-center">
           <p className="text-[10px] uppercase tracking-[0.4em] text-q-accent">Private list</p>

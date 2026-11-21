@@ -19,6 +19,7 @@ import {
   LogOut,
   Menu,
   Moon,
+  PanelBottom,
   Package,
   ShoppingBag,
   Sun,
@@ -39,6 +40,7 @@ const links = [
   { to: '/admin/static-pages', label: 'About & Contact', icon: FileText, end: false },
   { to: '/admin/contact-inbox', label: 'Contact inbox', icon: Mail, end: false },
   { to: '/admin/login-banner', label: 'Login banner', icon: LogIn, end: false },
+  { to: '/admin/site-footer', label: 'Site footer', icon: PanelBottom, end: false },
   { to: '/admin/account-hero', label: 'Account page', icon: User, end: false },
   { to: '/admin/brand-story', label: 'Brand story', icon: BookOpen, end: false },
   { to: '/admin/instagram', label: 'Instagram', icon: Instagram, end: false },
@@ -63,7 +65,7 @@ function SidebarNav({ onNavigate }) {
   return (
     <div className="admin-sidebar-inner flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden">
       <div className="admin-sidebar-head shrink-0 px-5 py-5">
-        <Link to="/admin" className="admin-sidebar-brand flex items-center gap-3" onClick={onNavigate}>
+        <Link to="/" className="admin-sidebar-brand flex items-center gap-3" onClick={onNavigate}>
           <span className="admin-sidebar-crown">
             <Crown size={22} strokeWidth={1.5} />
           </span>

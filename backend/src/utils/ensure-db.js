@@ -111,6 +111,21 @@ export async function ensureSiteSectionsTable() {
       'image',
     ]
   );
+  await pool.execute(
+    `INSERT INTO site_sections (section_key, eyebrow, headline, body, cta_label, cta_link, image_url, media_type)
+     VALUES (?,?,?,?,?,?,?,?)
+     ON DUPLICATE KEY UPDATE section_key=section_key`,
+    [
+      'site_footer',
+      'Footer',
+      'Site footer background',
+      'Optional full-width background image for the storefront footer.',
+      null,
+      null,
+      null,
+      'image',
+    ]
+  );
   siteSectionsReady = true;
 }
 

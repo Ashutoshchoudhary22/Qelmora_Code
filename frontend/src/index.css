@@ -936,10 +936,197 @@ a {
   background: #fff;
 }
 
-[data-theme="light"] .site-footer,
+[data-theme="light"] .site-footer:not(.site-footer-premium):not(.site-footer--has-bg),
 [data-theme="light"] .site-announcement {
   background: #f5f5f4;
   border-color: rgb(0 0 0 / 0.08);
+}
+
+.site-footer-premium {
+  --footer-gold: #ffffff;
+  --footer-gold-bright: #ffffff;
+  --footer-gold-muted: rgb(255 255 255 / 0.9);
+  --footer-ink: #ffffff;
+  color: var(--footer-ink);
+}
+
+.site-footer-premium--default-bg {
+  background: linear-gradient(180deg, #1a130d 0%, #120e0b 100%);
+}
+
+[data-theme="light"] .site-footer-premium.site-footer-premium--default-bg {
+  background: linear-gradient(180deg, #1a130d 0%, #120e0b 100%) !important;
+}
+
+.site-footer--has-bg {
+  background-color: transparent;
+}
+
+.site-footer-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  pointer-events: none;
+}
+
+.site-footer-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgb(0 0 0 / 0.12) 0%, rgb(0 0 0 / 0.28) 100%);
+}
+
+[data-theme="light"] .site-footer-scrim {
+  background: transparent;
+}
+
+.site-footer-columns {
+  display: grid;
+  gap: 2.5rem 1.5rem;
+}
+
+@media (min-width: 900px) {
+  .site-footer-columns {
+    grid-template-columns: minmax(0, 1.35fr) repeat(3, minmax(0, 1fr));
+    gap: 0;
+    align-items: start;
+  }
+
+  .site-footer-col:not(:first-child) {
+    border-left: 1px solid rgb(201 168 108 / 0.32);
+    padding-left: clamp(1.25rem, 2.5vw, 2.25rem);
+    margin-left: clamp(1rem, 2vw, 2rem);
+  }
+}
+
+.site-footer-logo {
+  font-size: clamp(1.85rem, 3vw, 2.35rem);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 2px 14px rgb(0 0 0 / 0.55);
+}
+
+.site-footer-tagline {
+  margin-top: 1rem;
+  max-width: 22rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.75;
+  color: rgb(255 255 255 / 0.92);
+  text-shadow: 0 1px 10px rgb(0 0 0 / 0.5);
+}
+
+.site-footer-socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1.35rem;
+}
+
+.site-footer-social-btn {
+  display: inline-flex;
+  height: 2.35rem;
+  width: 2.35rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid rgb(255 255 255 / 0.55);
+  color: #fff;
+  background: rgb(0 0 0 / 0.2);
+  transition: border-color 0.2s, color 0.2s, background 0.2s, transform 0.15s;
+}
+
+.site-footer-social-btn:hover {
+  border-color: #fff;
+  color: #fff;
+  background: rgb(255 255 255 / 0.15);
+  transform: translateY(-1px);
+}
+
+.site-footer-heading {
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 1px 8px rgb(0 0 0 / 0.45);
+}
+
+.site-footer-links,
+.site-footer-contact {
+  margin-top: 1.15rem;
+  list-style: none;
+  padding: 0;
+}
+
+.site-footer-links li + li,
+.site-footer-contact li + li {
+  margin-top: 0.65rem;
+}
+
+.site-footer-links a,
+.site-footer-contact a {
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.45;
+  color: rgb(255 255 255 / 0.92);
+  text-shadow: 0 1px 8px rgb(0 0 0 / 0.45);
+  transition: color 0.2s;
+}
+
+.site-footer-links a:hover,
+.site-footer-contact a:hover {
+  color: #fff;
+  font-weight: 700;
+}
+
+.site-footer-contact-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.site-footer-contact-icon {
+  display: inline-flex;
+  color: #fff;
+}
+
+.site-footer-copy {
+  margin-top: 2.5rem;
+  padding-top: 1.35rem;
+  border-top: 1px solid rgb(255 255 255 / 0.28);
+  text-align: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.88);
+  text-shadow: 0 1px 8px rgb(0 0 0 / 0.45);
+}
+
+/* Newsletter band */
+.site-newsletter {
+  background: linear-gradient(180deg, #111 0%, #090909 100%);
+}
+
+[data-theme="light"] .site-newsletter {
+  background: linear-gradient(180deg, #fafaf9 0%, #f0eeeb 100%) !important;
+  border-color: rgb(0 0 0 / 0.1) !important;
+}
+
+[data-theme="light"] .site-newsletter .text-stone-300 {
+  color: #44403c !important;
+}
+
+.site-footer-inner {
+  position: relative;
+  z-index: 2;
 }
 
 [data-theme="light"] [class*="0a0a0a"],

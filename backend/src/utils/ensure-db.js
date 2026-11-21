@@ -141,6 +141,21 @@ export async function ensureSiteSectionsTable() {
       'image',
     ]
   );
+  await pool.execute(
+    `INSERT INTO site_sections (section_key, eyebrow, headline, body, cta_label, cta_link, image_url, media_type)
+     VALUES (?,?,?,?,?,?,?,?)
+     ON DUPLICATE KEY UPDATE section_key=section_key`,
+    [
+      'brand_story_band',
+      'Brand story',
+      'Brand story band background',
+      'Background for the homepage brand story section.',
+      null,
+      null,
+      null,
+      'image',
+    ]
+  );
   siteSectionsReady = true;
 }
 

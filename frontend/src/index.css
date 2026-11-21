@@ -1467,12 +1467,202 @@ a {
   color: #0c0a09;
 }
 
-.home-brand-story-media {
-  box-shadow: 0 20px 44px rgb(0 0 0 / 0.14);
+/* Homepage — brand story (premium) */
+.home-brand-story-premium {
+  background: #f6f1ea;
+  color: #292524;
 }
 
-[data-theme="light"] .home-brand-story-media {
-  box-shadow: 0 16px 40px rgb(28 25 23 / 0.08);
+.home-brand-story-premium-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  pointer-events: none;
+}
+
+.home-brand-story-premium-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(105deg, rgb(255 251 245 / 0.78) 0%, rgb(246 240 232 / 0.45) 55%, rgb(246 240 232 / 0.25) 100%);
+}
+
+.home-brand-story-premium-inner {
+  position: relative;
+  z-index: 2;
+}
+
+.home-brand-story-grid {
+  display: grid;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .home-brand-story-grid {
+    grid-template-columns: 1.05fr minmax(280px, 0.95fr);
+    gap: clamp(2rem, 4vw, 4rem);
+  }
+}
+
+.home-brand-story-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+  color: #b45309;
+}
+
+.home-brand-story-eyebrow::before,
+.home-brand-story-eyebrow::after {
+  content: '';
+  width: 2.25rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgb(180 83 9 / 0.65), transparent);
+}
+
+.home-brand-story-title {
+  margin-top: 1.35rem;
+  font-size: clamp(1.85rem, 3.8vw, 2.65rem);
+  font-weight: 500;
+  line-height: 1.22;
+  color: #292524;
+}
+
+.home-brand-story-em {
+  font-style: italic;
+  position: relative;
+  display: inline;
+}
+
+.home-brand-story-em::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0.05em;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, #c4843a 15%, #c4843a 85%, transparent);
+}
+
+.home-brand-story-body {
+  margin-top: 1.25rem;
+  max-width: 34rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.75;
+  color: #57534e;
+}
+
+.home-brand-story-cta {
+  display: inline-flex;
+  margin-top: 1.75rem;
+  align-items: center;
+  gap: 0.55rem;
+  border-radius: 0.75rem;
+  background: linear-gradient(135deg, #4a3426 0%, #3d2b1f 100%);
+  padding: 0.95rem 1.35rem;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #fafaf9;
+  box-shadow: 0 14px 32px -18px rgb(61 43 31 / 0.55);
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+
+.home-brand-story-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 36px -16px rgb(61 43 31 / 0.6);
+  color: #fff;
+}
+
+.home-brand-story-visual {
+  display: flex;
+  justify-content: center;
+}
+
+@media (min-width: 900px) {
+  .home-brand-story-visual {
+    justify-content: flex-end;
+  }
+}
+
+.home-brand-story-card {
+  position: relative;
+  width: min(100%, 320px);
+}
+
+.home-brand-story-card-back {
+  position: absolute;
+  inset: 12px -12px -12px 12px;
+  z-index: 0;
+  border-radius: 1.1rem;
+  background: rgb(255 255 255 / 0.55);
+  box-shadow: 0 24px 48px -28px rgb(61 43 31 / 0.35);
+}
+
+.home-brand-story-card-frame {
+  position: relative;
+  z-index: 1;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 1.1rem;
+  border: 6px solid #fff;
+  background: #e7e5e4;
+  box-shadow: 0 22px 50px -24px rgb(28 25 23 / 0.35);
+}
+
+.home-brand-story-card--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 18rem;
+  border: 1px dashed rgb(120 113 108 / 0.35);
+  border-radius: 1.1rem;
+  background: rgb(255 255 255 / 0.35);
+}
+
+.home-brand-story-card-media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.home-brand-story-badge {
+  position: absolute;
+  z-index: 2;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.94);
+  padding: 0.35rem 0.65rem;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #1c1917;
+  box-shadow: 0 8px 20px -12px rgb(0 0 0 / 0.35);
+}
+
+.home-brand-story-badge--fit {
+  top: 0.85rem;
+  left: 0.85rem;
+}
+
+.home-brand-story-badge--rating {
+  bottom: 0.85rem;
+  left: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: #b45309;
 }
 
 .home-promo-band {

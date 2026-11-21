@@ -15,8 +15,8 @@ export default function AdminSiteFooter() {
               <PanelBottom size={20} strokeWidth={1.5} />
             </span>
             <div>
-              <h1 className="font-display">Footer &amp; newsletter</h1>
-              <p>Background images for the newsletter band and site footer on every page.</p>
+              <h1 className="font-display">Bands &amp; footer</h1>
+              <p>Background images for brand story, newsletter, and footer sections on the storefront.</p>
             </div>
           </div>
         </div>

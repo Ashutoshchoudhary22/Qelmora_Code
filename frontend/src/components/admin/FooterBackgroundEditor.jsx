@@ -204,6 +204,29 @@ export function NewsletterBackgroundEditor() {
   );
 }
 
+const BRAND_STORY_BAND_GUIDELINES = [
+  { label: 'Size', value: '2400×900 px or wider (landscape)' },
+  { label: 'Format', value: 'JPG, PNG, or WebP' },
+  { label: 'File size', value: 'Under 800 KB' },
+  { label: 'Tip', value: 'Cream / gold silk textures match the homepage brand story layout' },
+];
+
+export function BrandStoryBandBackgroundEditor() {
+  return (
+    <SectionImageEditor
+      sectionKey="brand_story_band"
+      headline="Brand story band background"
+      title="Brand story section (homepage)"
+      hint="Full-width background behind the homepage brand story block. Product image still comes from Admin → Brand story."
+      guidelines={BRAND_STORY_BAND_GUIDELINES}
+      previewHref="/"
+      previewLabel="homepage brand story"
+      cloudFolder="qelmora/brand-story"
+      saveLabel="Save brand story background"
+    />
+  );
+}
+
 export function FooterAndNewsletterEditors() {
   return (
     <div className="space-y-12">
@@ -211,10 +234,11 @@ export function FooterAndNewsletterEditors() {
         <span className="admin-product-card-head-icon">
           <Mail size={16} />
         </span>
-        <span className="font-semibold text-stone-900">Storefront bands</span>
+        <span className="font-semibold text-stone-900">Homepage bands &amp; footer</span>
       </div>
-      <FooterBackgroundEditor />
+      <BrandStoryBandBackgroundEditor />
       <NewsletterBackgroundEditor />
+      <FooterBackgroundEditor />
     </div>
   );
 }

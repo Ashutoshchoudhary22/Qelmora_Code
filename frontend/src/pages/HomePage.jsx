@@ -9,6 +9,7 @@ import { Newsletter } from '../components/Newsletter';
 import { HeroBannerMedia } from '../components/home/HeroBannerMedia';
 import { formatBrandTitle } from '../lib/brand';
 import { HomePromoBand } from '../components/home/HomePromoBand';
+import { BrandStorySection } from '../components/home/BrandStorySection';
 export default function HomePage() {
   const { data: heroBanners } = useQuery({
     queryKey: ['banners', 'hero'],
@@ -44,11 +45,6 @@ export default function HomePage() {
   const { data: collectionBanner } = useQuery({
     queryKey: ['banners', 'collection'],
     queryFn: async () => (await api.get('/banners?placement=collection')).data,
-  });
-
-  const { data: brandStory } = useQuery({
-    queryKey: ['content', 'brand_story'],
-    queryFn: async () => (await api.get('/content/brand_story')).data,
   });
 
   const { data: instagramMeta } = useQuery({
@@ -168,50 +164,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="home-brand-story border-y border-white/10 bg-[#0a0a0a]">
-        <div className="site-container grid gap-12 py-16 md:grid-cols-2 md:items-center md:gap-16 md:py-24 lg:gap-20">
-          <div className="max-w-xl md:pr-4">
-            <p className="text-[10px] uppercase tracking-[0.4em] text-q-accent">{brandStory?.eyebrow || 'Brand story'}</p>
-            <h2 className="font-display mt-5 text-3xl font-light leading-snug tracking-tight text-stone-100 md:text-4xl lg:text-[2.75rem] lg:leading-tight">
-              {brandStory?.headline ||
-                'QELMORA began with a refusal — to chase trends, to shout, to compromise on the stitch.'}
-            </h2>
-            <p className="mt-6 text-sm leading-8 text-stone-500 md:text-[0.95rem]">
-              {brandStory?.body ||
-                'We make fewer pieces, with better fiber, for people who treat clothing as identity, not ornament. Every release is a chapter — yours to wear in.'}
-            </p>
-            <Link
-              to={brandStory?.ctaLink || '/about'}
-              className="mt-8 inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.28em] text-q-accent transition hover:text-q-accent-soft"
-            >
-              {brandStory?.ctaLabel || 'Read the full story'} <ArrowUpRight size={14} />
-            </Link>
-          </div>
-
-          <div className="w-full md:justify-self-end">
-            {brandStory?.imageUrl ? (
-              <div className="home-brand-story-media mx-auto aspect-[4/5] w-full max-w-[300px] overflow-hidden border border-white/10 bg-[#141210] sm:max-w-[340px] md:ml-auto md:max-w-[380px]">
-                {brandStory.mediaType === 'video' ? (
-                  <video
-                    src={brandStory.imageUrl}
-                    className="h-full w-full object-cover object-center"
-                    muted
-                    loop
-                    playsInline
-                    autoPlay
-                  />
-                ) : (
-                  <img src={brandStory.imageUrl} alt="" className="h-full w-full object-cover object-center" loading="lazy" />
-                )}
-              </div>
-            ) : (
-              <div className="mx-auto flex aspect-[4/5] max-w-[300px] items-center justify-center border border-dashed border-white/15 bg-black/20 md:ml-auto md:max-w-[380px]">
-                <span className="text-[10px] uppercase tracking-[0.4em] text-stone-600">Brand image</span>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
+      <BrandStorySection />
 
       <section className="overflow-hidden py-16">
         <p className="mb-8 text-center text-[10px] uppercase tracking-[0.4em] text-stone-600">

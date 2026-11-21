@@ -211,6 +211,29 @@ const BRAND_STORY_BAND_GUIDELINES = [
   { label: 'Tip', value: 'Cream / gold silk textures match the homepage brand story layout' },
 ];
 
+const FEATURED_COLLECTION_GUIDELINES = [
+  { label: 'Size', value: '2400×900 px or wider (landscape)' },
+  { label: 'Format', value: 'JPG, PNG, or WebP' },
+  { label: 'File size', value: 'Under 800 KB' },
+  { label: 'Tip', value: 'Match cream/gold silk textures used for brand story and newsletter' },
+];
+
+export function FeaturedCollectionBandBackgroundEditor() {
+  return (
+    <SectionImageEditor
+      sectionKey="featured_collection_band"
+      headline="Featured collection band background"
+      title="Featured collection (homepage)"
+      hint="Background behind the featured collection block. Banner image/text still come from Admin → Banners (collection placement)."
+      guidelines={FEATURED_COLLECTION_GUIDELINES}
+      previewHref="/"
+      previewLabel="homepage featured collection"
+      cloudFolder="qelmora/featured"
+      saveLabel="Save featured collection background"
+    />
+  );
+}
+
 export function BrandStoryBandBackgroundEditor() {
   return (
     <SectionImageEditor
@@ -236,6 +259,7 @@ export function FooterAndNewsletterEditors() {
         </span>
         <span className="font-semibold text-stone-900">Homepage bands &amp; footer</span>
       </div>
+      <FeaturedCollectionBandBackgroundEditor />
       <BrandStoryBandBackgroundEditor />
       <NewsletterBackgroundEditor />
       <FooterBackgroundEditor />

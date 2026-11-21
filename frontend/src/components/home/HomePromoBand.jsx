@@ -1,9 +1,8 @@
 import { Link } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
+import { BRAND_NAME } from '../../lib/brand';
 
 export function HomePromoBand({ banner }) {
-  const title = banner?.title || 'Archive edit — up to 30% on signature outerwear';
-  const subtitle = banner?.subtitle?.trim();
-  const ctaLabel = banner?.ctaLabel || 'Shop the edit';
   const ctaLink = banner?.ctaLink || '/shop/men';
   const url = banner?.secureUrl;
   const isVideo = banner?.resourceType === 'video';
@@ -35,14 +34,18 @@ export function HomePromoBand({ banner }) {
         />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent md:hidden" aria-hidden />
 
-        <div className="relative flex min-h-[300px] flex-col justify-center px-6 py-12 md:min-h-[380px] md:max-w-2xl md:px-12 lg:min-h-[420px] lg:px-16">
-          <p className="text-[10px] uppercase tracking-[0.45em] text-q-accent">Limited offer</p>
-          <h2 className="font-display mt-4 text-4xl font-light leading-[1.08] tracking-tight text-stone-50 md:text-5xl lg:text-[3.25rem]">
-            {title}
+        <div className="home-promo-band-copy relative z-[2] flex min-h-[300px] flex-col justify-center px-6 py-12 md:min-h-[380px] md:max-w-2xl md:px-12 lg:min-h-[420px] lg:px-16">
+          <p className="home-limited-offer-label home-promo-eyebrow">Limited offer</p>
+          <h2 className="home-promo-brand font-display">
+            {BRAND_NAME}
+            <sup className="home-promo-reg" aria-hidden>
+              ®
+            </sup>
           </h2>
-          {subtitle && <p className="mt-4 max-w-md text-sm leading-relaxed text-stone-300 md:text-base">{subtitle}</p>}
-          <Link to={ctaLink} className="btn-primary btn-accent mt-8 w-fit px-8 py-3 text-[11px] tracking-[0.22em]">
-            {ctaLabel}
+          <p className="home-promo-tagline">Premium streetwear</p>
+          <Link to={ctaLink} className="home-promo-cta">
+            <span>Shop now</span>
+            <ArrowRight size={16} strokeWidth={1.75} aria-hidden />
           </Link>
         </div>
       </div>

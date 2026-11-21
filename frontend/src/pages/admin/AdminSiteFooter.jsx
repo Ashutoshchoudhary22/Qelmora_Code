@@ -16,7 +16,7 @@ export default function AdminSiteFooter() {
             </span>
             <div>
               <h1 className="font-display">Bands &amp; footer</h1>
-              <p>Background images for brand story, newsletter, and footer sections on the storefront.</p>
+              <p>Background images for featured collection, brand story, newsletter, and footer on the storefront.</p>
             </div>
           </div>
         </div>

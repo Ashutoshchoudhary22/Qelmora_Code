@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { ArrowRight, ArrowUpRight, ShoppingBag } from 'lucide-react';
+import { ArrowRight, ShoppingBag } from 'lucide-react';
 import { api } from '../api/client';
 import { CategoryCollectionCards } from '../components/CategoryCollectionCards';
 import { CollectionPlacementGrid } from '../components/CollectionPlacementGrid';
@@ -10,6 +10,7 @@ import { HeroBannerMedia } from '../components/home/HeroBannerMedia';
 import { formatBrandTitle } from '../lib/brand';
 import { HomePromoBand } from '../components/home/HomePromoBand';
 import { BrandStorySection } from '../components/home/BrandStorySection';
+import { FeaturedCollectionSection } from '../components/home/FeaturedCollectionSection';
 export default function HomePage() {
   const { data: heroBanners } = useQuery({
     queryKey: ['banners', 'hero'],
@@ -42,11 +43,6 @@ export default function HomePage() {
     queryFn: async () => (await api.get('/banners?placement=promo')).data,
   });
 
-  const { data: collectionBanner } = useQuery({
-    queryKey: ['banners', 'collection'],
-    queryFn: async () => (await api.get('/banners?placement=collection')).data,
-  });
-
   const { data: instagramMeta } = useQuery({
     queryKey: ['content', 'instagram'],
     queryFn: async () => (await api.get('/content/instagram')).data,
@@ -58,7 +54,6 @@ export default function HomePage() {
   });
 
   const promoItem = promo?.items?.[0];
-  const collectionItem = collectionBanner?.items?.[0];
 
   return (
     <main>
@@ -70,9 +65,7 @@ export default function HomePage() {
         )}
         <div className="hero-scrim home-hero-fill z-[1]" aria-hidden />
         <div className="home-hero-content site-container relative z-[2] w-full pb-10 pt-0 md:pb-14">
-          <p className="home-hero-kicker animate-fade-up">
-            {hero?.subtitle || 'Premium streetwear'}
-          </p>
+          <p className="home-hero-kicker animate-fade-up">{hero?.subtitle || 'Premium streetwear'}</p>
           <h1 className="home-hero-title font-display font-semibold animate-fade-up">
             {formatBrandTitle(hero?.title, { suffix: '®' })}
           </h1>
@@ -141,28 +134,7 @@ export default function HomePage() {
 
       <HomePromoBand banner={promoItem} />
 
-      <section className="site-container grid gap-10 py-20 md:grid-cols-2 md:items-center">
-        <div className="relative aspect-[4/5] overflow-hidden bg-[#1a1816]">
-          {collectionItem?.secureUrl ? (
-            <img src={collectionItem.secureUrl} alt="" className="h-full w-full object-cover" />
-          ) : (
-            <div className="flex h-full items-center justify-center text-xs tracking-[0.5em] text-stone-600">FEATURED</div>
-          )}
-        </div>
-        <div>
-          <p className="text-[10px] uppercase tracking-[0.35em] text-q-accent">Featured collection</p>
-          <h2 className="font-display mt-4 text-5xl font-light leading-tight">
-            {collectionItem?.title || 'Monochrome volumes'}
-          </h2>
-          <p className="mt-6 text-sm leading-8 text-stone-400">
-            {collectionItem?.subtitle ||
-              'Sculpted layers in obsidian, ivory, and a single thread of amber — built for cities that never sleep.'}
-          </p>
-          <Link to={collectionItem?.ctaLink || '/collections'} className="btn-primary mt-8 inline-flex">
-            {collectionItem?.ctaLabel || 'Discover'} <ArrowUpRight size={15} />
-          </Link>
-        </div>
-      </section>
+      <FeaturedCollectionSection />
 
       <BrandStorySection />
 

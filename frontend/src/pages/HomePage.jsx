@@ -11,6 +11,7 @@ import { formatBrandTitle } from '../lib/brand';
 import { HomePromoBand } from '../components/home/HomePromoBand';
 import { BrandStorySection } from '../components/home/BrandStorySection';
 import { FeaturedCollectionSection } from '../components/home/FeaturedCollectionSection';
+import { HomeInstagramSection } from '../components/home/HomeInstagramSection';
 export default function HomePage() {
   const { data: heroBanners } = useQuery({
     queryKey: ['banners', 'hero'],
@@ -41,16 +42,6 @@ export default function HomePage() {
   const { data: promo } = useQuery({
     queryKey: ['banners', 'promo'],
     queryFn: async () => (await api.get('/banners?placement=promo')).data,
-  });
-
-  const { data: instagramMeta } = useQuery({
-    queryKey: ['content', 'instagram'],
-    queryFn: async () => (await api.get('/content/instagram')).data,
-  });
-
-  const { data: instagramFeed } = useQuery({
-    queryKey: ['instagram'],
-    queryFn: async () => (await api.get('/instagram')).data,
   });
 
   const promoItem = promo?.items?.[0];
@@ -138,34 +129,7 @@ export default function HomePage() {
 
       <BrandStorySection />
 
-      <section className="overflow-hidden py-16">
-        <p className="mb-8 text-center text-[10px] uppercase tracking-[0.4em] text-stone-600">
-          {instagramMeta?.eyebrow || '@qelmora on Instagram'}
-        </p>
-        <div className="relative flex overflow-hidden">
-          <div className="marquee-track flex shrink-0 gap-4 pr-4">
-            {(instagramFeed?.items?.length ? [...instagramFeed.items, ...instagramFeed.items] : []).map((post, i) => (
-              <a
-                key={`${post.id}-${i}`}
-                href={instagramMeta?.ctaLink || 'https://instagram.com'}
-                target="_blank"
-                rel="noreferrer"
-                className="block h-48 w-36 shrink-0 overflow-hidden bg-[#1c1a18] md:h-56 md:w-44"
-              >
-                {post.resourceType === 'video' ? (
-                  <video src={post.secureUrl} className="h-full w-full object-cover" muted loop playsInline autoPlay />
-                ) : (
-                  <img src={post.secureUrl} alt="" className="h-full w-full object-cover" loading="lazy" />
-                )}
-              </a>
-            ))}
-            {!instagramFeed?.items?.length &&
-              [...Array(16)].map((_, i) => (
-                <div key={i} className="h-48 w-36 shrink-0 bg-[#1c1a18] md:h-56 md:w-44" />
-              ))}
-          </div>
-        </div>
-      </section>
+      <HomeInstagramSection />
 
       <Newsletter />
     </main>

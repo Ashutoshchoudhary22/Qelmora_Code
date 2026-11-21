@@ -218,6 +218,13 @@ const FEATURED_COLLECTION_GUIDELINES = [
   { label: 'Tip', value: 'Match cream/gold silk textures used for brand story and newsletter' },
 ];
 
+const INSTAGRAM_BAND_GUIDELINES = [
+  { label: 'Size', value: '2400×900 px or wider (landscape)' },
+  { label: 'Format', value: 'JPG, PNG, or WebP' },
+  { label: 'File size', value: 'Under 800 KB' },
+  { label: 'Tip', value: 'Cream / gold wave textures match the Instagram mock; keep contrast for the marquee' },
+];
+
 export function FeaturedCollectionBandBackgroundEditor() {
   return (
     <SectionImageEditor
@@ -230,6 +237,22 @@ export function FeaturedCollectionBandBackgroundEditor() {
       previewLabel="homepage featured collection"
       cloudFolder="qelmora/featured"
       saveLabel="Save featured collection background"
+    />
+  );
+}
+
+export function InstagramBandBackgroundEditor() {
+  return (
+    <SectionImageEditor
+      sectionKey="instagram_band"
+      headline="Instagram band background"
+      title="Instagram section (homepage)"
+      hint="Background behind the Instagram feed marquee above the newsletter. Post images still come from Admin → Instagram."
+      guidelines={INSTAGRAM_BAND_GUIDELINES}
+      previewHref="/"
+      previewLabel="homepage Instagram section"
+      cloudFolder="qelmora/instagram"
+      saveLabel="Save Instagram background"
     />
   );
 }
@@ -261,6 +284,7 @@ export function FooterAndNewsletterEditors() {
       </div>
       <FeaturedCollectionBandBackgroundEditor />
       <BrandStoryBandBackgroundEditor />
+      <InstagramBandBackgroundEditor />
       <NewsletterBackgroundEditor />
       <FooterBackgroundEditor />
     </div>

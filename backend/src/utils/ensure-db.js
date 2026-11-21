@@ -55,7 +55,14 @@ export async function ensureSiteSectionsTable() {
     `INSERT INTO site_sections (section_key, eyebrow, headline, body, cta_label, cta_link)
      VALUES (?,?,?,?,?,?)
      ON DUPLICATE KEY UPDATE section_key=section_key`,
-    ['instagram', '@qelmora on Instagram', 'Instagram', null, null, 'https://instagram.com']
+    [
+      'instagram',
+      '@qelmora on Instagram',
+      'From Our Instagram',
+      'Latest drops, real looks & love from our community.',
+      'Follow Us on Instagram',
+      'https://instagram.com/qelmora',
+    ]
   );
   await pool.execute(
     `INSERT INTO site_sections (section_key, eyebrow, headline, body, cta_label, cta_link)
@@ -165,6 +172,21 @@ export async function ensureSiteSectionsTable() {
       'Featured collection',
       'Featured collection band background',
       'Background for the homepage featured collection section.',
+      null,
+      null,
+      null,
+      'image',
+    ]
+  );
+  await pool.execute(
+    `INSERT INTO site_sections (section_key, eyebrow, headline, body, cta_label, cta_link, image_url, media_type)
+     VALUES (?,?,?,?,?,?,?,?)
+     ON DUPLICATE KEY UPDATE section_key=section_key`,
+    [
+      'instagram_band',
+      'Instagram',
+      'Instagram band background',
+      'Background for the homepage Instagram feed section above the newsletter.',
       null,
       null,
       null,

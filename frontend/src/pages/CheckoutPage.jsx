@@ -1,11 +1,24 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  ArrowRight,
+  Banknote,
+  CreditCard,
+  Home,
+  Lock,
+  Mail,
+  MapPin,
+  Phone,
+  ShoppingCart,
+} from 'lucide-react';
 import { api } from '../api/client';
 import { AddressForm } from '../components/AddressForm';
 import { ProtectedRoute } from '../components/ProtectedRoute';
 import { useAuth } from '../context/AuthContext';
 import { formatInr } from '../lib/money';
+
+const CHECKOUT_SILK = '/profile/our-story-golden-silk.png';
 
 function loadRazorpay() {
   return new Promise((resolve) => {
@@ -16,6 +29,12 @@ function loadRazorpay() {
     s.onerror = () => resolve(false);
     document.body.appendChild(s);
   });
+}
+
+function formatAddressLine(a) {
+  if (!a) return '';
+  const parts = [a.line1, a.line2, [a.city, a.state, a.postalCode].filter(Boolean).join(', ')].filter(Boolean);
+  return parts.join(', ');
 }
 
 function CheckoutForm() {
@@ -34,6 +53,11 @@ function CheckoutForm() {
   });
 
   const items = addresses?.items || [];
+
+  const selectedAddress = useMemo(
+    () => items.find((a) => String(a.id) === String(addressId)) || null,
+    [items, addressId]
+  );
 
   useEffect(() => {
     if (!items.length || addressId) return;
@@ -93,7 +117,7 @@ function CheckoutForm() {
 
   function submit(e) {
     e.preventDefault();
-    if (!addressId) return setError('Select a delivery address');
+    if (!addressId) return setError('Select or add a delivery address');
     if (paymentMethod === 'cod') placeCod.mutate();
     else payOnline();
   }
@@ -105,106 +129,189 @@ function CheckoutForm() {
     setError('');
   }
 
+  const phoneDisplay = selectedAddress?.phone || '—';
+  const emailDisplay = user?.email || '';
+
   return (
-    <form onSubmit={submit} className="grid gap-12 lg:grid-cols-[1fr_340px]">
-      <div className="space-y-8">
-        <section>
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="text-[10px] uppercase tracking-widest text-stone-500">Delivery address</h2>
-            {items.length > 0 && !showAddAddress && (
-              <button
-                type="button"
-                onClick={() => setShowAddAddress(true)}
-                className="text-[10px] uppercase tracking-widest text-q-accent hover:underline"
-              >
-                + Add new address
-              </button>
-            )}
+    <form onSubmit={submit} className="checkout-layout">
+      <div>
+        <section className="checkout-card">
+          <div className="checkout-card-head">
+            <p className="checkout-card-title">
+              <MapPin size={18} aria-hidden />
+              Delivery Address
+            </p>
+            <span className="checkout-card-hint">Enter your shipping address</span>
           </div>
 
           {loadingAddresses ? (
-            <p className="mt-4 text-sm text-stone-500">Loading addresses…</p>
+            <p className="text-sm text-stone-500">Loading addresses…</p>
           ) : (
             <>
-              {items.length > 0 && (
-                <div className="mt-4 space-y-3">
+              {selectedAddress && !showAddAddress && (
+                <div role="presentation" className="checkout-field checkout-field--selectable">
+                  <span className="checkout-field-icon">
+                    <Home size={18} aria-hidden />
+                  </span>
+                  <span className="checkout-field-body">
+                    <span className="checkout-field-label">
+                      Address <span className="req">*</span>
+                    </span>
+                    <span className="checkout-field-value">{formatAddressLine(selectedAddress)}</span>
+                  </span>
+                </div>
+              )}
+
+              {items.length > 1 && !showAddAddress && (
+                <div className="checkout-address-pick">
                   {items.map((a) => (
-                    <label
+                    <button
                       key={a.id}
-                      className={`flex cursor-pointer gap-3 border p-4 transition ${
-                        String(addressId) === String(a.id) ? 'border-q-accent' : 'border-white/10'
+                      type="button"
+                      className={`checkout-address-chip ${
+                        String(addressId) === String(a.id) ? 'checkout-address-chip--active' : ''
                       }`}
+                      onClick={() => setAddressId(String(a.id))}
                     >
-                      <input
-                        type="radio"
-                        name="addr"
-                        value={a.id}
-                        checked={String(addressId) === String(a.id)}
-                        onChange={() => setAddressId(String(a.id))}
-                        className="mt-1"
-                      />
-                      <div className="text-sm text-stone-300">
-                        <p className="font-medium text-stone-100">
-                          {a.fullName}
-                          {a.isDefault && (
-                            <span className="ml-2 text-[10px] uppercase tracking-wider text-q-accent">Default</span>
-                          )}
-                        </p>
-                        <p className="mt-1 text-stone-500">
-                          {a.line1}
-                          {a.line2 ? `, ${a.line2}` : ''}, {a.city}, {a.state} {a.postalCode}
-                        </p>
-                        <p className="text-stone-500">{a.phone}</p>
-                      </div>
-                    </label>
+                      {a.city || a.line1}
+                      {a.isDefault ? ' · Default' : ''}
+                    </button>
                   ))}
                 </div>
               )}
 
+              {items.length > 0 && !showAddAddress && (
+                <button type="button" className="checkout-link-btn" onClick={() => setShowAddAddress(true)}>
+                  + Add new address
+                </button>
+              )}
+
               {showAddAddress && (
-                <div className={`rounded border border-white/10 bg-[#0e0e0e] p-5 ${items.length ? 'mt-6' : 'mt-4'}`}>
-                  <h3 className="text-[10px] uppercase tracking-widest text-stone-500">
-                    {items.length ? 'New delivery address' : 'Add your delivery address'}
-                  </h3>
-                  <p className="mt-2 text-xs text-stone-600">We deliver across India. All fields are required except line 2.</p>
-                  <div className="mt-4">
-                    <AddressForm
-                      initialFullName={user?.name || ''}
-                      isDefault={items.length === 0}
-                      submitLabel="Save & use this address"
-                      onSuccess={onAddressCreated}
-                      onCancel={items.length > 0 ? () => setShowAddAddress(false) : undefined}
-                    />
-                  </div>
+                <div className="checkout-address-form">
+                  <p className="mb-3 text-xs text-stone-500">
+                    {items.length ? 'Save a new delivery address' : 'Add your delivery address to continue'}
+                  </p>
+                  <AddressForm
+                    initialFullName={user?.name || ''}
+                    isDefault={items.length === 0}
+                    submitLabel="Save & use this address"
+                    onSuccess={onAddressCreated}
+                    onCancel={items.length > 0 ? () => setShowAddAddress(false) : undefined}
+                  />
                 </div>
               )}
             </>
           )}
         </section>
 
-        <section>
-          <h2 className="text-[10px] uppercase tracking-widest text-stone-500">Payment</h2>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            <label className={`border p-4 text-sm ${paymentMethod === 'cod' ? 'border-q-accent' : 'border-white/10'}`}>
-              <input type="radio" className="mr-2" checked={paymentMethod === 'cod'} onChange={() => setPaymentMethod('cod')} />
-              Cash on delivery
+        <section className="checkout-card">
+          <div className="checkout-card-head">
+            <p className="checkout-card-title">
+              <Phone size={18} aria-hidden />
+              Contact Details
+            </p>
+            <span className="checkout-card-hint">We&apos;ll use this to update your order</span>
+          </div>
+
+          <div className="checkout-contact-grid">
+            <div className="checkout-field">
+              <span className="checkout-field-icon">
+                <Phone size={18} aria-hidden />
+              </span>
+              <span className="checkout-field-body">
+                <span className="checkout-field-label">
+                  Phone Number <span className="req">*</span>
+                </span>
+                <span className="checkout-field-value">{phoneDisplay}</span>
+              </span>
+            </div>
+
+            <div className="checkout-field">
+              <span className="checkout-field-icon">
+                <Mail size={18} aria-hidden />
+              </span>
+              <span className="checkout-field-body">
+                <span className="checkout-field-label">Email Address (Optional)</span>
+                <span className="checkout-field-value">{emailDisplay || 'you@email.com'}</span>
+              </span>
+            </div>
+          </div>
+        </section>
+
+        <section className="checkout-card">
+          <div className="checkout-card-head">
+            <p className="checkout-card-title">
+              <CreditCard size={18} aria-hidden />
+              Payment
+            </p>
+            <span className="checkout-card-hint">Choose how you want to pay</span>
+          </div>
+          <div className="checkout-pay-options">
+            <label
+              className={`checkout-pay-option ${paymentMethod === 'cod' ? 'checkout-pay-option--active' : ''}`}
+            >
+              <input
+                type="radio"
+                name="payment"
+                className="sr-only"
+                checked={paymentMethod === 'cod'}
+                onChange={() => setPaymentMethod('cod')}
+              />
+              <span className="checkout-pay-radio" aria-hidden />
+              <span className="checkout-pay-icon-wrap">
+                <Banknote size={20} strokeWidth={1.75} aria-hidden />
+              </span>
+              <span className="checkout-pay-copy">
+                <span className="checkout-pay-name">Cash on delivery</span>
+                <span className="checkout-pay-desc">Pay in cash when your order is delivered</span>
+              </span>
             </label>
-            <label className={`border p-4 text-sm ${paymentMethod === 'online' ? 'border-q-accent' : 'border-white/10'}`}>
-              <input type="radio" className="mr-2" checked={paymentMethod === 'online'} onChange={() => setPaymentMethod('online')} />
-              Razorpay (UPI / Card)
+            <label
+              className={`checkout-pay-option ${paymentMethod === 'online' ? 'checkout-pay-option--active' : ''}`}
+            >
+              <input
+                type="radio"
+                name="payment"
+                className="sr-only"
+                checked={paymentMethod === 'online'}
+                onChange={() => setPaymentMethod('online')}
+              />
+              <span className="checkout-pay-radio" aria-hidden />
+              <span className="checkout-pay-icon-wrap">
+                <CreditCard size={20} strokeWidth={1.75} aria-hidden />
+              </span>
+              <span className="checkout-pay-copy">
+                <span className="checkout-pay-name">Razorpay</span>
+                <span className="checkout-pay-desc">UPI, debit / credit card &amp; net banking</span>
+              </span>
             </label>
           </div>
         </section>
-        {error && <p className="text-sm text-red-400">{error}</p>}
+
+        {error && <p className="checkout-error">{error}</p>}
       </div>
 
-      <aside className="border border-white/10 bg-[#0e0e0e] p-6 h-fit">
-        <h2 className="text-[10px] uppercase tracking-widest text-stone-500">Order total</h2>
-        <p className="mt-4 text-3xl text-stone-100">{formatInr(cart?.total || 0)}</p>
-        <p className="mt-2 text-xs text-stone-500">{cart?.itemCount || 0} items</p>
-        <button type="submit" disabled={placeCod.isPending} className="btn-primary btn-accent mt-8 w-full disabled:opacity-50">
-          Place order
-        </button>
+      <aside className="checkout-summary">
+        <div className="checkout-summary-head">
+          <ShoppingCart size={20} strokeWidth={1.75} aria-hidden />
+          <h2>Order Summary</h2>
+        </div>
+        <div className="checkout-summary-body">
+          <p className="checkout-summary-label">Total Amount</p>
+          <p className="checkout-summary-total">{formatInr(cart?.total || 0)}</p>
+          <p className="checkout-summary-note">(Incl. of all taxes)</p>
+          <p className="checkout-summary-items">{cart?.itemCount || 0} items in your bag</p>
+          <div className="checkout-summary-divider" />
+          <button
+            type="submit"
+            disabled={placeCod.isPending || !addressId}
+            className="checkout-place-order"
+          >
+            <Lock size={16} aria-hidden />
+            Place Order
+            <ArrowRight size={16} aria-hidden />
+          </button>
+        </div>
       </aside>
     </form>
   );
@@ -213,10 +320,22 @@ function CheckoutForm() {
 export default function CheckoutPage() {
   return (
     <ProtectedRoute>
-      <main className="site-container py-14">
-        <h1 className="font-display text-4xl font-light">Checkout</h1>
-        <div className="mt-10">
-          <CheckoutForm />
+      <main className="checkout-page">
+        <div className="checkout-page-silk" style={{ backgroundImage: `url(${CHECKOUT_SILK})` }} aria-hidden />
+        <div className="checkout-page-scrim" aria-hidden />
+        <div className="checkout-page-content site-container py-10 md:py-14">
+          <nav className="checkout-crumb" aria-label="Breadcrumb">
+            <Link to="/">Home</Link>
+            <span className="checkout-crumb-sep" aria-hidden>
+              ›
+            </span>
+            <strong>Checkout</strong>
+          </nav>
+          <h1 className="checkout-title">Checkout</h1>
+          <p className="checkout-subtitle">Enter your details to complete your order</p>
+          <div className="mt-2">
+            <CheckoutForm />
+          </div>
         </div>
       </main>
     </ProtectedRoute>

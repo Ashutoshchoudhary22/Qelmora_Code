@@ -1,12 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Check, CloudUpload, ImageIcon, X } from 'lucide-react';
+import { Check, CloudUpload, ImageIcon, Mail, X } from 'lucide-react';
 import { api } from '../../api/client';
 import { AdminOfferTileCard } from './AdminOfferTileCard';
 import { uploadToCloudinary } from '../../lib/cloudinary';
-
-const SECTION_KEY = 'site_footer';
-const HEADLINE = 'Site footer background';
 
 const FOOTER_GUIDELINES = [
   { label: 'Size', value: '2400×900 px or wider (landscape)' },
@@ -15,7 +12,24 @@ const FOOTER_GUIDELINES = [
   { label: 'Tip', value: 'Dark or muted images keep footer links readable' },
 ];
 
-export function FooterBackgroundEditor() {
+const NEWSLETTER_GUIDELINES = [
+  { label: 'Size', value: '2400×700 px or wider (landscape)' },
+  { label: 'Format', value: 'JPG, PNG, or WebP' },
+  { label: 'File size', value: 'Under 800 KB' },
+  { label: 'Tip', value: 'Soft cream / gold textures work best behind the form' },
+];
+
+function SectionImageEditor({
+  sectionKey,
+  headline,
+  title,
+  hint,
+  guidelines,
+  previewHref,
+  previewLabel,
+  cloudFolder,
+  saveLabel,
+}) {
   const qc = useQueryClient();
   const [imageUrl, setImageUrl] = useState('');
   const [mediaType, setMediaType] = useState('image');
@@ -23,8 +37,8 @@ export function FooterBackgroundEditor() {
   const [uploading, setUploading] = useState(false);
 
   const { data, isLoading } = useQuery({
-    queryKey: ['content', SECTION_KEY],
-    queryFn: async () => (await api.get(`/content/${SECTION_KEY}`)).data,
+    queryKey: ['content', sectionKey],
+    queryFn: async () => (await api.get(`/content/${sectionKey}`)).data,
   });
 
   useEffect(() => {
@@ -34,11 +48,8 @@ export function FooterBackgroundEditor() {
   }, [data]);
 
   const save = useMutation({
-    mutationFn: (payload) => api.patch(`/content/admin/${SECTION_KEY}`, payload),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['content', SECTION_KEY] });
-      qc.invalidateQueries({ queryKey: ['content', 'site_footer'] });
-    },
+    mutationFn: (payload) => api.patch(`/content/admin/${sectionKey}`, payload),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['content', sectionKey] }),
   });
 
   async function onFile(e) {
@@ -47,7 +58,7 @@ export function FooterBackgroundEditor() {
     setUploading(true);
     setMsg('');
     try {
-      const meta = await uploadToCloudinary(file, 'qelmora/footer', '/content/admin/cloudinary-signature');
+      const meta = await uploadToCloudinary(file, cloudFolder, '/content/admin/cloudinary-signature');
       setImageUrl(meta.secure_url);
       setMediaType(meta.resource_type === 'video' ? 'video' : 'image');
     } catch (err) {
@@ -68,15 +79,15 @@ export function FooterBackgroundEditor() {
     setMsg('');
     try {
       await save.mutateAsync({
-        headline: HEADLINE,
-        body: data?.body || 'Optional full-width background image for the storefront footer.',
+        headline,
+        body: data?.body || hint,
         imageUrl: imageUrl || null,
         mediaType: imageUrl ? mediaType : 'image',
       });
       setMsg(
         imageUrl
-          ? 'Saved — refresh any storefront page to see the footer background.'
-          : 'Removed — default footer background is active.'
+          ? `Saved — refresh the storefront to preview (${previewLabel}).`
+          : 'Removed — default background is active.'
       );
     } catch (e) {
       setMsg(e.response?.data?.message || 'Save failed');
@@ -84,7 +95,7 @@ export function FooterBackgroundEditor() {
   }
 
   if (isLoading) {
-    return <p className="admin-product-hint">Loading footer settings…</p>;
+    return <p className="admin-product-hint">Loading…</p>;
   }
 
   return (
@@ -95,10 +106,8 @@ export function FooterBackgroundEditor() {
             <ImageIcon size={16} />
           </span>
           <span className="min-w-0 flex-1">
-            Footer background
-            <span className="admin-product-hint mt-0.5 block font-normal normal-case tracking-normal">
-              Shown behind the site footer on every page. Remove the image and save to return to the default look.
-            </span>
+            {title}
+            <span className="admin-product-hint mt-0.5 block font-normal normal-case tracking-normal">{hint}</span>
           </span>
         </div>
 
@@ -107,7 +116,7 @@ export function FooterBackgroundEditor() {
             <AdminOfferTileCard
               secureUrl={imageUrl}
               resourceType={mediaType}
-              downloadName="site-footer-bg"
+              downloadName={sectionKey}
               onRemove={() => {
                 setImageUrl('');
                 setMediaType('image');
@@ -115,7 +124,7 @@ export function FooterBackgroundEditor() {
             />
           </div>
         ) : (
-          <p className="admin-product-hint mt-4">No background image — visitors see the default footer style.</p>
+          <p className="admin-product-hint mt-4">No background image — default styling is used.</p>
         )}
 
         <label className="admin-offer-upload-btn mt-4">
@@ -127,7 +136,7 @@ export function FooterBackgroundEditor() {
         <div className="admin-product-actions mt-6">
           <button type="button" className="admin-btn-add" onClick={submit} disabled={save.isPending || uploading}>
             <Check size={16} />
-            {save.isPending ? 'Saving…' : 'Save footer background'}
+            {save.isPending ? 'Saving…' : saveLabel}
           </button>
           <button type="button" className="admin-btn-cancel" onClick={resetForm}>
             <X size={16} />
@@ -140,7 +149,7 @@ export function FooterBackgroundEditor() {
       <aside className="admin-shop-category-guidelines">
         <h3 className="text-sm font-semibold text-stone-900">Image guidelines</h3>
         <ul className="admin-guidelines-list">
-          {FOOTER_GUIDELINES.map((row) => (
+          {guidelines.map((row) => (
             <li key={row.label}>
               <span>{row.label}</span>
               <span>{row.value}</span>
@@ -149,8 +158,8 @@ export function FooterBackgroundEditor() {
         </ul>
         <p className="admin-product-hint mt-4">
           Preview on{' '}
-          <a href="/" target="_blank" rel="noreferrer" className="text-[#c97a35] underline underline-offset-2">
-            homepage footer
+          <a href={previewHref} target="_blank" rel="noreferrer" className="text-[#c97a35] underline underline-offset-2">
+            {previewLabel}
           </a>
         </p>
         <div
@@ -159,6 +168,53 @@ export function FooterBackgroundEditor() {
           aria-hidden
         />
       </aside>
+    </div>
+  );
+}
+
+export function FooterBackgroundEditor() {
+  return (
+    <SectionImageEditor
+      sectionKey="site_footer"
+      headline="Site footer background"
+      title="Footer background"
+      hint="Shown behind the site footer on every page. Remove the image and save to use the default look."
+      guidelines={FOOTER_GUIDELINES}
+      previewHref="/"
+      previewLabel="homepage footer"
+      cloudFolder="qelmora/footer"
+      saveLabel="Save footer background"
+    />
+  );
+}
+
+export function NewsletterBackgroundEditor() {
+  return (
+    <SectionImageEditor
+      sectionKey="newsletter_band"
+      headline="Newsletter band background"
+      title="Newsletter section (above footer)"
+      hint="Background for the “Join the inner circle” band directly above the footer."
+      guidelines={NEWSLETTER_GUIDELINES}
+      previewHref="/"
+      previewLabel="newsletter section"
+      cloudFolder="qelmora/newsletter"
+      saveLabel="Save newsletter background"
+    />
+  );
+}
+
+export function FooterAndNewsletterEditors() {
+  return (
+    <div className="space-y-12">
+      <div className="admin-product-card-head mb-2">
+        <span className="admin-product-card-head-icon">
+          <Mail size={16} />
+        </span>
+        <span className="font-semibold text-stone-900">Storefront bands</span>
+      </div>
+      <FooterBackgroundEditor />
+      <NewsletterBackgroundEditor />
     </div>
   );
 }

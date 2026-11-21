@@ -1,8 +1,29 @@
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { ArrowRight, Mail } from 'lucide-react';
+import { api } from '../api/client';
+
+const DEFAULT_NEWSLETTER_BG = '/profile/our-story-golden-silk.png';
 
 export function Newsletter() {
   const [email, setEmail] = useState('');
   const [done, setDone] = useState(false);
+
+  const { data: bandCfg } = useQuery({
+    queryKey: ['content', 'newsletter_band'],
+    queryFn: async () => {
+      try {
+        return (await api.get('/content/newsletter_band')).data;
+      } catch {
+        return null;
+      }
+    },
+    staleTime: 30_000,
+    refetchOnWindowFocus: true,
+  });
+
+  const bgUrl = bandCfg?.imageUrl || DEFAULT_NEWSLETTER_BG;
+  const hasCustomBg = Boolean(bandCfg?.imageUrl);
 
   function submit(e) {
     e.preventDefault();
@@ -11,28 +32,43 @@ export function Newsletter() {
   }
 
   return (
-    <section className="site-newsletter border-y border-white/10">
-      <div className="site-container py-20 md:py-24">
-        <div className="mx-auto max-w-xl text-center">
-          <p className="text-[10px] uppercase tracking-[0.4em] text-q-accent">Private list</p>
-          <h2 className="font-display mt-4 text-4xl font-light text-stone-100">Join the inner circle</h2>
-          <p className="mt-4 text-sm leading-7 text-stone-500">
+    <section
+      className={`site-newsletter-premium relative overflow-hidden border-y border-[rgb(74_52_38/0.12)] ${
+        hasCustomBg ? 'site-newsletter-premium--custom' : ''
+      }`}
+    >
+      <div className="site-newsletter-premium-bg" style={{ backgroundImage: `url(${bgUrl})` }} aria-hidden />
+      <div className="site-newsletter-premium-scrim" aria-hidden />
+      <div className="site-newsletter-premium-inner site-container py-16 md:py-20">
+        <div className="mx-auto max-w-2xl text-center">
+          <p className="site-newsletter-eyebrow">
+            <span>Private list</span>
+          </p>
+          <h2 className="site-newsletter-title font-display">
+            Join the <em>inner circle</em>
+          </h2>
+          <p className="site-newsletter-sub">
             First access to drops, archive sales, and stories from the atelier.
           </p>
           {done ? (
-            <p className="mt-8 text-sm tracking-wide text-stone-300">You&apos;re on the list. Welcome in.</p>
+            <p className="site-newsletter-done">You&apos;re on the list. Welcome in.</p>
           ) : (
-            <form onSubmit={submit} className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email address"
-                className="input-field flex-1"
-              />
-              <button type="submit" className="btn-primary btn-accent sm:shrink-0">
+            <form onSubmit={submit} className="site-newsletter-form">
+              <label className="site-newsletter-field">
+                <Mail size={18} strokeWidth={1.65} className="site-newsletter-field-icon" aria-hidden />
+                <span className="sr-only">Email address</span>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Email address"
+                  className="site-newsletter-input"
+                />
+              </label>
+              <button type="submit" className="site-newsletter-submit">
                 Subscribe
+                <ArrowRight size={18} strokeWidth={2} aria-hidden />
               </button>
             </form>
           )}

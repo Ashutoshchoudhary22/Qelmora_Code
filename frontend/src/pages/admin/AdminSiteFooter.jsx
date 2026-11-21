@@ -1,5 +1,5 @@
 import { PanelBottom } from 'lucide-react';
-import { FooterBackgroundEditor } from '../../components/admin/FooterBackgroundEditor';
+import { FooterAndNewsletterEditors } from '../../components/admin/FooterBackgroundEditor';
 
 const ADMIN_WELCOME_BG = '/profile/QELMORA-admin.png';
 
@@ -15,15 +15,15 @@ export default function AdminSiteFooter() {
               <PanelBottom size={20} strokeWidth={1.5} />
             </span>
             <div>
-              <h1 className="font-display">Site footer</h1>
-              <p>Optional background image for the storefront footer across all pages.</p>
+              <h1 className="font-display">Footer &amp; newsletter</h1>
+              <p>Background images for the newsletter band and site footer on every page.</p>
             </div>
           </div>
         </div>
       </header>
 
       <div className="admin-products-body">
-        <FooterBackgroundEditor />
+        <FooterAndNewsletterEditors />
       </div>
     </div>
   );

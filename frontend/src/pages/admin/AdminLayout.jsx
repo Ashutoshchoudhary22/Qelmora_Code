@@ -40,7 +40,7 @@ const links = [
   { to: '/admin/static-pages', label: 'About & Contact', icon: FileText, end: false },
   { to: '/admin/contact-inbox', label: 'Contact inbox', icon: Mail, end: false },
   { to: '/admin/login-banner', label: 'Login banner', icon: LogIn, end: false },
-  { to: '/admin/site-footer', label: 'Site footer', icon: PanelBottom, end: false },
+  { to: '/admin/site-footer', label: 'Footer & newsletter', icon: PanelBottom, end: false },
   { to: '/admin/account-hero', label: 'Account page', icon: User, end: false },
   { to: '/admin/brand-story', label: 'Brand story', icon: BookOpen, end: false },
   { to: '/admin/instagram', label: 'Instagram', icon: Instagram, end: false },

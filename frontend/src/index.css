@@ -1210,6 +1210,17 @@ a {
   height: 0;
 }
 
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
 .admin-main {
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;

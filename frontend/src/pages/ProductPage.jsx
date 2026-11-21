@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../api/client';
-import { ProductGrid } from '../components/ProductGrid';
+import { ProductCard } from '../components/ProductCard';
 import { useAuth } from '../context/AuthContext';
 import { useCartDrawer } from '../context/CartDrawerContext';
 import { formatInr } from '../lib/money';
@@ -42,16 +42,6 @@ export default function ProductPage() {
     if (product?.related?.length) return product.related;
     return moreInCategory?.items || [];
   }, [product?.related, moreInCategory?.items]);
-
-  const { data: teeProducts } = useQuery({
-    queryKey: ['products', 'tees', categorySlug, slug],
-    enabled: Boolean(categorySlug && product),
-    queryFn: async () => {
-      const res = await api.get(`/products?category=${categorySlug}&search=shirt&limit=12`);
-      const items = (res.data?.items || []).filter((p) => p.slug !== slug);
-      return { items: items.slice(0, 8) };
-    },
-  });
 
   const sizes = useMemo(() => [...new Set(product?.variants?.map((v) => v.size) || [])], [product]);
   const colors = useMemo(() => {
@@ -251,32 +241,22 @@ export default function ProductPage() {
         <div className="mt-8">
           {loadingMore && !youMayLikeItems.length ? (
             <p className="text-sm text-stone-500">Loading…</p>
+          ) : youMayLikeItems.length ? (
+            <div className="scrollbar-hide flex gap-4 overflow-x-auto pb-2 md:gap-6 snap-x snap-mandatory">
+              {youMayLikeItems.map((p) => (
+                <div
+                  key={p.id || p.slug}
+                  className="w-[calc((100%-3*1rem)/4)] min-w-[calc((100%-3*1rem)/4)] shrink-0 snap-start md:w-[calc((100%-3*1.5rem)/4)] md:min-w-[calc((100%-3*1.5rem)/4)]"
+                >
+                  <ProductCard product={p} />
+                </div>
+              ))}
+            </div>
           ) : (
-            <ProductGrid
-              items={youMayLikeItems}
-              empty="Publish more active products in admin to fill this row."
-            />
+            <p className="text-sm text-stone-500">Publish more active products in admin to fill this row.</p>
           )}
         </div>
       </section>
-
-      {teeProducts?.items?.length > 0 && (
-        <section className="mt-20 border-t border-white/10 pt-16">
-          <p className="text-[10px] uppercase tracking-[0.35em] text-stone-500">Shop the edit</p>
-          <h2 className="font-display mt-2 text-3xl font-light">T-shirts</h2>
-          <div className="mt-8">
-            <ProductGrid items={teeProducts.items} />
-          </div>
-          {categorySlug && (
-            <Link
-              to={`/shop/${categorySlug}?q=shirt`}
-              className="mt-8 inline-block text-[10px] uppercase tracking-widest text-stone-500 hover:text-q-accent"
-            >
-              View all T-shirts →
-            </Link>
-          )}
-        </section>
-      )}
     </main>
   );
 }

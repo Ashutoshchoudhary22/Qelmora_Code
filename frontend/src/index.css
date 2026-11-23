@@ -2238,6 +2238,7 @@ html[data-theme="dark"] .auth-layout .text-stone-400 {
 }
 
 [data-theme="dark"] .home-new-arrivals-band .font-display,
+[data-theme="dark"] .home-new-arrivals-band h2,
 [data-theme="dark"] .home-new-arrivals-band h3 {
   color: #fafaf9;
 }
@@ -2525,15 +2526,6 @@ html[data-theme="dark"] .auth-layout .text-stone-400 {
   color: #292524;
 }
 
-.home-new-arrivals-intro {
-  background: #f6f1ea;
-}
-
-[data-theme="dark"] .home-new-arrivals-intro {
-  background: #0a0a0a;
-  color: #fafaf9;
-}
-
 .home-new-arrivals-bands {
   display: flex;
   flex-direction: column;
@@ -2554,13 +2546,23 @@ html[data-theme="dark"] .auth-layout .text-stone-400 {
   }
 }
 
-.home-new-arrivals-band--split:first-child .home-new-arrivals-band-inner {
+.home-new-arrivals-band--lead .home-new-arrivals-band-inner {
+  padding-top: 5rem;
   padding-bottom: 2.5rem;
 }
 
+.home-new-arrivals-section-head {
+  margin-bottom: 2.5rem;
+}
+
 @media (min-width: 768px) {
-  .home-new-arrivals-band--split:first-child .home-new-arrivals-band-inner {
+  .home-new-arrivals-band--lead .home-new-arrivals-band-inner {
+    padding-top: 5rem;
     padding-bottom: 3rem;
+  }
+
+  .home-new-arrivals-section-head {
+    margin-bottom: 3rem;
   }
 }
 

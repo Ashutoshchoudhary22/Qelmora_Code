@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
 import { api } from '../../api/client';
 import { hasCustomBandBackground, useBandBackgroundUrl } from '../../lib/useBandBackground';
 import { ProductGrid } from '../ProductGrid';
+import { ViewAllLink } from '../shop/ViewAllLink';
 
 const DEFAULT_NEW_ARRIVALS_BG = '/profile/our-story-golden-silk.png';
 
@@ -12,7 +12,16 @@ function resolveBandCfg(bandCfg, legacyBand) {
   return bandCfg;
 }
 
-function HomeNewArrivalsGenderBand({ sectionKey, legacyBand, title, viewAllTo, items, isLoading }) {
+function HomeNewArrivalsGenderBand({
+  sectionKey,
+  legacyBand,
+  title,
+  viewAllTo,
+  items,
+  total,
+  isLoading,
+  showSectionHeader = false,
+}) {
   const { data: bandCfg } = useQuery({
     queryKey: ['content', sectionKey],
     queryFn: async () => {
@@ -33,21 +42,28 @@ function HomeNewArrivalsGenderBand({ sectionKey, legacyBand, title, viewAllTo, i
   return (
     <div
       className={`home-new-arrivals-band home-new-arrivals-band--split relative overflow-hidden${
-        hasCustomBg ? ' home-new-arrivals-band--has-bg' : ''
-      }`}
+        showSectionHeader ? ' home-new-arrivals-band--lead' : ''
+      }${hasCustomBg ? ' home-new-arrivals-band--has-bg' : ''}`}
     >
       <div className="home-new-arrivals-band-bg" style={{ backgroundImage: `url(${bgUrl})` }} aria-hidden />
       <div className="home-new-arrivals-band-scrim" aria-hidden />
 
-      <div className="home-new-arrivals-band-inner site-container relative z-[2] pt-14 md:pt-16">
-        <div className="mb-8 flex items-end justify-between gap-4">
+      <div className="home-new-arrivals-band-inner site-container relative z-[2]">
+        {showSectionHeader && (
+          <header className="home-new-arrivals-section-head">
+            <p className="home-new-arrivals-eyebrow">Just landed</p>
+            <h2 className="home-new-arrivals-title font-display">New arrivals</h2>
+          </header>
+        )}
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
           <h3 className="font-display text-2xl font-light">{title}</h3>
-          <Link
+          <ViewAllLink
             to={viewAllTo}
-            className="text-[10px] uppercase tracking-widest text-stone-500 hover:text-q-accent"
-          >
-            View all {title.toLowerCase()}
-          </Link>
+            total={total}
+            alwaysShow
+            label={`View all ${title.toLowerCase()}`}
+            className="self-end"
+          />
         </div>
         {isLoading ? <p className="text-stone-500">Loading…</p> : <ProductGrid items={items} />}
       </div>
@@ -81,11 +97,6 @@ export function HomeNewArrivalsSection() {
 
   return (
     <section className="home-new-arrivals">
-      <div className="home-new-arrivals-intro site-container pt-20 pb-6 md:pb-8">
-        <p className="home-new-arrivals-eyebrow">Just landed</p>
-        <h2 className="home-new-arrivals-title font-display">New arrivals</h2>
-      </div>
-
       <div className="home-new-arrivals-bands">
         <HomeNewArrivalsGenderBand
           sectionKey="home_men_new_arrivals_band"
@@ -93,7 +104,9 @@ export function HomeNewArrivalsSection() {
           title="Men"
           viewAllTo="/shop/men#new-arrivals"
           items={newMen?.items}
+          total={newMen?.total}
           isLoading={loadingNewMen}
+          showSectionHeader
         />
         <HomeNewArrivalsGenderBand
           sectionKey="home_women_new_arrivals_band"
@@ -101,6 +114,7 @@ export function HomeNewArrivalsSection() {
           title="Women"
           viewAllTo="/shop/women#new-arrivals"
           items={newWomen?.items}
+          total={newWomen?.total}
           isLoading={loadingNewWomen}
         />
       </div>

@@ -120,6 +120,21 @@ export async function ensureSiteSectionsTable() {
      VALUES (?,?,?,?,?,?,?,?)
      ON DUPLICATE KEY UPDATE section_key=section_key`,
     [
+      'site_header_band',
+      'Header',
+      'Site header background',
+      'Background behind the sticky top navigation (after scroll on homepage; always on inner pages). Homepage hero overlay at top stays transparent.',
+      null,
+      null,
+      null,
+      'image',
+    ]
+  );
+  await pool.execute(
+    `INSERT INTO site_sections (section_key, eyebrow, headline, body, cta_label, cta_link, image_url, media_type)
+     VALUES (?,?,?,?,?,?,?,?)
+     ON DUPLICATE KEY UPDATE section_key=section_key`,
+    [
       'login_form_band',
       'Login',
       'Login form area background',

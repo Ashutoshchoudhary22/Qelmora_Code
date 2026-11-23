@@ -841,6 +841,46 @@ a {
   border-color: rgb(0 0 0 / 0.08);
 }
 
+.site-header--has-bg {
+  position: relative;
+  overflow: hidden;
+  background: transparent !important;
+}
+
+.site-header-band-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center top;
+  pointer-events: none;
+}
+
+.site-header-band-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgb(255 251 245 / 0.55) 0%,
+    rgb(246 240 232 / 0.42) 100%
+  );
+}
+
+[data-theme="dark"] .site-header-band-scrim {
+  background: rgb(0 0 0 / 0.42);
+}
+
+[data-theme="light"] .site-header.site-header--has-bg {
+  border-color: rgb(0 0 0 / 0.1) !important;
+}
+
+[data-theme="light"] .site-home-header-shell:has(.site-header--has-bg) {
+  background: transparent !important;
+}
+
 [data-theme="light"] .site-header-hero {
   background: transparent !important;
   border-color: transparent !important;

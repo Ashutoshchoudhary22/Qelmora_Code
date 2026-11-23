@@ -474,6 +474,17 @@ const STATIC_PAGE_BAND_GUIDELINES = [
   DARK_BAND_GUIDELINE,
 ];
 
+const HEADER_BAND_GUIDELINES = [
+  { label: 'Size', value: '2400×320 px or wider (wide strip — top nav height)' },
+  { label: 'Format', value: 'JPG, PNG, or WebP' },
+  { label: 'File size', value: 'Under 500 KB' },
+  {
+    label: 'Tip',
+    value: 'Subtle texture or silk band; shows when sticky nav is visible (scroll on home, all inner pages). Hero overlay on home top stays clear.',
+  },
+  DARK_BAND_GUIDELINE,
+];
+
 const LOGIN_FORM_BAND_GUIDELINES = [
   { label: 'Size', value: '1600×1200 px or wider (form column)' },
   { label: 'Format', value: 'JPG, PNG, or WebP' },
@@ -481,6 +492,22 @@ const LOGIN_FORM_BAND_GUIDELINES = [
   { label: 'Tip', value: 'Subtle texture — left campaign panel stays in Login banner editor below' },
   DARK_BAND_GUIDELINE,
 ];
+
+export function HeaderBandBackgroundEditor() {
+  return (
+    <SectionImageEditor
+      sectionKey="site_header_band"
+      headline="Site header background"
+      title="Top navigation bar (storefront)"
+      hint="Background behind the sticky header. On the homepage it appears after you scroll; at the very top the hero still shows through. Optional dark-theme image below."
+      guidelines={HEADER_BAND_GUIDELINES}
+      previewHref="/shop/men"
+      previewLabel="storefront header (scroll or inner page)"
+      cloudFolder="qelmora/site-header"
+      saveLabel="Save header background"
+    />
+  );
+}
 
 export function LoginFormBandBackgroundEditor() {
   return (
@@ -675,6 +702,7 @@ export function FooterAndNewsletterEditors() {
         </span>
         <span className="font-semibold text-stone-900">Homepage bands &amp; footer</span>
       </div>
+      <HeaderBandBackgroundEditor />
       <HomeMenNewArrivalsBandBackgroundEditor />
       <HomeWomenNewArrivalsBandBackgroundEditor />
       <ShopByCategoryBandBackgroundEditor />

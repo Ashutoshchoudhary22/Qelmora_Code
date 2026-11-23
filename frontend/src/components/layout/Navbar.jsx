@@ -97,7 +97,8 @@ function AccountMenu({ onNavigate, heroOverlay = false }) {
   );
 }
 
-export function Navbar({ heroOverlay = false, inHomeShell = false }) {
+export function Navbar({ heroOverlay = false, inHomeShell = false, headerBgUrl = '', hasHeaderBg = false }) {
+  const showHeaderBg = hasHeaderBg && headerBgUrl && !heroOverlay;
   const [open, setOpen] = useState(false);
   const { user, logout, isAdmin } = useAuth();
   const { openCart } = useCartDrawer();
@@ -114,12 +115,20 @@ export function Navbar({ heroOverlay = false, inHomeShell = false }) {
       className={`site-header z-40 transition-[background-color,border-color,backdrop-filter,box-shadow] duration-300 ${
         heroOverlay
           ? 'site-header-hero border-b-0 bg-transparent backdrop-blur-none shadow-none'
-          : inHomeShell
-            ? 'site-header-scrolled-shell border-b border-white/10 bg-black/85 shadow-sm backdrop-blur-xl'
-            : 'sticky top-0 border-b-0 bg-black/80 backdrop-blur-xl'
+          : showHeaderBg
+            ? 'site-header--has-bg sticky top-0 border-b border-white/10 shadow-sm backdrop-blur-sm'
+            : inHomeShell
+              ? 'site-header-scrolled-shell border-b border-white/10 bg-black/85 shadow-sm backdrop-blur-xl'
+              : 'sticky top-0 border-b-0 bg-black/80 backdrop-blur-xl'
       }`}
     >
-      <div className="site-container flex items-center justify-between gap-4 py-4">
+      {showHeaderBg && (
+        <>
+          <div className="site-header-band-bg" style={{ backgroundImage: `url(${headerBgUrl})` }} aria-hidden />
+          <div className="site-header-band-scrim" aria-hidden />
+        </>
+      )}
+      <div className="site-container relative z-[2] flex items-center justify-between gap-4 py-4">
         <Link
           to="/"
           className={`site-logo-wordmark font-display text-2xl font-medium md:text-[1.65rem] ${
@@ -196,7 +205,7 @@ export function Navbar({ heroOverlay = false, inHomeShell = false }) {
       </div>
 
       {open && (
-        <div className="site-mobile-nav border-t-0 bg-[#0a0a0a] px-5 py-6 lg:hidden">
+        <div className="site-mobile-nav relative z-[2] border-t-0 bg-[#0a0a0a] px-5 py-6 lg:hidden">
           <nav className="flex flex-col gap-4">
             {links.map((l) => (
               <Link

@@ -193,6 +193,51 @@ export async function ensureSiteSectionsTable() {
       'image',
     ]
   );
+  await pool.execute(
+    `INSERT INTO site_sections (section_key, eyebrow, headline, body, cta_label, cta_link, image_url, media_type)
+     VALUES (?,?,?,?,?,?,?,?)
+     ON DUPLICATE KEY UPDATE section_key=section_key`,
+    [
+      'promo_band',
+      'Promo',
+      'Limited offer / promo band background',
+      'Full-width background behind the homepage limited offer promo strip. Photo/video in the card still comes from Admin → Banners (promo).',
+      null,
+      null,
+      null,
+      'image',
+    ]
+  );
+  await pool.execute(
+    `INSERT INTO site_sections (section_key, eyebrow, headline, body, cta_label, cta_link, image_url, media_type)
+     VALUES (?,?,?,?,?,?,?,?)
+     ON DUPLICATE KEY UPDATE section_key=section_key`,
+    [
+      'shop_by_category_band',
+      'Shop by category',
+      'Shop by category band background',
+      'Background behind the homepage Shop by category section. Tiles still come from Admin → Home shop by category.',
+      null,
+      null,
+      null,
+      'image',
+    ]
+  );
+  await pool.execute(
+    `INSERT INTO site_sections (section_key, eyebrow, headline, body, cta_label, cta_link, image_url, media_type)
+     VALUES (?,?,?,?,?,?,?,?)
+     ON DUPLICATE KEY UPDATE section_key=section_key`,
+    [
+      'new_arrivals_band',
+      'New arrivals',
+      'New arrivals band background',
+      'Background behind the Just landed / New arrivals section on the homepage. Products still come from catalog (new arrival flag).',
+      null,
+      null,
+      null,
+      'image',
+    ]
+  );
   siteSectionsReady = true;
 }
 

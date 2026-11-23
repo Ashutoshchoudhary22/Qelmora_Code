@@ -2266,6 +2266,122 @@ a {
   color: #b45309;
 }
 
+/* Homepage — Just landed / new arrivals band */
+.home-new-arrivals-band {
+  background: #f6f1ea;
+  color: #292524;
+}
+
+.home-new-arrivals-band-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  pointer-events: none;
+}
+
+.home-new-arrivals-band-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(165deg, rgb(255 251 245 / 0.78) 0%, rgb(246 240 232 / 0.5) 55%, rgb(246 240 232 / 0.32) 100%);
+}
+
+.home-new-arrivals-band-inner {
+  position: relative;
+  z-index: 2;
+}
+
+.home-new-arrivals-eyebrow {
+  margin: 0;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--color-q-accent);
+}
+
+.home-new-arrivals-title {
+  margin: 0.5rem 0 0;
+  font-size: clamp(2rem, 5vw, 2.5rem);
+  font-weight: 300;
+  line-height: 1.15;
+  color: #1c1917;
+}
+
+[data-theme="dark"] .home-new-arrivals-title {
+  color: #fafaf9;
+}
+
+/* Homepage — shop by category band */
+.home-shop-category-band {
+  background: #f6f1ea;
+  color: #292524;
+}
+
+.home-shop-category-band-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  pointer-events: none;
+}
+
+.home-shop-category-band-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(165deg, rgb(255 251 245 / 0.72) 0%, rgb(246 240 232 / 0.45) 55%, rgb(246 240 232 / 0.3) 100%);
+}
+
+.home-shop-category-band-inner {
+  position: relative;
+  z-index: 2;
+}
+
+.home-shop-category-eyebrow {
+  margin: 0;
+  text-align: center;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: #57534e;
+}
+
+[data-theme="dark"] .home-shop-category-eyebrow {
+  color: #e7e5e4;
+}
+
+/* Homepage — limited offer promo (outer band bg) */
+.home-promo-band-section {
+  background: #f6f1ea;
+}
+
+.home-promo-band-section-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  pointer-events: none;
+}
+
+.home-promo-band-section-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgb(255 251 245 / 0.55) 0%, rgb(246 240 232 / 0.35) 50%, rgb(246 240 232 / 0.25) 100%);
+}
+
 .home-promo-band {
   box-shadow: 0 24px 48px rgb(0 0 0 / 0.12);
 }

@@ -225,6 +225,75 @@ const INSTAGRAM_BAND_GUIDELINES = [
   { label: 'Tip', value: 'Cream / gold wave textures match the Instagram mock; keep contrast for the marquee' },
 ];
 
+const PROMO_BAND_GUIDELINES = [
+  { label: 'Size', value: '2400×720 px wide (promo strip) or wider' },
+  { label: 'Format', value: 'JPG, PNG, or WebP' },
+  { label: 'File size', value: 'Under 800 KB' },
+  { label: 'Tip', value: 'Optional silk/cream backdrop around the card; main product shot stays Admin → Banners → Promo' },
+];
+
+const SHOP_CATEGORY_BAND_GUIDELINES = [
+  { label: 'Size', value: '2400×900 px or wider (landscape)' },
+  { label: 'Format', value: 'JPG, PNG, or WebP' },
+  { label: 'File size', value: 'Under 800 KB' },
+  { label: 'Tip', value: 'Cream/gold textures; category tile images stay in Admin → Home shop by category' },
+];
+
+const NEW_ARRIVALS_BAND_GUIDELINES = [
+  { label: 'Size', value: '2400×900 px or wider (landscape)' },
+  { label: 'Format', value: 'JPG, PNG, or WebP' },
+  { label: 'File size', value: 'Under 800 KB' },
+  { label: 'Tip', value: 'Soft cream/silk backdrop; product cards are pulled automatically from new arrivals' },
+];
+
+export function NewArrivalsBandBackgroundEditor() {
+  return (
+    <SectionImageEditor
+      sectionKey="new_arrivals_band"
+      headline="New arrivals band background"
+      title="Just landed / New arrivals (homepage)"
+      hint="Background behind the new arrivals block (Men & Women grids). Products are still from Admin → Products (new arrival)."
+      guidelines={NEW_ARRIVALS_BAND_GUIDELINES}
+      previewHref="/"
+      previewLabel="homepage new arrivals"
+      cloudFolder="qelmora/new-arrivals"
+      saveLabel="Save new arrivals background"
+    />
+  );
+}
+
+export function ShopByCategoryBandBackgroundEditor() {
+  return (
+    <SectionImageEditor
+      sectionKey="shop_by_category_band"
+      headline="Shop by category band background"
+      title="Shop by category (homepage)"
+      hint="Background behind the Shop by category block. Men/Women (or custom) tiles still come from Admin → Home shop by category."
+      guidelines={SHOP_CATEGORY_BAND_GUIDELINES}
+      previewHref="/"
+      previewLabel="homepage Shop by category"
+      cloudFolder="qelmora/shop-by-category"
+      saveLabel="Save shop by category background"
+    />
+  );
+}
+
+export function PromoBandBackgroundEditor() {
+  return (
+    <SectionImageEditor
+      sectionKey="promo_band"
+      headline="Limited offer promo band background"
+      title="Limited offer / promo strip (homepage)"
+      hint="Full-width band behind the limited offer block. The card photo and CTA link still come from Admin → Banners → Promo."
+      guidelines={PROMO_BAND_GUIDELINES}
+      previewHref="/"
+      previewLabel="homepage promo strip"
+      cloudFolder="qelmora/promo-band"
+      saveLabel="Save promo band background"
+    />
+  );
+}
+
 export function FeaturedCollectionBandBackgroundEditor() {
   return (
     <SectionImageEditor
@@ -282,7 +351,10 @@ export function FooterAndNewsletterEditors() {
         </span>
         <span className="font-semibold text-stone-900">Homepage bands &amp; footer</span>
       </div>
+      <NewArrivalsBandBackgroundEditor />
+      <ShopByCategoryBandBackgroundEditor />
       <FeaturedCollectionBandBackgroundEditor />
+      <PromoBandBackgroundEditor />
       <BrandStoryBandBackgroundEditor />
       <InstagramBandBackgroundEditor />
       <NewsletterBackgroundEditor />

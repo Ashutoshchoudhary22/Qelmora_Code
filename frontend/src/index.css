@@ -2028,8 +2028,54 @@ a {
   color: #fafaf9;
 }
 
-[data-theme="dark"] .home-instagram-premium-scrim {
-  background: linear-gradient(180deg, rgb(12 10 9 / 0.78) 0%, rgb(12 10 9 / 0.62) 100%);
+/* Dark mode — black shade over homepage band background images */
+[data-theme="dark"] .home-new-arrivals-band,
+[data-theme="dark"] .home-shop-category-band,
+[data-theme="dark"] .home-promo-band-section,
+[data-theme="dark"] .home-featured-collection,
+[data-theme="dark"] .home-brand-story-premium,
+[data-theme="dark"] .home-instagram-premium,
+[data-theme="dark"] .site-newsletter-premium {
+  background: #0c0b0a;
+  color: #fafaf9;
+}
+
+[data-theme="dark"] .home-new-arrivals-band-scrim,
+[data-theme="dark"] .home-shop-category-band-scrim,
+[data-theme="dark"] .home-promo-band-section-scrim,
+[data-theme="dark"] .home-featured-collection-scrim,
+[data-theme="dark"] .home-brand-story-premium-scrim,
+[data-theme="dark"] .home-instagram-premium-scrim,
+[data-theme="dark"] .site-newsletter-premium-scrim {
+  background: linear-gradient(
+    180deg,
+    rgb(0 0 0 / 0.78) 0%,
+    rgb(0 0 0 / 0.65) 45%,
+    rgb(0 0 0 / 0.72) 100%
+  ) !important;
+}
+
+[data-theme="dark"] .home-new-arrivals-band .font-display,
+[data-theme="dark"] .home-new-arrivals-band h3 {
+  color: #fafaf9;
+}
+
+[data-theme="dark"] .home-featured-collection-title,
+[data-theme="dark"] .home-featured-collection-body,
+[data-theme="dark"] .home-brand-story-title,
+[data-theme="dark"] .home-brand-story-body {
+  color: #fafaf9;
+}
+
+[data-theme="dark"] .home-featured-collection-eyebrow,
+[data-theme="dark"] .home-brand-story-eyebrow {
+  color: #e2c08c;
+}
+
+[data-theme="dark"] .site-newsletter-premium .site-newsletter-eyebrow,
+[data-theme="dark"] .site-newsletter-premium .site-newsletter-title,
+[data-theme="dark"] .site-newsletter-premium .site-newsletter-lead {
+  color: #fafaf9;
 }
 
 [data-theme="dark"] .home-instagram-premium-brand,

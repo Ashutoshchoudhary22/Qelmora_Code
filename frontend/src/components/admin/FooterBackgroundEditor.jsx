@@ -143,8 +143,9 @@ function SectionImageEditor({
               Light mode background
             </p>
             {imageUrl ? (
-              <div className="mt-3 max-w-md">
+              <div className="mt-3 w-full max-w-4xl">
                 <AdminOfferTileCard
+                  variant="band"
                   secureUrl={imageUrl}
                   resourceType={mediaType}
                   downloadName={`${sectionKey}-light`}
@@ -170,8 +171,9 @@ function SectionImageEditor({
               Dark mode background
             </p>
             {darkImageUrl ? (
-              <div className="mt-3 max-w-md">
+              <div className="mt-3 w-full max-w-4xl">
                 <AdminOfferTileCard
+                  variant="band"
                   secureUrl={darkImageUrl}
                   resourceType={darkMediaType}
                   downloadName={`${sectionKey}-dark`}

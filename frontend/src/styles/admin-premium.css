@@ -1612,6 +1612,24 @@ html[data-theme="light"] .admin-quick-actions .font-display {
   background: #f0e4d6;
 }
 
+.admin-offer-tile--band .admin-offer-tile-media {
+  aspect-ratio: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  min-height: 5rem;
+}
+
+.admin-offer-tile-media-fit {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: min(28rem, 52vh);
+  object-fit: contain;
+  object-position: center;
+}
+
 .admin-offer-tile-cloud {
   position: absolute;
   left: 0.5rem;

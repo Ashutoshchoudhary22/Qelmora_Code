@@ -2,18 +2,29 @@ import { Cloud, Download, ExternalLink, GripVertical, Trash2 } from 'lucide-reac
 import { downloadMedia } from '../../lib/download';
 
 /** Cream-theme offer tile for admin premium panels */
-export function AdminOfferTileCard({ secureUrl, resourceType = 'image', downloadName, onRemove }) {
+export function AdminOfferTileCard({
+  secureUrl,
+  resourceType = 'image',
+  downloadName,
+  onRemove,
+  /** `band` = full uncropped landscape preview (Bands & footer admin) */
+  variant = 'tile',
+}) {
   if (!secureUrl) return null;
 
   const filename = downloadName || 'qelmora-offer';
+  const isBand = variant === 'band';
+  const mediaClass = isBand
+    ? 'admin-offer-tile-media-fit'
+    : 'h-full w-full object-cover';
 
   return (
-    <article className="admin-offer-tile">
+    <article className={`admin-offer-tile${isBand ? ' admin-offer-tile--band' : ''}`}>
       <div className="admin-offer-tile-media">
         {resourceType === 'video' ? (
-          <video src={secureUrl} className="h-full w-full object-cover" muted playsInline controls />
+          <video src={secureUrl} className={mediaClass} muted playsInline controls />
         ) : (
-          <img src={secureUrl} alt="" className="h-full w-full object-cover" />
+          <img src={secureUrl} alt="" className={mediaClass} />
         )}
         <span className="admin-offer-tile-cloud">
           <Cloud size={11} />

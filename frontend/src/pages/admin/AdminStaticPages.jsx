@@ -1,4 +1,5 @@
 import { FileText } from 'lucide-react';
+import { AboutBandBackgroundEditor, ContactBandBackgroundEditor } from '../../components/admin/FooterBackgroundEditor';
 import { StaticPageEditor } from '../../components/admin/StaticPageEditor';
 
 const ADMIN_WELCOME_BG = '/profile/QELMORA-admin.png';
@@ -24,7 +25,9 @@ export default function AdminStaticPages() {
         </div>
       </header>
 
-      <div className="admin-products-body">
+      <div className="admin-products-body flex flex-col gap-8">
+        <AboutBandBackgroundEditor />
+        <ContactBandBackgroundEditor />
         <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
           <StaticPageEditor variant="premium" sectionKey="about" pageTitle="About us" pagePath="/about" />
           <StaticPageEditor variant="premium" sectionKey="contact" pageTitle="Contact us" pagePath="/contact" />

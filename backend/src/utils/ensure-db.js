@@ -280,6 +280,51 @@ export async function ensureSiteSectionsTable() {
       'image',
     ]
   );
+  await pool.execute(
+    `INSERT INTO site_sections (section_key, eyebrow, headline, body, cta_label, cta_link, image_url, media_type)
+     VALUES (?,?,?,?,?,?,?,?)
+     ON DUPLICATE KEY UPDATE section_key=section_key`,
+    [
+      'about_band',
+      'About',
+      'About page background',
+      'Full-width background on /about. Story image stays in About editor below.',
+      null,
+      null,
+      null,
+      'image',
+    ]
+  );
+  await pool.execute(
+    `INSERT INTO site_sections (section_key, eyebrow, headline, body, cta_label, cta_link, image_url, media_type)
+     VALUES (?,?,?,?,?,?,?,?)
+     ON DUPLICATE KEY UPDATE section_key=section_key`,
+    [
+      'contact_band',
+      'Contact',
+      'Contact page background',
+      'Full-width background on /contact. Sidebar image stays in Contact editor below.',
+      null,
+      null,
+      null,
+      'image',
+    ]
+  );
+  await pool.execute(
+    `INSERT INTO site_sections (section_key, eyebrow, headline, body, cta_label, cta_link, image_url, media_type)
+     VALUES (?,?,?,?,?,?,?,?)
+     ON DUPLICATE KEY UPDATE section_key=section_key`,
+    [
+      'nowhere_else_band',
+      'Nowhere Else',
+      'Nowhere Else page background',
+      'Background behind /collections (Nowhere Else). Tiles still come from Admin → Nowhere Else.',
+      null,
+      null,
+      null,
+      'image',
+    ]
+  );
   const shopSectionBands = [
     ['shop_men_collection_band', "Men's shop — collection section", 'Shop the edit block on /shop/men'],
     ['shop_men_new_arrivals_band', "Men's shop — new arrivals section", 'Just landed block on /shop/men'],

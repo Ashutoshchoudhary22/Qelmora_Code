@@ -4,16 +4,19 @@ import { CategoryCollectionCards } from '../components/CategoryCollectionCards';
 import { CollectionPlacementGrid } from '../components/CollectionPlacementGrid';
 import { StaticPageContent } from '../components/StaticPageContent';
 import { ContactForm } from '../components/ContactForm';
+import { SiteSectionBand } from '../components/SiteSectionBand';
 
 export function AboutPage() {
   return (
-    <StaticPageContent
-      sectionKey="about"
-      compactImage
-      defaultEyebrow="About us"
-      defaultHeadline="The QELMORA edit"
-      defaultBody="Founded on the belief that luxury is restraint, QELMORA designs modular wardrobes for people who travel light and dress with intent. We partner with mills in Gujarat and Tamil Nadu, finish in small batches, and release only what we would wear ourselves."
-    />
+    <SiteSectionBand sectionKey="about_band">
+      <StaticPageContent
+        sectionKey="about"
+        compactImage
+        defaultEyebrow="About us"
+        defaultHeadline="The QELMORA edit"
+        defaultBody="Founded on the belief that luxury is restraint, QELMORA designs modular wardrobes for people who travel light and dress with intent. We partner with mills in Gujarat and Tamil Nadu, finish in small batches, and release only what we would wear ourselves."
+      />
+    </SiteSectionBand>
   );
 }
 
@@ -23,14 +26,6 @@ export function ContactPage() {
     queryFn: async () => (await api.get('/content/contact')).data,
   });
 
-  if (isLoading) {
-    return (
-      <main className="site-container py-20">
-        <p className="text-stone-500">Loading…</p>
-      </main>
-    );
-  }
-
   const bodyParagraphs = (data?.body || 'Mon–Sat, 10am–7pm IST\nBandra Kurla Complex, Mumbai, India')
     .split('\n')
     .filter(Boolean);
@@ -38,8 +33,19 @@ export function ContactPage() {
   const helpEmail = (data?.ctaLink || 'hello@qelmora.com').replace(/^mailto:/i, '');
   const metaLabels = ['Studio hours', 'Visit us'];
 
+  if (isLoading) {
+    return (
+      <SiteSectionBand sectionKey="contact_band">
+        <main className="site-container py-20">
+          <p className="text-stone-500">Loading…</p>
+        </main>
+      </SiteSectionBand>
+    );
+  }
+
   return (
-    <main className="site-container py-14 md:py-20">
+    <SiteSectionBand sectionKey="contact_band">
+      <main className="site-container py-14 md:py-20">
       <div className="contact-page mx-auto max-w-5xl">
         <header className="max-w-3xl">
           <p className="text-[10px] uppercase tracking-[0.4em] text-q-accent">{data?.eyebrow || 'Contact'}</p>
@@ -86,7 +92,8 @@ export function ContactPage() {
           </div>
         </div>
       </div>
-    </main>
+      </main>
+    </SiteSectionBand>
   );
 }
 
@@ -103,26 +110,28 @@ export function CollectionsPage() {
   const hasNowhereTiles = (nowhereTiles?.items || []).length > 0;
 
   return (
-    <main className="site-container py-20">
-      <p className="text-[10px] uppercase tracking-[0.4em] text-q-accent">Exclusive to QELMORA</p>
-      <h1 className="font-display mt-4 text-5xl font-light">Nowhere else</h1>
-      <p className="mt-4 max-w-xl text-sm leading-8 text-stone-500">
-        Beyond this edit, you won&apos;t find these capsules anywhere else — limited runs, our mills, our cut. Same
-        category visuals as the homepage, managed in admin.
-      </p>
-      {isLoading || loadingTiles ? (
-        <p className="mt-12 text-stone-500">Loading…</p>
-      ) : hasNowhereTiles ? (
-        <CollectionPlacementGrid
-          placement="page_nowhere_else"
-          columns={2}
-          imageFit="contain"
-          className="mt-12 gap-6 md:gap-8"
-          emptyMessage="Add tiles in Admin → Nowhere Else."
-        />
-      ) : (
-        <CategoryCollectionCards items={data?.items} slugs={['men', 'women']} columns={2} className="mt-12" />
-      )}
-    </main>
+    <SiteSectionBand sectionKey="nowhere_else_band">
+      <main className="site-container py-20">
+        <p className="text-[10px] uppercase tracking-[0.4em] text-q-accent">Exclusive to QELMORA</p>
+        <h1 className="font-display mt-4 text-5xl font-light">Nowhere else</h1>
+        <p className="mt-4 max-w-xl text-sm leading-8 text-stone-500">
+          Beyond this edit, you won&apos;t find these capsules anywhere else — limited runs, our mills, our cut. Same
+          category visuals as the homepage, managed in admin.
+        </p>
+        {isLoading || loadingTiles ? (
+          <p className="mt-12 text-stone-500">Loading…</p>
+        ) : hasNowhereTiles ? (
+          <CollectionPlacementGrid
+            placement="page_nowhere_else"
+            columns={2}
+            imageFit="contain"
+            className="mt-12 gap-6 md:gap-8"
+            emptyMessage="Add tiles in Admin → Nowhere Else."
+          />
+        ) : (
+          <CategoryCollectionCards items={data?.items} slugs={['men', 'women']} columns={2} className="mt-12" />
+        )}
+      </main>
+    </SiteSectionBand>
   );
 }

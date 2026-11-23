@@ -458,6 +458,70 @@ function ShopGenderSectionBackgroundEditors({ gender, sections }) {
   );
 }
 
+const NOWHERE_ELSE_BAND_GUIDELINES = [
+  { label: 'Size', value: '2400×1200 px or wider' },
+  { label: 'Format', value: 'JPG, PNG, or WebP' },
+  { label: 'File size', value: 'Under 800 KB' },
+  { label: 'Tip', value: 'Cream / gold silk works behind the headline; tiles stay separate in Nowhere Else' },
+  DARK_BAND_GUIDELINE,
+];
+
+const STATIC_PAGE_BAND_GUIDELINES = [
+  { label: 'Size', value: '2400×1200 px or wider' },
+  { label: 'Format', value: 'JPG, PNG, or WebP' },
+  { label: 'File size', value: 'Under 800 KB' },
+  { label: 'Tip', value: 'Page backdrop only — inline story/form images stay in the editor cards below' },
+  DARK_BAND_GUIDELINE,
+];
+
+export function AboutBandBackgroundEditor() {
+  return (
+    <SectionImageEditor
+      sectionKey="about_band"
+      headline="About page background"
+      title="About us (/about)"
+      hint="Full-width background behind the about page. Portrait/story upload stays in About editor."
+      guidelines={STATIC_PAGE_BAND_GUIDELINES}
+      previewHref="/about"
+      previewLabel="about page"
+      cloudFolder="qelmora/about-band"
+      saveLabel="Save about background"
+    />
+  );
+}
+
+export function ContactBandBackgroundEditor() {
+  return (
+    <SectionImageEditor
+      sectionKey="contact_band"
+      headline="Contact page background"
+      title="Contact us (/contact)"
+      hint="Full-width background behind the contact page. Side image stays in Contact editor."
+      guidelines={STATIC_PAGE_BAND_GUIDELINES}
+      previewHref="/contact"
+      previewLabel="contact page"
+      cloudFolder="qelmora/contact-band"
+      saveLabel="Save contact background"
+    />
+  );
+}
+
+export function NowhereElseBandBackgroundEditor() {
+  return (
+    <SectionImageEditor
+      sectionKey="nowhere_else_band"
+      headline="Nowhere Else page background"
+      title="Nowhere Else (/collections)"
+      hint="Full-width background on the Nowhere Else page. Capsule tiles below are still managed separately."
+      guidelines={NOWHERE_ELSE_BAND_GUIDELINES}
+      previewHref="/collections"
+      previewLabel="Nowhere Else page"
+      cloudFolder="qelmora/nowhere-else"
+      saveLabel="Save Nowhere Else background"
+    />
+  );
+}
+
 export function ShopMenSectionBackgroundEditors() {
   return <ShopGenderSectionBackgroundEditors gender="men" sections={SHOP_MEN_SECTIONS} />;
 }

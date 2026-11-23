@@ -1,4 +1,5 @@
 import { Sparkles } from 'lucide-react';
+import { NowhereElseBandBackgroundEditor } from '../../components/admin/FooterBackgroundEditor';
 import { ShopOfferPanel } from '../../components/admin/ShopOfferPanel';
 
 const ADMIN_WELCOME_BG = '/profile/QELMORA-admin.png';
@@ -25,14 +26,17 @@ export default function AdminNowhereElse() {
         </div>
       </header>
 
-      <ShopOfferPanel
+      <div className="admin-products-body flex flex-col gap-8">
+        <NowhereElseBandBackgroundEditor />
+        <ShopOfferPanel
         variant="premium"
         placement="page_nowhere_else"
         label="Nowhere Else Tiles"
         previewPath="/collections"
         sizeVariant="categoryCard"
         description="Shown below the page headline. Use sort order for display sequence."
-      />
+        />
+      </div>
     </div>
   );
 }

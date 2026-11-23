@@ -359,6 +359,46 @@ export function ShopWomenOffersBandBackgroundEditor() {
   );
 }
 
+const SHOP_PRODUCTS_BAND_GUIDELINES = [
+  { label: 'Size', value: '2400×1400 px or wider (tall band behind listings)' },
+  { label: 'Format', value: 'JPG, PNG, or WebP' },
+  { label: 'File size', value: 'Under 800 KB' },
+  { label: 'Tip', value: 'Soft textures — product cards and grids are still from the catalog below' },
+  DARK_BAND_GUIDELINE,
+];
+
+export function ShopMenProductsBandBackgroundEditor() {
+  return (
+    <SectionImageEditor
+      sectionKey="shop_men_products_band"
+      headline="Men's shop products band background"
+      title="Shop listing background (Men)"
+      hint="Behind Shop the edit, Just landed / New arrivals, best sellers, and View all listing pages on /shop/men."
+      guidelines={SHOP_PRODUCTS_BAND_GUIDELINES}
+      previewHref="/shop/men"
+      previewLabel="men's shop page"
+      cloudFolder="qelmora/shop-products-men"
+      saveLabel="Save men's shop background"
+    />
+  );
+}
+
+export function ShopWomenProductsBandBackgroundEditor() {
+  return (
+    <SectionImageEditor
+      sectionKey="shop_women_products_band"
+      headline="Women's shop products band background"
+      title="Shop listing background (Women)"
+      hint="Behind Shop the edit, Just landed / New arrivals, best sellers, and View all listing pages on /shop/women."
+      guidelines={SHOP_PRODUCTS_BAND_GUIDELINES}
+      previewHref="/shop/women"
+      previewLabel="women's shop page"
+      cloudFolder="qelmora/shop-products-women"
+      saveLabel="Save women's shop background"
+    />
+  );
+}
+
 export function NewArrivalsBandBackgroundEditor() {
   return (
     <SectionImageEditor

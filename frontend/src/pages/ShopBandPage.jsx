@@ -4,15 +4,19 @@ import { api } from '../api/client';
 import { ProductGrid } from '../components/ProductGrid';
 import { ShopBreadcrumb } from '../components/shop/ShopBreadcrumb';
 import { ShopProductFilters } from '../components/shop/ShopProductFilters';
+import { ShopProductsBand } from '../components/shop/ShopProductsBand';
 import { buildBandProductUrl, SHOP_SORT_OPTIONS } from '../lib/shopListFilters';
 
 const TITLES = { men: 'Men', women: 'Women' };
 
 const BANDS = {
   all: {
-    eyebrow: null,
-    headline: (gender) => `Clothes for ${gender.toLowerCase()}`,
-    sub: null,
+    eyebrow: 'Shop the edit',
+    headline: (gender) => `The ${gender.toLowerCase()}’s collection`,
+    sub: (gender) =>
+      gender === 'Women'
+        ? 'Quiet confidence in every cut — limited pieces, updated in real time.'
+        : 'Elevated staples and statement layers — small batches, live inventory.',
     baseQuery: (cat) => `category=${cat}`,
     empty: 'No products in this collection yet.',
     showHighlightFilters: true,
@@ -91,7 +95,8 @@ export default function ShopBandPage() {
   }
 
   return (
-    <main className="site-container pb-10 pt-4 md:pb-14 md:pt-5">
+    <ShopProductsBand shopCategory={shopCategory}>
+      <main className="site-container relative z-[2] pb-10 pt-4 md:pb-14 md:pt-5">
       <ShopBreadcrumb category={shopCategory} band={band} />
 
       <header className="mt-3 flex flex-col gap-4 sm:mt-4 lg:flex-row lg:items-center lg:justify-between">
@@ -150,6 +155,7 @@ export default function ShopBandPage() {
           )}
         </div>
       </div>
-    </main>
+      </main>
+    </ShopProductsBand>
   );
 }

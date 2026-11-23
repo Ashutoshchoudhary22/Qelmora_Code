@@ -13,6 +13,10 @@ import {
   User,
 } from 'lucide-react';
 import { api } from '../../api/client';
+import {
+  ShopMenProductsBandBackgroundEditor,
+  ShopWomenProductsBandBackgroundEditor,
+} from '../../components/admin/FooterBackgroundEditor';
 import { formatInr } from '../../lib/money';
 
 const ADMIN_WELCOME_BG = '/profile/QELMORA-admin.png';
@@ -115,7 +119,10 @@ export default function AdminProducts() {
         </div>
       </header>
 
-      <div className="admin-products-body">
+      <div className="admin-products-body flex flex-col gap-8">
+        <ShopMenProductsBandBackgroundEditor />
+        <ShopWomenProductsBandBackgroundEditor />
+
         <div className="admin-products-toolbar">
           <div className="admin-products-search">
             <Search className="admin-products-search-icon" size={17} />

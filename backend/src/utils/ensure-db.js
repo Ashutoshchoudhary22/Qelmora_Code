@@ -280,6 +280,36 @@ export async function ensureSiteSectionsTable() {
       'image',
     ]
   );
+  await pool.execute(
+    `INSERT INTO site_sections (section_key, eyebrow, headline, body, cta_label, cta_link, image_url, media_type)
+     VALUES (?,?,?,?,?,?,?,?)
+     ON DUPLICATE KEY UPDATE section_key=section_key`,
+    [
+      'shop_men_products_band',
+      'Shop products',
+      "Men's shop products band background",
+      'Background behind the collection, new arrivals, trending, and best sellers on /shop/men. Products still come from Admin → Products.',
+      null,
+      null,
+      null,
+      'image',
+    ]
+  );
+  await pool.execute(
+    `INSERT INTO site_sections (section_key, eyebrow, headline, body, cta_label, cta_link, image_url, media_type)
+     VALUES (?,?,?,?,?,?,?,?)
+     ON DUPLICATE KEY UPDATE section_key=section_key`,
+    [
+      'shop_women_products_band',
+      'Shop products',
+      "Women's shop products band background",
+      'Background behind the collection, new arrivals, trending, and best sellers on /shop/women. Products still come from Admin → Products.',
+      null,
+      null,
+      null,
+      'image',
+    ]
+  );
   siteSectionsReady = true;
 }
 

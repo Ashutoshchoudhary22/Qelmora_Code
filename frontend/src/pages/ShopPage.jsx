@@ -6,6 +6,7 @@ import { ProductGrid } from '../components/ProductGrid';
 import { ShopOfferBanners } from '../components/shop/ShopOfferBanners';
 import { TrendingCategories } from '../components/shop/TrendingCategories';
 import { ViewAllLink } from '../components/shop/ViewAllLink';
+import { ShopProductsBand } from '../components/shop/ShopProductsBand';
 
 const TITLES = {
   men: 'Men',
@@ -81,7 +82,8 @@ export default function ShopPage() {
         </div>
       )}
 
-      <main className="site-container py-14 md:py-20">
+      <ShopProductsBand shopCategory={shopCategory}>
+        <main className="site-container relative z-[2] py-14 md:py-20">
         {shopCategory && (
           <section
             id="collection"
@@ -170,7 +172,8 @@ export default function ShopPage() {
             )}
           </section>
         )}
-      </main>
+        </main>
+      </ShopProductsBand>
     </>
   );
 }

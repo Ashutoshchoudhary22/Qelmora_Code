@@ -40,6 +40,18 @@ body {
   min-width: 320px;
 }
 
+/* Hide viewport scrollbar; page still scrolls with wheel / touch */
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
 button,
 a {
   cursor: pointer;
@@ -2508,6 +2520,60 @@ html[data-theme="dark"] .auth-layout .text-stone-400 {
 }
 
 /* Homepage — Just landed / new arrivals band */
+.home-new-arrivals {
+  background: transparent;
+  color: #292524;
+}
+
+.home-new-arrivals-intro {
+  background: #f6f1ea;
+}
+
+[data-theme="dark"] .home-new-arrivals-intro {
+  background: #0a0a0a;
+  color: #fafaf9;
+}
+
+.home-new-arrivals-bands {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.home-new-arrivals-band--split + .home-new-arrivals-band--split {
+  margin-top: 0;
+}
+
+.home-new-arrivals-band--split + .home-new-arrivals-band--split .home-new-arrivals-band-inner {
+  padding-top: 1.75rem;
+}
+
+@media (min-width: 768px) {
+  .home-new-arrivals-band--split + .home-new-arrivals-band--split .home-new-arrivals-band-inner {
+    padding-top: 2.25rem;
+  }
+}
+
+.home-new-arrivals-band--split:first-child .home-new-arrivals-band-inner {
+  padding-bottom: 2.5rem;
+}
+
+@media (min-width: 768px) {
+  .home-new-arrivals-band--split:first-child .home-new-arrivals-band-inner {
+    padding-bottom: 3rem;
+  }
+}
+
+.home-new-arrivals-band--split:last-child .home-new-arrivals-band-inner {
+  padding-bottom: 3.5rem;
+}
+
+@media (min-width: 768px) {
+  .home-new-arrivals-band--split:last-child .home-new-arrivals-band-inner {
+    padding-bottom: 4rem;
+  }
+}
+
 .home-new-arrivals-band {
   background: #f6f1ea;
   color: #292524;
@@ -2586,18 +2652,14 @@ html[data-theme="dark"] .auth-layout .text-stone-400 {
   z-index: 2;
 }
 
-.home-shop-category-eyebrow {
+.home-shop-category-title {
   margin: 0;
   text-align: center;
-  font-size: 0.625rem;
-  font-weight: 700;
-  letter-spacing: 0.4em;
-  text-transform: uppercase;
-  color: #57534e;
+  color: #1c1917;
 }
 
-[data-theme="dark"] .home-shop-category-eyebrow {
-  color: #e7e5e4;
+[data-theme="dark"] .home-shop-category-title {
+  color: #fafaf9;
 }
 
 /* Homepage — limited offer promo (outer band bg) */
@@ -2828,6 +2890,14 @@ html[data-theme="dark"] .auth-layout .text-stone-400 {
 .admin-main {
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.admin-main::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 /* —— Account dashboard (luxury overview) —— */

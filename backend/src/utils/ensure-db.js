@@ -258,13 +258,33 @@ export async function ensureSiteSectionsTable() {
       'new_arrivals_band',
       'New arrivals',
       'New arrivals band background',
-      'Background behind the Just landed / New arrivals section on the homepage. Products still come from catalog (new arrival flag).',
+      'Legacy single homepage new arrivals background (use home_men / home_women keys instead).',
       null,
       null,
       null,
       'image',
     ]
   );
+  const homeNewArrivalsBands = [
+    [
+      'home_men_new_arrivals_band',
+      "Homepage — men's new arrivals",
+      "Background behind the Men's grid in Just landed / New arrivals on the homepage.",
+    ],
+    [
+      'home_women_new_arrivals_band',
+      "Homepage — women's new arrivals",
+      "Background behind the Women's grid in Just landed / New arrivals on the homepage.",
+    ],
+  ];
+  for (const [key, headline, body] of homeNewArrivalsBands) {
+    await pool.execute(
+      `INSERT INTO site_sections (section_key, eyebrow, headline, body, cta_label, cta_link, image_url, media_type)
+       VALUES (?,?,?,?,?,?,?,?)
+       ON DUPLICATE KEY UPDATE section_key=section_key`,
+      [key, 'New arrivals', headline, body, null, null, null, 'image']
+    );
+  }
   await pool.execute(
     `INSERT INTO site_sections (section_key, eyebrow, headline, body, cta_label, cta_link, image_url, media_type)
      VALUES (?,?,?,?,?,?,?,?)

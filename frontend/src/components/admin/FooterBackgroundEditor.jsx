@@ -554,18 +554,34 @@ export function ShopWomenSectionBackgroundEditors() {
   return <ShopGenderSectionBackgroundEditors gender="women" sections={SHOP_WOMEN_SECTIONS} />;
 }
 
-export function NewArrivalsBandBackgroundEditor() {
+export function HomeMenNewArrivalsBandBackgroundEditor() {
   return (
     <SectionImageEditor
-      sectionKey="new_arrivals_band"
-      headline="New arrivals band background"
-      title="Just landed / New arrivals (homepage)"
-      hint="Background behind the new arrivals block (Men & Women grids). Products are still from Admin → Products (new arrival)."
+      sectionKey="home_men_new_arrivals_band"
+      headline="Homepage — men's new arrivals background"
+      title="Just landed — Men's grid (homepage)"
+      hint="Background behind the Men's new arrivals grid only. Women's grid has its own upload below. Products still from Admin → Products (new arrival)."
       guidelines={NEW_ARRIVALS_BAND_GUIDELINES}
       previewHref="/"
-      previewLabel="homepage new arrivals"
-      cloudFolder="qelmora/new-arrivals"
-      saveLabel="Save new arrivals background"
+      previewLabel="homepage men's new arrivals"
+      cloudFolder="qelmora/home-new-arrivals-men"
+      saveLabel="Save men's homepage new arrivals background"
+    />
+  );
+}
+
+export function HomeWomenNewArrivalsBandBackgroundEditor() {
+  return (
+    <SectionImageEditor
+      sectionKey="home_women_new_arrivals_band"
+      headline="Homepage — women's new arrivals background"
+      title="Just landed — Women's grid (homepage)"
+      hint="Background behind the Women's new arrivals grid only. Men's grid has its own upload above."
+      guidelines={NEW_ARRIVALS_BAND_GUIDELINES}
+      previewHref="/"
+      previewLabel="homepage women's new arrivals"
+      cloudFolder="qelmora/home-new-arrivals-women"
+      saveLabel="Save women's homepage new arrivals background"
     />
   );
 }
@@ -659,7 +675,8 @@ export function FooterAndNewsletterEditors() {
         </span>
         <span className="font-semibold text-stone-900">Homepage bands &amp; footer</span>
       </div>
-      <NewArrivalsBandBackgroundEditor />
+      <HomeMenNewArrivalsBandBackgroundEditor />
+      <HomeWomenNewArrivalsBandBackgroundEditor />
       <ShopByCategoryBandBackgroundEditor />
       <FeaturedCollectionBandBackgroundEditor />
       <PromoBandBackgroundEditor />

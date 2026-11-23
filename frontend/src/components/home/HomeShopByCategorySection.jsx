@@ -39,7 +39,9 @@ export function HomeShopByCategorySection() {
       <div className="home-shop-category-band-scrim" aria-hidden />
 
       <div className="home-shop-category-band-inner site-container relative z-[2] py-20">
-        <p className="home-shop-category-eyebrow">Shop by category</p>
+        <h2 className="home-shop-category-title font-display text-3xl font-semibold uppercase tracking-wide sm:text-4xl">
+          Shop by category
+        </h2>
         {hasHomeCategoryTiles ? (
           <CollectionPlacementGrid
             placement="home_shop_by_category"

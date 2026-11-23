@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @import "./styles/admin-premium.css";
 
+/* Match Tailwind `dark:` utilities to storefront/admin theme toggle (not OS preference). */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 @theme {
   --color-q-black: #090909;
   --color-q-ink: #121110;
@@ -932,8 +935,134 @@ a {
   background: rgb(255 255 255 / 0.92) !important;
 }
 
+/* Header icons (profile, cart, theme) — light bar needs dark strokes */
+html[data-theme="light"] .site-header:not(.site-header-hero) button,
+html[data-theme="light"] .site-header:not(.site-header-hero) .text-stone-200,
+html[data-theme="light"] .site-header:not(.site-header-hero) .text-stone-300 {
+  color: #292524;
+}
+
+html[data-theme="light"] .site-header:not(.site-header-hero) button:hover {
+  color: #0c0a09;
+}
+
+html[data-theme="dark"] .site-header:not(.site-header-hero) button,
+html[data-theme="dark"] .site-header:not(.site-header-hero) .text-stone-200,
+html[data-theme="dark"] .site-header:not(.site-header-hero) .text-stone-300 {
+  color: #e7e5e4;
+}
+
+html[data-theme="dark"] .site-header:not(.site-header-hero) button:hover {
+  color: #fafaf9;
+}
+
+html[data-theme="dark"] .account-menu-dropdown {
+  border-color: rgb(255 255 255 / 0.12) !important;
+  background: #141210 !important;
+  box-shadow: 0 18px 40px -16px rgb(0 0 0 / 0.65);
+}
+
+html[data-theme="dark"] .account-menu-dropdown .border-stone-100,
+html[data-theme="dark"] .account-menu-dropdown .border-t {
+  border-color: rgb(255 255 255 / 0.1) !important;
+}
+
+html[data-theme="dark"] .account-menu-dropdown .text-stone-500 {
+  color: #a8a29e !important;
+}
+
+html[data-theme="dark"] .account-menu-dropdown .text-stone-700,
+html[data-theme="dark"] .account-menu-dropdown .text-stone-600 {
+  color: #e7e5e4 !important;
+}
+
+html[data-theme="dark"] .account-menu-dropdown a:hover,
+html[data-theme="dark"] .account-menu-dropdown button:hover {
+  background: rgb(255 255 255 / 0.06) !important;
+  color: #fafaf9 !important;
+}
+
 [data-theme="light"] .site-mobile-nav {
   background: #fff;
+}
+
+.auth-page-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.auth-page-heading h1 {
+  margin: 0;
+  min-width: 0;
+}
+
+.auth-theme-toggle {
+  display: inline-flex;
+  flex-shrink: 0;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.45rem;
+  width: auto;
+  max-width: none;
+  padding: 0.55rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid rgb(0 0 0 / 0.12);
+  background: rgb(255 255 255 / 0.92);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #292524;
+  box-shadow: 0 8px 24px -16px rgb(0 0 0 / 0.35);
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+
+.auth-theme-toggle:hover {
+  border-color: rgb(232 149 74 / 0.45);
+  color: #0c0a09;
+}
+
+.auth-theme-toggle-label {
+  line-height: 1;
+}
+
+html[data-theme="dark"] .auth-theme-toggle {
+  border-color: rgb(255 255 255 / 0.14);
+  background: rgb(20 18 16 / 0.92);
+  color: #e7e5e4;
+}
+
+html[data-theme="dark"] .auth-theme-toggle:hover {
+  border-color: rgb(232 149 74 / 0.45);
+  color: #fafaf9;
+}
+
+.auth-layout-aside-scrim {
+  background: linear-gradient(to top, rgb(0 0 0 / 0.7), rgb(0 0 0 / 0.25) 45%, rgb(0 0 0 / 0.4));
+  pointer-events: none;
+}
+
+html[data-theme="light"] .auth-layout {
+  background: #fafaf9;
+  color: #1c1917;
+}
+
+html[data-theme="dark"] .auth-layout {
+  background: #0a0a0a;
+  color: #f5f5f4;
+}
+
+html[data-theme="dark"] .auth-layout .auth-panel,
+html[data-theme="dark"] .auth-layout main .text-stone-900,
+html[data-theme="dark"] .auth-layout main .text-stone-500 {
+  color: inherit;
+}
+
+html[data-theme="dark"] .auth-layout .text-stone-400 {
+  color: #a8a29e;
 }
 
 [data-theme="light"] .site-footer:not(.site-footer-premium):not(.site-footer--has-bg),
@@ -2783,15 +2912,25 @@ a {
   margin-bottom: 0.35rem;
   padding: 0.72rem 0.95rem;
   border-radius: 0.85rem;
+  border: 1px solid transparent;
   font-size: 0.92rem;
   font-weight: 500;
   color: rgb(250 250 249 / 0.88);
-  transition: background 0.2s, color 0.2s, transform 0.2s;
+  transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.account-nav-pill svg {
+  color: currentcolor;
 }
 
 .account-nav-pill:hover {
   background: rgb(255 255 255 / 0.06);
   color: #fff;
+}
+
+.account-nav-pill:focus-visible {
+  outline: 2px solid rgb(232 149 74 / 0.55);
+  outline-offset: 2px;
 }
 
 .account-nav-pill--active {
@@ -2802,6 +2941,33 @@ a {
 
 .account-nav-pill--active:hover {
   color: #1a1208;
+}
+
+html[data-theme="dark"] .account-nav-pill {
+  color: #e7e5e4;
+}
+
+html[data-theme="dark"] .account-nav-pill:hover {
+  border-color: rgb(232 149 74 / 0.35);
+  background: rgb(255 255 255 / 0.1) !important;
+  color: #fafaf9 !important;
+}
+
+html[data-theme="dark"] .account-nav-pill:hover svg {
+  color: #fafaf9 !important;
+}
+
+html[data-theme="dark"] .account-nav-pill--active,
+html[data-theme="dark"] .account-nav-pill--active:hover {
+  color: #1a1208 !important;
+}
+
+html[data-theme="dark"] .account-nav-pill--active:hover svg {
+  color: #1a1208 !important;
+}
+
+html[data-theme="dark"] .account-nav-pill:focus-visible {
+  color: #fafaf9;
 }
 
 .account-sidebar-logout {
@@ -2830,6 +2996,19 @@ a {
 
 html[data-theme="light"] .account-dashboard-page {
   background: linear-gradient(168deg, #fdfaf6 0%, #f6efe6 42%, #f1e7d9 100%);
+}
+
+html[data-theme="dark"] .account-dashboard-page {
+  background: linear-gradient(168deg, #141210 0%, #0c0b0a 45%, #050504 100%);
+  color: #e7e5e4;
+}
+
+html[data-theme="dark"] .account-dashboard-page .account-breadcrumb {
+  color: #a8a29e;
+}
+
+html[data-theme="dark"] .account-dashboard-page .account-breadcrumb strong {
+  color: #f5f5f4;
 }
 
 html[data-theme="light"] .account-dashboard-page .account-breadcrumb a:hover {
@@ -2904,8 +3083,13 @@ html[data-theme="light"] .account-nav-pill {
 }
 
 html[data-theme="light"] .account-nav-pill:hover {
-  background: rgb(232 149 74 / 0.14) !important;
-  color: #92400e !important;
+  border-color: rgb(232 149 74 / 0.45) !important;
+  background: rgb(232 149 74 / 0.16) !important;
+  color: #7c2d12 !important;
+}
+
+html[data-theme="light"] .account-nav-pill:hover svg {
+  color: #7c2d12 !important;
 }
 
 html[data-theme="light"] .account-nav-pill--active {
@@ -3012,6 +3196,38 @@ html[data-theme="light"] .account-nav-mobile .border-transparent.bg-gradient-to-
   font-weight: 500;
   color: #92400e;
   box-shadow: 0 4px 14px -8px rgb(146 64 14 / 0.45);
+}
+
+html[data-theme="dark"] .account-hero-card {
+  border-color: rgb(255 255 255 / 0.1);
+  background: linear-gradient(120deg, #1c1917 0%, #121110 55%, #0a0908 100%);
+}
+
+html[data-theme="dark"] .account-hero-card-scrim {
+  background: linear-gradient(
+    100deg,
+    rgb(10 10 10 / 0.88) 0%,
+    rgb(12 10 9 / 0.65) 42%,
+    rgb(12 10 9 / 0.35) 62%,
+    transparent 78%
+  ) !important;
+}
+
+html[data-theme="dark"] .account-hero-greeting {
+  color: #fafaf9 !important;
+}
+
+html[data-theme="dark"] .account-hero-contact {
+  color: #a8a29e !important;
+}
+
+html[data-theme="dark"] .account-hero-avatar {
+  border-color: rgb(232 149 74 / 0.55);
+  background: linear-gradient(160deg, #292524 0%, #1c1917 100%);
+  color: #f4c9a0;
+  box-shadow:
+    0 0 0 1px rgb(232 149 74 / 0.25),
+    0 6px 20px -8px rgb(0 0 0 / 0.55);
 }
 
 .account-hero-edit {
@@ -3216,24 +3432,72 @@ html[data-theme="light"] .account-nav-mobile .border-transparent.bg-gradient-to-
 
 .account-dashboard-main .account-subpanel {
   border-radius: 1rem;
-  border: 1px solid rgb(0 0 0 / 0.08);
-  background: rgb(255 255 255 / 0.92);
   box-shadow: 0 12px 32px -24px rgb(0 0 0 / 0.2);
 }
 
-[data-theme="light"] .account-panel {
-  background: #ffffff !important;
-  border-color: rgb(0 0 0 / 0.1);
+html[data-theme="light"] .account-dashboard-main .account-subpanel {
+  border: 1px solid rgb(0 0 0 / 0.08);
+  background: rgb(255 255 255 / 0.92);
 }
 
-[data-theme="light"] .account-page .rounded-lg.border-white\/10.bg-black\/20 {
-  background: #fafaf9 !important;
-  border-color: rgb(0 0 0 / 0.08);
+html[data-theme="dark"] .account-dashboard-main .account-subpanel {
+  border: 1px solid rgb(255 255 255 / 0.1);
+  background: rgb(12 12 12 / 0.94);
+  box-shadow: 0 16px 40px -28px rgb(0 0 0 / 0.55);
 }
 
-[data-theme="light"] .shop-offer-band {
-  background: #f5f5f4 !important;
-  border-color: rgb(0 0 0 / 0.08);
+html[data-theme="light"] .account-subpanel {
+  color: #1c1917;
+}
+
+html[data-theme="light"] .account-subpanel .font-display,
+html[data-theme="light"] .account-subpanel h1,
+html[data-theme="light"] .account-subpanel h2,
+html[data-theme="light"] .account-subpanel .text-stone-900,
+html[data-theme="light"] .account-subpanel .text-stone-800 {
+  color: #0c0a09;
+}
+
+html[data-theme="light"] .account-subpanel .text-stone-600 {
+  color: #57534e;
+}
+
+html[data-theme="dark"] .account-subpanel {
+  color: #e7e5e4;
+}
+
+html[data-theme="dark"] .account-subpanel .font-display,
+html[data-theme="dark"] .account-subpanel h1,
+html[data-theme="dark"] .account-subpanel h2,
+html[data-theme="dark"] .account-subpanel .text-stone-900,
+html[data-theme="dark"] .account-subpanel .text-stone-800 {
+  color: #fafaf9;
+}
+
+html[data-theme="dark"] .account-subpanel .text-stone-600,
+html[data-theme="dark"] .account-subpanel .text-stone-500 {
+  color: #a8a29e;
+}
+
+html[data-theme="dark"] .account-subpanel .text-stone-400 {
+  color: #d6d3d1;
+}
+
+html[data-theme="dark"] .account-subpanel .border-stone-200 {
+  border-color: rgb(255 255 255 / 0.1);
+}
+
+html[data-theme="dark"] .account-subpanel :is(.divide-stone-200 > :not([hidden]) ~ :not([hidden])) {
+  border-color: rgb(255 255 255 / 0.1);
+}
+
+html[data-theme="dark"] .account-subpanel a:hover {
+  background: rgb(255 255 255 / 0.04);
+}
+
+html[data-theme="dark"] .account-subpanel .bg-stone-50\/50,
+html[data-theme="dark"] .account-subpanel .bg-stone-50\/30 {
+  background: rgb(255 255 255 / 0.04) !important;
 }
 
 .shop-offer-band.shop-offer-band--has-bg {

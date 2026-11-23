@@ -1,4 +1,5 @@
 import { LogIn } from 'lucide-react';
+import { LoginFormBandBackgroundEditor } from '../../components/admin/FooterBackgroundEditor';
 import { LoginBannerEditor } from '../../components/admin/LoginBannerEditor';
 
 const ADMIN_WELCOME_BG = '/profile/QELMORA-admin.png';
@@ -16,13 +17,14 @@ export default function AdminLoginBanner() {
             </span>
             <div>
               <h1 className="font-display">Login Banner</h1>
-              <p>Side image and copy shown beside the login and signup forms.</p>
+              <p>Light/dark backgrounds for the form column and left campaign panel on /login and /register.</p>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="admin-products-body">
+      <div className="admin-products-body flex flex-col gap-8">
+        <LoginFormBandBackgroundEditor />
         <LoginBannerEditor variant="premium" />
       </div>
     </div>

@@ -120,6 +120,21 @@ export async function ensureSiteSectionsTable() {
      VALUES (?,?,?,?,?,?,?,?)
      ON DUPLICATE KEY UPDATE section_key=section_key`,
     [
+      'login_form_band',
+      'Login',
+      'Login form area background',
+      'Background behind the sign-in / register form column on /login and /register.',
+      null,
+      null,
+      null,
+      'image',
+    ]
+  );
+  await pool.execute(
+    `INSERT INTO site_sections (section_key, eyebrow, headline, body, cta_label, cta_link, image_url, media_type)
+     VALUES (?,?,?,?,?,?,?,?)
+     ON DUPLICATE KEY UPDATE section_key=section_key`,
+    [
       'account_hero',
       'Account',
       'Profile header background',

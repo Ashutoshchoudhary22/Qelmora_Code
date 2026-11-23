@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { AuthThemeToggle } from '../../components/layout/AuthThemeToggle';
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -25,7 +26,10 @@ export default function LoginPage() {
   return (
     <div>
       <p className="text-[10px] font-semibold uppercase tracking-[0.35em] text-stone-500">Login</p>
-      <h1 className="font-display mt-2 text-3xl font-light text-stone-900 sm:text-4xl">Welcome back</h1>
+      <div className="auth-page-heading mt-2">
+        <h1 className="font-display text-3xl font-light text-stone-900 sm:text-4xl">Welcome back</h1>
+        <AuthThemeToggle />
+      </div>
       <p className="mt-2 text-sm text-stone-500">Sign in to access your orders and saved details.</p>
       {location.state?.from?.startsWith?.('/admin') && (
         <p className="mt-3 text-sm text-amber-800/90">Admin area requires an admin account.</p>

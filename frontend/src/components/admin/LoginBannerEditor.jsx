@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { AlignLeft, Check, CloudUpload, LogIn, Type, X } from 'lucide-react';
+import { AlignLeft, Check, CloudUpload, LogIn, Moon, Sun, Type, X } from 'lucide-react';
 import { api } from '../../api/client';
 import { AdminOfferTileCard } from './AdminOfferTileCard';
 import { MediaAssetCard } from './MediaAssetCard';
@@ -12,6 +12,7 @@ const LOGIN_GUIDELINES = [
   { label: 'Format', value: 'JPG, PNG, or WebP' },
   { label: 'File size', value: 'Under 600 KB' },
   { label: 'Video', value: 'MP4, under 15 MB (optional)' },
+  { label: 'Dark mode', value: 'Optional darker left panel when shoppers use dark theme' },
 ];
 
 export function LoginBannerEditor({ variant = 'default' }) {
@@ -22,9 +23,12 @@ export function LoginBannerEditor({ variant = 'default' }) {
     headline: '',
     imageUrl: '',
     mediaType: 'image',
+    darkImageUrl: '',
+    darkMediaType: 'image',
   });
   const [msg, setMsg] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [uploadingDark, setUploadingDark] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ['content', 'login_banner'],
@@ -38,6 +42,8 @@ export function LoginBannerEditor({ variant = 'default' }) {
       headline: data.headline || '',
       imageUrl: data.imageUrl || '',
       mediaType: data.mediaType || 'image',
+      darkImageUrl: data.darkImageUrl || '',
+      darkMediaType: data.darkMediaType || 'image',
     });
   }, [data]);
 
@@ -46,22 +52,25 @@ export function LoginBannerEditor({ variant = 'default' }) {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['content', 'login_banner'] }),
   });
 
-  async function onFile(e) {
+  async function onFile(e, target) {
     const file = e.target.files?.[0];
     if (!file) return;
-    setUploading(true);
+    if (target === 'dark') setUploadingDark(true);
+    else setUploading(true);
     setMsg('');
     try {
       const meta = await uploadToCloudinary(file, 'qelmora/auth', '/content/admin/cloudinary-signature');
-      setForm((f) => ({
-        ...f,
-        imageUrl: meta.secure_url,
-        mediaType: meta.resource_type === 'video' ? 'video' : 'image',
-      }));
+      const type = meta.resource_type === 'video' ? 'video' : 'image';
+      if (target === 'dark') {
+        setForm((f) => ({ ...f, darkImageUrl: meta.secure_url, darkMediaType: type }));
+      } else {
+        setForm((f) => ({ ...f, imageUrl: meta.secure_url, mediaType: type }));
+      }
     } catch (err) {
       setMsg(err.message || 'Upload failed');
     } finally {
-      setUploading(false);
+      if (target === 'dark') setUploadingDark(false);
+      else setUploading(false);
       e.target.value = '';
     }
   }
@@ -73,20 +82,24 @@ export function LoginBannerEditor({ variant = 'default' }) {
       headline: data.headline || '',
       imageUrl: data.imageUrl || '',
       mediaType: data.mediaType || 'image',
+      darkImageUrl: data.darkImageUrl || '',
+      darkMediaType: data.darkMediaType || 'image',
     });
     setMsg('');
   }
 
   async function submit() {
-    if (!form.imageUrl) return setMsg('Upload a banner image (required).');
+    if (!form.imageUrl && !form.darkImageUrl) return setMsg('Upload at least one side panel image (light or dark).');
     setMsg('');
     try {
       await save.mutateAsync({
         eyebrow: form.eyebrow.trim(),
         headline: form.headline.trim() || 'Welcome to QELMORA',
         body: null,
-        imageUrl: form.imageUrl,
-        mediaType: form.mediaType || 'image',
+        imageUrl: form.imageUrl || null,
+        mediaType: form.imageUrl ? form.mediaType || 'image' : 'image',
+        darkImageUrl: form.darkImageUrl || null,
+        darkMediaType: form.darkImageUrl ? form.darkMediaType || 'image' : 'image',
       });
       setMsg('Saved — open /login to preview.');
     } catch (e) {
@@ -155,28 +168,76 @@ export function LoginBannerEditor({ variant = 'default' }) {
             </div>
           </div>
 
-          {form.imageUrl ? (
-            <div className="mt-4 max-w-[240px]">
-              <AdminOfferTileCard
-                secureUrl={form.imageUrl}
-                resourceType={form.mediaType}
-                downloadName="login-banner"
-                onRemove={() => setForm((f) => ({ ...f, imageUrl: '', mediaType: 'image' }))}
-              />
+          <div className="mt-6 grid gap-8 lg:grid-cols-2">
+            <div>
+              <p className="admin-field-label flex items-center gap-2">
+                <Sun size={15} aria-hidden />
+                Light mode — left panel
+              </p>
+              {form.imageUrl ? (
+                <div className="mt-3 w-full max-w-xs">
+                  <AdminOfferTileCard
+                    variant="band"
+                    secureUrl={form.imageUrl}
+                    resourceType={form.mediaType}
+                    downloadName="login-banner-light"
+                    onRemove={() => setForm((f) => ({ ...f, imageUrl: '', mediaType: 'image' }))}
+                  />
+                </div>
+              ) : (
+                <p className="admin-product-hint mt-3">No light image — default gradient is used.</p>
+              )}
+              <label className="admin-offer-upload-btn mt-4">
+                <CloudUpload size={18} />
+                {uploading ? 'Uploading…' : form.imageUrl ? 'Replace light panel' : 'Upload light panel'}
+                <input
+                  type="file"
+                  accept="image/*,video/*"
+                  className="hidden"
+                  disabled={uploading}
+                  onChange={(e) => onFile(e, 'light')}
+                />
+              </label>
             </div>
-          ) : (
-            <p className="admin-product-hint mt-4">No banner image yet — upload required before save.</p>
-          )}
-
-          <label className="admin-offer-upload-btn mt-4">
-            <CloudUpload size={18} />
-            {uploading ? 'Uploading…' : form.imageUrl ? 'Replace Image / Video' : 'Upload Banner Image / Video'}
-            <input type="file" accept="image/*,video/*" className="hidden" disabled={uploading} onChange={onFile} />
-          </label>
-          <p className="admin-product-hint mt-2">Size: 900×1200 px (3:4) for the side panel. JPG/WebP, under 600 KB</p>
+            <div>
+              <p className="admin-field-label flex items-center gap-2">
+                <Moon size={15} aria-hidden />
+                Dark mode — left panel
+              </p>
+              {form.darkImageUrl ? (
+                <div className="mt-3 w-full max-w-xs">
+                  <AdminOfferTileCard
+                    variant="band"
+                    secureUrl={form.darkImageUrl}
+                    resourceType={form.darkMediaType}
+                    downloadName="login-banner-dark"
+                    onRemove={() => setForm((f) => ({ ...f, darkImageUrl: '', darkMediaType: 'image' }))}
+                  />
+                </div>
+              ) : (
+                <p className="admin-product-hint mt-3">No dark image — uses light panel when dark theme is on.</p>
+              )}
+              <label className="admin-offer-upload-btn mt-4">
+                <CloudUpload size={18} />
+                {uploadingDark ? 'Uploading…' : form.darkImageUrl ? 'Replace dark panel' : 'Upload dark panel'}
+                <input
+                  type="file"
+                  accept="image/*,video/*"
+                  className="hidden"
+                  disabled={uploadingDark}
+                  onChange={(e) => onFile(e, 'dark')}
+                />
+              </label>
+            </div>
+          </div>
 
           <div className="admin-product-actions mt-6">
-            <button type="button" className="admin-btn-add" onClick={submit} disabled={save.isPending}>
+            <button
+              type="button"
+              className="admin-btn-add"
+              onClick={submit}
+              disabled={save.isPending || uploading || uploadingDark}
+            >
               <Check size={16} />
               {save.isPending ? 'Saving…' : 'Save Login Banner'}
             </button>
@@ -237,7 +298,7 @@ export function LoginBannerEditor({ variant = 'default' }) {
           />
           <label className="btn-primary btn-accent mt-2 inline-flex cursor-pointer text-[10px]">
             {uploading ? 'Uploading…' : form.imageUrl ? 'Replace image / video' : 'Upload banner image / video'}
-            <input type="file" accept="image/*,video/*" className="hidden" disabled={uploading} onChange={onFile} />
+            <input type="file" accept="image/*,video/*" className="hidden" disabled={uploading} onChange={(e) => onFile(e, 'light')} />
           </label>
           <UploadSizeHint variant="loginSplit" video className="mt-2" />
         </div>

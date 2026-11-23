@@ -474,6 +474,30 @@ const STATIC_PAGE_BAND_GUIDELINES = [
   DARK_BAND_GUIDELINE,
 ];
 
+const LOGIN_FORM_BAND_GUIDELINES = [
+  { label: 'Size', value: '1600×1200 px or wider (form column)' },
+  { label: 'Format', value: 'JPG, PNG, or WebP' },
+  { label: 'File size', value: 'Under 800 KB' },
+  { label: 'Tip', value: 'Subtle texture — left campaign panel stays in Login banner editor below' },
+  DARK_BAND_GUIDELINE,
+];
+
+export function LoginFormBandBackgroundEditor() {
+  return (
+    <SectionImageEditor
+      sectionKey="login_form_band"
+      headline="Login form area background"
+      title="Sign-in form column (/login)"
+      hint="Background behind the right-hand login and register forms. Left panel image stays in Login banner editor."
+      guidelines={LOGIN_FORM_BAND_GUIDELINES}
+      previewHref="/login"
+      previewLabel="login page"
+      cloudFolder="qelmora/login-form"
+      saveLabel="Save login form background"
+    />
+  );
+}
+
 export function AboutBandBackgroundEditor() {
   return (
     <SectionImageEditor

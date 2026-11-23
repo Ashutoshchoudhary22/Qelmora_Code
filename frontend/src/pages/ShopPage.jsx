@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
-import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../api/client';
 import { ProductGrid } from '../components/ProductGrid';
 import { ShopOfferBanners } from '../components/shop/ShopOfferBanners';
+import { ShopSectionBand } from '../components/shop/ShopSectionBand';
 import { TrendingCategories } from '../components/shop/TrendingCategories';
 import { ViewAllLink } from '../components/shop/ViewAllLink';
-import { ShopProductsBand } from '../components/shop/ShopProductsBand';
 
 const TITLES = {
   men: 'Men',
@@ -82,12 +82,13 @@ export default function ShopPage() {
         </div>
       )}
 
-      <ShopProductsBand shopCategory={shopCategory}>
-        <main className="site-container relative z-[2] py-14 md:py-20">
-        {shopCategory && (
+      {shopCategory && (
+        <ShopSectionBand shopCategory={shopCategory} section="collection">
           <section
             id="collection"
-            className={`scroll-mt-28 border-b border-white/10 pb-14 ${offerPlacement ? 'mt-0' : ''}`}
+            className={`site-container scroll-mt-28 border-b border-white/10 py-14 md:py-20 ${
+              offerPlacement ? '' : 'pt-14'
+            }`}
           >
             {collectionCopy && (
               <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
@@ -123,10 +124,12 @@ export default function ShopPage() {
               </div>
             )}
           </section>
-        )}
+        </ShopSectionBand>
+      )}
 
-        {shopCategory && (loadingNew || newItems.length > 0) && (
-          <section id="new-arrivals" className="mt-14 scroll-mt-28 border-b border-white/10 pb-14">
+      {shopCategory && (loadingNew || newItems.length > 0) && (
+        <ShopSectionBand shopCategory={shopCategory} section="new_arrivals">
+          <section id="new-arrivals" className="site-container scroll-mt-28 border-b border-white/10 py-14 md:py-16">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <p className="text-[10px] uppercase tracking-[0.35em] text-q-accent">Just landed</p>
@@ -144,14 +147,20 @@ export default function ShopPage() {
               </div>
             )}
           </section>
-        )}
+        </ShopSectionBand>
+      )}
 
-        {trendingPlacement && (
-          <TrendingCategories placement={trendingPlacement} shopPath={shopPath} genderLabel={title.toLowerCase()} />
-        )}
+      {trendingPlacement && shopCategory && (
+        <ShopSectionBand shopCategory={shopCategory} section="trending">
+          <div className="site-container">
+            <TrendingCategories placement={trendingPlacement} shopPath={shopPath} genderLabel={title.toLowerCase()} />
+          </div>
+        </ShopSectionBand>
+      )}
 
-        {shopCategory && (
-          <section id="best-sellers" className="mt-14 scroll-mt-28">
+      {shopCategory && (
+        <ShopSectionBand shopCategory={shopCategory} section="best_sellers">
+          <section id="best-sellers" className="site-container scroll-mt-28 py-14 md:py-20">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <p className="text-[10px] uppercase tracking-[0.35em] text-q-accent">Curated</p>
@@ -171,9 +180,8 @@ export default function ShopPage() {
               </div>
             )}
           </section>
-        )}
-        </main>
-      </ShopProductsBand>
+        </ShopSectionBand>
+      )}
     </>
   );
 }

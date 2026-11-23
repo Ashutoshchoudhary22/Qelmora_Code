@@ -4,10 +4,16 @@ import { api } from '../api/client';
 import { ProductGrid } from '../components/ProductGrid';
 import { ShopBreadcrumb } from '../components/shop/ShopBreadcrumb';
 import { ShopProductFilters } from '../components/shop/ShopProductFilters';
-import { ShopProductsBand } from '../components/shop/ShopProductsBand';
+import { ShopSectionBand } from '../components/shop/ShopSectionBand';
 import { buildBandProductUrl, SHOP_SORT_OPTIONS } from '../lib/shopListFilters';
 
 const TITLES = { men: 'Men', women: 'Women' };
+
+const BAND_SHOP_SECTION = {
+  all: 'collection',
+  'new-arrivals': 'new_arrivals',
+  'best-sellers': 'best_sellers',
+};
 
 const BANDS = {
   all: {
@@ -94,8 +100,10 @@ export default function ShopBandPage() {
     setSearchParams(next, { replace: true });
   }
 
+  const shopSection = BAND_SHOP_SECTION[band];
+
   return (
-    <ShopProductsBand shopCategory={shopCategory}>
+    <ShopSectionBand shopCategory={shopCategory} section={shopSection}>
       <main className="site-container relative z-[2] pb-10 pt-4 md:pb-14 md:pt-5">
       <ShopBreadcrumb category={shopCategory} band={band} />
 
@@ -156,6 +164,6 @@ export default function ShopBandPage() {
         </div>
       </div>
       </main>
-    </ShopProductsBand>
+    </ShopSectionBand>
   );
 }

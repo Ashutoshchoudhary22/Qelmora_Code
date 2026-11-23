@@ -280,36 +280,24 @@ export async function ensureSiteSectionsTable() {
       'image',
     ]
   );
-  await pool.execute(
-    `INSERT INTO site_sections (section_key, eyebrow, headline, body, cta_label, cta_link, image_url, media_type)
-     VALUES (?,?,?,?,?,?,?,?)
-     ON DUPLICATE KEY UPDATE section_key=section_key`,
-    [
-      'shop_men_products_band',
-      'Shop products',
-      "Men's shop products band background",
-      'Background behind the collection, new arrivals, trending, and best sellers on /shop/men. Products still come from Admin → Products.',
-      null,
-      null,
-      null,
-      'image',
-    ]
-  );
-  await pool.execute(
-    `INSERT INTO site_sections (section_key, eyebrow, headline, body, cta_label, cta_link, image_url, media_type)
-     VALUES (?,?,?,?,?,?,?,?)
-     ON DUPLICATE KEY UPDATE section_key=section_key`,
-    [
-      'shop_women_products_band',
-      'Shop products',
-      "Women's shop products band background",
-      'Background behind the collection, new arrivals, trending, and best sellers on /shop/women. Products still come from Admin → Products.',
-      null,
-      null,
-      null,
-      'image',
-    ]
-  );
+  const shopSectionBands = [
+    ['shop_men_collection_band', "Men's shop — collection section", 'Shop the edit block on /shop/men'],
+    ['shop_men_new_arrivals_band', "Men's shop — new arrivals section", 'Just landed block on /shop/men'],
+    ['shop_men_trending_band', "Men's shop — trending section", 'Trending categories on /shop/men'],
+    ['shop_men_best_sellers_band', "Men's shop — best sellers section", 'Best sellers block on /shop/men'],
+    ['shop_women_collection_band', "Women's shop — collection section", 'Shop the edit block on /shop/women'],
+    ['shop_women_new_arrivals_band', "Women's shop — new arrivals section", 'Just landed block on /shop/women'],
+    ['shop_women_trending_band', "Women's shop — trending section", 'Trending categories on /shop/women'],
+    ['shop_women_best_sellers_band', "Women's shop — best sellers section", 'Best sellers block on /shop/women'],
+  ];
+  for (const [key, headline, body] of shopSectionBands) {
+    await pool.execute(
+      `INSERT INTO site_sections (section_key, eyebrow, headline, body, cta_label, cta_link, image_url, media_type)
+       VALUES (?,?,?,?,?,?,?,?)
+       ON DUPLICATE KEY UPDATE section_key=section_key`,
+      [key, 'Shop sections', headline, body, null, null, null, 'image']
+    );
+  }
   siteSectionsReady = true;
 }
 

@@ -14,8 +14,8 @@ import {
 } from 'lucide-react';
 import { api } from '../../api/client';
 import {
-  ShopMenProductsBandBackgroundEditor,
-  ShopWomenProductsBandBackgroundEditor,
+  ShopMenSectionBackgroundEditors,
+  ShopWomenSectionBackgroundEditors,
 } from '../../components/admin/FooterBackgroundEditor';
 import { formatInr } from '../../lib/money';
 
@@ -120,8 +120,8 @@ export default function AdminProducts() {
       </header>
 
       <div className="admin-products-body flex flex-col gap-8">
-        <ShopMenProductsBandBackgroundEditor />
-        <ShopWomenProductsBandBackgroundEditor />
+        <ShopMenSectionBackgroundEditors />
+        <ShopWomenSectionBackgroundEditors />
 
         <div className="admin-products-toolbar">
           <div className="admin-products-search">

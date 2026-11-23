@@ -359,44 +359,111 @@ export function ShopWomenOffersBandBackgroundEditor() {
   );
 }
 
-const SHOP_PRODUCTS_BAND_GUIDELINES = [
-  { label: 'Size', value: '2400×1400 px or wider (tall band behind listings)' },
+const SHOP_SECTION_BAND_GUIDELINES = [
+  { label: 'Size', value: '2400×900 px or wider (one section band)' },
   { label: 'Format', value: 'JPG, PNG, or WebP' },
   { label: 'File size', value: 'Under 800 KB' },
-  { label: 'Tip', value: 'Soft textures — product cards and grids are still from the catalog below' },
+  { label: 'Tip', value: 'Each block on the shop page has its own background — not one image for the full page' },
   DARK_BAND_GUIDELINE,
 ];
 
-export function ShopMenProductsBandBackgroundEditor() {
+const SHOP_MEN_SECTIONS = [
+  {
+    section: 'collection',
+    title: 'Men — Shop the edit / Collection',
+    hint: 'Only the collection block on /shop/men (and View all collection).',
+    previewHref: '/shop/men#collection',
+    previewLabel: 'men’s collection section',
+    saveLabel: 'Save men’s collection background',
+  },
+  {
+    section: 'new_arrivals',
+    title: 'Men — Just landed / New arrivals',
+    hint: 'Only the new arrivals block on /shop/men.',
+    previewHref: '/shop/men#new-arrivals',
+    previewLabel: 'men’s new arrivals section',
+    saveLabel: 'Save men’s new arrivals background',
+  },
+  {
+    section: 'trending',
+    title: 'Men — Trending categories',
+    hint: 'Only the trending carousel block on /shop/men. Tiles still from Admin → Trending categories.',
+    previewHref: '/shop/men#trending-categories',
+    previewLabel: 'men’s trending section',
+    saveLabel: 'Save men’s trending background',
+  },
+  {
+    section: 'best_sellers',
+    title: 'Men — Best sellers',
+    hint: 'Only the best sellers block on /shop/men.',
+    previewHref: '/shop/men#best-sellers',
+    previewLabel: 'men’s best sellers section',
+    saveLabel: 'Save men’s best sellers background',
+  },
+];
+
+const SHOP_WOMEN_SECTIONS = [
+  {
+    section: 'collection',
+    title: 'Women — Shop the edit / Collection',
+    hint: 'Only the collection block on /shop/women (and View all collection).',
+    previewHref: '/shop/women#collection',
+    previewLabel: 'women’s collection section',
+    saveLabel: 'Save women’s collection background',
+  },
+  {
+    section: 'new_arrivals',
+    title: 'Women — Just landed / New arrivals',
+    hint: 'Only the new arrivals block on /shop/women.',
+    previewHref: '/shop/women#new-arrivals',
+    previewLabel: 'women’s new arrivals section',
+    saveLabel: 'Save women’s new arrivals background',
+  },
+  {
+    section: 'trending',
+    title: 'Women — Trending categories',
+    hint: 'Only the trending carousel on /shop/women.',
+    previewHref: '/shop/women#trending-categories',
+    previewLabel: 'women’s trending section',
+    saveLabel: 'Save women’s trending background',
+  },
+  {
+    section: 'best_sellers',
+    title: 'Women — Best sellers',
+    hint: 'Only the best sellers block on /shop/women.',
+    previewHref: '/shop/women#best-sellers',
+    previewLabel: 'women’s best sellers section',
+    saveLabel: 'Save women’s best sellers background',
+  },
+];
+
+function ShopGenderSectionBackgroundEditors({ gender, sections }) {
   return (
-    <SectionImageEditor
-      sectionKey="shop_men_products_band"
-      headline="Men's shop products band background"
-      title="Shop listing background (Men)"
-      hint="Behind Shop the edit, Just landed / New arrivals, best sellers, and View all listing pages on /shop/men."
-      guidelines={SHOP_PRODUCTS_BAND_GUIDELINES}
-      previewHref="/shop/men"
-      previewLabel="men's shop page"
-      cloudFolder="qelmora/shop-products-men"
-      saveLabel="Save men's shop background"
-    />
+    <div className="space-y-10">
+      {sections.map((cfg) => (
+        <SectionImageEditor
+          key={cfg.section}
+          sectionKey={`shop_${gender}_${cfg.section}_band`}
+          headline={cfg.title}
+          title={cfg.title}
+          hint={cfg.hint}
+          guidelines={SHOP_SECTION_BAND_GUIDELINES}
+          previewHref={cfg.previewHref}
+          previewLabel={cfg.previewLabel}
+          cloudFolder={`qelmora/shop-${gender}-${cfg.section}`}
+          saveLabel={cfg.saveLabel}
+        />
+      ))}
+    </div>
   );
 }
 
-export function ShopWomenProductsBandBackgroundEditor() {
-  return (
-    <SectionImageEditor
-      sectionKey="shop_women_products_band"
-      headline="Women's shop products band background"
-      title="Shop listing background (Women)"
-      hint="Behind Shop the edit, Just landed / New arrivals, best sellers, and View all listing pages on /shop/women."
-      guidelines={SHOP_PRODUCTS_BAND_GUIDELINES}
-      previewHref="/shop/women"
-      previewLabel="women's shop page"
-      cloudFolder="qelmora/shop-products-women"
-      saveLabel="Save women's shop background"
-    />
-  );
+export function ShopMenSectionBackgroundEditors() {
+  return <ShopGenderSectionBackgroundEditors gender="men" sections={SHOP_MEN_SECTIONS} />;
+}
+
+export function ShopWomenSectionBackgroundEditors() {
+  return <ShopGenderSectionBackgroundEditors gender="women" sections={SHOP_WOMEN_SECTIONS} />;
 }
 
 export function NewArrivalsBandBackgroundEditor() {

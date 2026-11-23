@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowUpRight, Star } from 'lucide-react';
 import { api } from '../../api/client';
+import { useBandBackgroundUrl } from '../../lib/useBandBackground';
 
 const DEFAULT_FEATURED_BG = '/profile/our-story-golden-silk.png';
 
@@ -25,7 +26,7 @@ export function FeaturedCollectionSection() {
   });
 
   const item = collectionBanner?.items?.[0];
-  const bgUrl = bandCfg?.imageUrl || DEFAULT_FEATURED_BG;
+  const bgUrl = useBandBackgroundUrl(bandCfg, DEFAULT_FEATURED_BG);
 
   return (
     <section className="home-featured-collection relative overflow-hidden">

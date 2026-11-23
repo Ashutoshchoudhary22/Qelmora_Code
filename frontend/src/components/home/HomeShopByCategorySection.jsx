@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../api/client';
+import { useBandBackgroundUrl } from '../../lib/useBandBackground';
 import { CategoryCollectionCards } from '../CategoryCollectionCards';
 import { CollectionPlacementGrid } from '../CollectionPlacementGrid';
 
@@ -30,7 +31,7 @@ export function HomeShopByCategorySection() {
   });
 
   const hasHomeCategoryTiles = (homeCategoryTiles?.items || []).length > 0;
-  const bgUrl = bandCfg?.imageUrl || DEFAULT_SHOP_CATEGORY_BG;
+  const bgUrl = useBandBackgroundUrl(bandCfg, DEFAULT_SHOP_CATEGORY_BG);
 
   return (
     <section className="home-shop-category-band relative overflow-hidden">

@@ -13,6 +13,7 @@ import {
   Users,
 } from 'lucide-react';
 import { api } from '../../api/client';
+import { useBandBackgroundUrl } from '../../lib/useBandBackground';
 import { BRAND_NAME } from '../../lib/brand';
 
 const DEFAULT_INSTAGRAM_BG = '/profile/our-story-golden-silk.png';
@@ -98,7 +99,7 @@ export function HomeInstagramSection() {
     queryFn: async () => (await api.get('/instagram')).data,
   });
 
-  const bgUrl = bandCfg?.imageUrl || DEFAULT_INSTAGRAM_BG;
+  const bgUrl = useBandBackgroundUrl(bandCfg, DEFAULT_INSTAGRAM_BG);
   const profileLink = instagramMeta?.ctaLink || 'https://instagram.com/qelmora';
   const subtitle =
     instagramMeta?.body?.trim() ||

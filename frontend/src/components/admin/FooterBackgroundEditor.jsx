@@ -1,15 +1,21 @@
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Check, CloudUpload, ImageIcon, Mail, X } from 'lucide-react';
+import { Check, CloudUpload, ImageIcon, Mail, Moon, Sun, X } from 'lucide-react';
 import { api } from '../../api/client';
 import { AdminOfferTileCard } from './AdminOfferTileCard';
 import { uploadToCloudinary } from '../../lib/cloudinary';
+
+const DARK_BAND_GUIDELINE = {
+  label: 'Dark mode',
+  value: 'Optional darker / muted image shown when shoppers use dark theme (falls back to light image if empty)',
+};
 
 const FOOTER_GUIDELINES = [
   { label: 'Size', value: '2400×900 px or wider (landscape)' },
   { label: 'Format', value: 'JPG, PNG, or WebP' },
   { label: 'File size', value: 'Under 800 KB' },
   { label: 'Tip', value: 'Dark or muted images keep footer links readable' },
+  DARK_BAND_GUIDELINE,
 ];
 
 const NEWSLETTER_GUIDELINES = [
@@ -17,6 +23,7 @@ const NEWSLETTER_GUIDELINES = [
   { label: 'Format', value: 'JPG, PNG, or WebP' },
   { label: 'File size', value: 'Under 800 KB' },
   { label: 'Tip', value: 'Soft cream / gold textures work best behind the form' },
+  DARK_BAND_GUIDELINE,
 ];
 
 function SectionImageEditor({
@@ -33,8 +40,15 @@ function SectionImageEditor({
   const qc = useQueryClient();
   const [imageUrl, setImageUrl] = useState('');
   const [mediaType, setMediaType] = useState('image');
+  const [darkImageUrl, setDarkImageUrl] = useState('');
+  const [darkMediaType, setDarkMediaType] = useState('image');
   const [msg, setMsg] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [uploadingDark, setUploadingDark] = useState(false);
+
+  const guidelineRows = guidelines.some((r) => r.label === 'Dark mode')
+    ? guidelines
+    : [...guidelines, DARK_BAND_GUIDELINE];
 
   const { data, isLoading } = useQuery({
     queryKey: ['content', sectionKey],
@@ -45,6 +59,8 @@ function SectionImageEditor({
     if (!data) return;
     setImageUrl(data.imageUrl || '');
     setMediaType(data.mediaType || 'image');
+    setDarkImageUrl(data.darkImageUrl || '');
+    setDarkMediaType(data.darkMediaType || 'image');
   }, [data]);
 
   const save = useMutation({
@@ -52,19 +68,28 @@ function SectionImageEditor({
     onSuccess: () => qc.invalidateQueries({ queryKey: ['content', sectionKey] }),
   });
 
-  async function onFile(e) {
+  async function onFile(e, target) {
     const file = e.target.files?.[0];
     if (!file) return;
-    setUploading(true);
+    if (target === 'dark') setUploadingDark(true);
+    else setUploading(true);
     setMsg('');
     try {
       const meta = await uploadToCloudinary(file, cloudFolder, '/content/admin/cloudinary-signature');
-      setImageUrl(meta.secure_url);
-      setMediaType(meta.resource_type === 'video' ? 'video' : 'image');
+      const url = meta.secure_url;
+      const type = meta.resource_type === 'video' ? 'video' : 'image';
+      if (target === 'dark') {
+        setDarkImageUrl(url);
+        setDarkMediaType(type);
+      } else {
+        setImageUrl(url);
+        setMediaType(type);
+      }
     } catch (err) {
       setMsg(err.message || 'Upload failed');
     } finally {
-      setUploading(false);
+      if (target === 'dark') setUploadingDark(false);
+      else setUploading(false);
       e.target.value = '';
     }
   }
@@ -72,6 +97,8 @@ function SectionImageEditor({
   function resetForm() {
     setImageUrl(data?.imageUrl || '');
     setMediaType(data?.mediaType || 'image');
+    setDarkImageUrl(data?.darkImageUrl || '');
+    setDarkMediaType(data?.darkMediaType || 'image');
     setMsg('');
   }
 
@@ -83,12 +110,10 @@ function SectionImageEditor({
         body: data?.body || hint,
         imageUrl: imageUrl || null,
         mediaType: imageUrl ? mediaType : 'image',
+        darkImageUrl: darkImageUrl || null,
+        darkMediaType: darkImageUrl ? darkMediaType : 'image',
       });
-      setMsg(
-        imageUrl
-          ? `Saved — refresh the storefront to preview (${previewLabel}).`
-          : 'Removed — default background is active.'
-      );
+      setMsg('Saved — refresh the storefront and toggle light/dark to preview.');
     } catch (e) {
       setMsg(e.response?.data?.message || 'Save failed');
     }
@@ -111,30 +136,70 @@ function SectionImageEditor({
           </span>
         </div>
 
-        {imageUrl ? (
-          <div className="mt-4 max-w-md">
-            <AdminOfferTileCard
-              secureUrl={imageUrl}
-              resourceType={mediaType}
-              downloadName={sectionKey}
-              onRemove={() => {
-                setImageUrl('');
-                setMediaType('image');
-              }}
-            />
+        <div className="mt-5 grid gap-8 lg:grid-cols-2">
+          <div>
+            <p className="admin-field-label flex items-center gap-2">
+              <Sun size={15} aria-hidden />
+              Light mode background
+            </p>
+            {imageUrl ? (
+              <div className="mt-3 max-w-md">
+                <AdminOfferTileCard
+                  secureUrl={imageUrl}
+                  resourceType={mediaType}
+                  downloadName={`${sectionKey}-light`}
+                  onRemove={() => {
+                    setImageUrl('');
+                    setMediaType('image');
+                  }}
+                />
+              </div>
+            ) : (
+              <p className="admin-product-hint mt-3">No light-mode image — default styling is used.</p>
+            )}
+            <label className="admin-offer-upload-btn mt-4">
+              <CloudUpload size={18} />
+              {uploading ? 'Uploading…' : imageUrl ? 'Replace light image' : 'Upload light image'}
+              <input type="file" accept="image/*" className="hidden" disabled={uploading} onChange={(e) => onFile(e, 'light')} />
+            </label>
           </div>
-        ) : (
-          <p className="admin-product-hint mt-4">No background image — default styling is used.</p>
-        )}
 
-        <label className="admin-offer-upload-btn mt-4">
-          <CloudUpload size={18} />
-          {uploading ? 'Uploading…' : imageUrl ? 'Replace background' : 'Upload background image'}
-          <input type="file" accept="image/*" className="hidden" disabled={uploading} onChange={onFile} />
-        </label>
+          <div>
+            <p className="admin-field-label flex items-center gap-2">
+              <Moon size={15} aria-hidden />
+              Dark mode background
+            </p>
+            {darkImageUrl ? (
+              <div className="mt-3 max-w-md">
+                <AdminOfferTileCard
+                  secureUrl={darkImageUrl}
+                  resourceType={darkMediaType}
+                  downloadName={`${sectionKey}-dark`}
+                  onRemove={() => {
+                    setDarkImageUrl('');
+                    setDarkMediaType('image');
+                  }}
+                />
+              </div>
+            ) : (
+              <p className="admin-product-hint mt-3">No dark image — uses the light background when dark theme is on.</p>
+            )}
+            <label className="admin-offer-upload-btn mt-4">
+              <CloudUpload size={18} />
+              {uploadingDark ? 'Uploading…' : darkImageUrl ? 'Replace dark image' : 'Upload dark image'}
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                disabled={uploadingDark}
+                onChange={(e) => onFile(e, 'dark')}
+              />
+            </label>
+          </div>
+        </div>
 
         <div className="admin-product-actions mt-6">
-          <button type="button" className="admin-btn-add" onClick={submit} disabled={save.isPending || uploading}>
+          <button type="button" className="admin-btn-add" onClick={submit} disabled={save.isPending || uploading || uploadingDark}>
             <Check size={16} />
             {save.isPending ? 'Saving…' : saveLabel}
           </button>
@@ -149,7 +214,7 @@ function SectionImageEditor({
       <aside className="admin-shop-category-guidelines">
         <h3 className="text-sm font-semibold text-stone-900">Image guidelines</h3>
         <ul className="admin-guidelines-list">
-          {guidelines.map((row) => (
+          {guidelineRows.map((row) => (
             <li key={row.label}>
               <span>{row.label}</span>
               <span>{row.value}</span>
@@ -209,6 +274,7 @@ const BRAND_STORY_BAND_GUIDELINES = [
   { label: 'Format', value: 'JPG, PNG, or WebP' },
   { label: 'File size', value: 'Under 800 KB' },
   { label: 'Tip', value: 'Cream / gold silk textures match the homepage brand story layout' },
+  DARK_BAND_GUIDELINE,
 ];
 
 const FEATURED_COLLECTION_GUIDELINES = [
@@ -216,6 +282,7 @@ const FEATURED_COLLECTION_GUIDELINES = [
   { label: 'Format', value: 'JPG, PNG, or WebP' },
   { label: 'File size', value: 'Under 800 KB' },
   { label: 'Tip', value: 'Match cream/gold silk textures used for brand story and newsletter' },
+  DARK_BAND_GUIDELINE,
 ];
 
 const INSTAGRAM_BAND_GUIDELINES = [
@@ -223,6 +290,7 @@ const INSTAGRAM_BAND_GUIDELINES = [
   { label: 'Format', value: 'JPG, PNG, or WebP' },
   { label: 'File size', value: 'Under 800 KB' },
   { label: 'Tip', value: 'Cream / gold wave textures match the Instagram mock; keep contrast for the marquee' },
+  DARK_BAND_GUIDELINE,
 ];
 
 const PROMO_BAND_GUIDELINES = [
@@ -230,6 +298,7 @@ const PROMO_BAND_GUIDELINES = [
   { label: 'Format', value: 'JPG, PNG, or WebP' },
   { label: 'File size', value: 'Under 800 KB' },
   { label: 'Tip', value: 'Optional silk/cream backdrop around the card; main product shot stays Admin → Banners → Promo' },
+  DARK_BAND_GUIDELINE,
 ];
 
 const SHOP_CATEGORY_BAND_GUIDELINES = [
@@ -237,6 +306,7 @@ const SHOP_CATEGORY_BAND_GUIDELINES = [
   { label: 'Format', value: 'JPG, PNG, or WebP' },
   { label: 'File size', value: 'Under 800 KB' },
   { label: 'Tip', value: 'Cream/gold textures; category tile images stay in Admin → Home shop by category' },
+  DARK_BAND_GUIDELINE,
 ];
 
 const NEW_ARRIVALS_BAND_GUIDELINES = [
@@ -244,6 +314,7 @@ const NEW_ARRIVALS_BAND_GUIDELINES = [
   { label: 'Format', value: 'JPG, PNG, or WebP' },
   { label: 'File size', value: 'Under 800 KB' },
   { label: 'Tip', value: 'Soft cream/silk backdrop; product cards are pulled automatically from new arrivals' },
+  DARK_BAND_GUIDELINE,
 ];
 
 export function NewArrivalsBandBackgroundEditor() {

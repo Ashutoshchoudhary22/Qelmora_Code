@@ -14,6 +14,8 @@ const sectionSchema = z.object({
   ctaLink: z.string().max(500).optional().nullable(),
   imageUrl: z.string().url().optional().nullable(),
   mediaType: z.enum(['image', 'video']).optional(),
+  darkImageUrl: z.string().url().optional().nullable(),
+  darkMediaType: z.enum(['image', 'video']).optional(),
 });
 
 router.get('/admin/all', requireAuth, requireAdmin, async (_req, res, next) => {
@@ -21,7 +23,9 @@ router.get('/admin/all', requireAuth, requireAdmin, async (_req, res, next) => {
     const [items] = await pool.execute(
       `SELECT section_key AS sectionKey, eyebrow, headline, body,
         cta_label AS ctaLabel, cta_link AS ctaLink,
-        image_url AS imageUrl, media_type AS mediaType, updated_at AS updatedAt
+        image_url AS imageUrl, media_type AS mediaType,
+        dark_image_url AS darkImageUrl, dark_media_type AS darkMediaType,
+        updated_at AS updatedAt
        FROM site_sections ORDER BY section_key`
     );
     res.json({ items });
@@ -43,6 +47,8 @@ router.patch('/admin/:key', requireAuth, requireAdmin, async (req, res, next) =>
       ctaLink: 'cta_link',
       imageUrl: 'image_url',
       mediaType: 'media_type',
+      darkImageUrl: 'dark_image_url',
+      darkMediaType: 'dark_media_type',
     };
     for (const [k, col] of Object.entries(map)) {
       if (data[k] !== undefined) {
@@ -65,7 +71,9 @@ router.get('/:key', async (req, res, next) => {
     const [rows] = await pool.execute(
       `SELECT section_key AS sectionKey, eyebrow, headline, body,
         cta_label AS ctaLabel, cta_link AS ctaLink,
-        image_url AS imageUrl, media_type AS mediaType, updated_at AS updatedAt
+        image_url AS imageUrl, media_type AS mediaType,
+        dark_image_url AS darkImageUrl, dark_media_type AS darkMediaType,
+        updated_at AS updatedAt
        FROM site_sections WHERE section_key=? LIMIT 1`,
       [req.params.key]
     );

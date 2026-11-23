@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowRight } from 'lucide-react';
 import { api } from '../../api/client';
+import { useBandBackgroundUrl } from '../../lib/useBandBackground';
 import { BRAND_NAME } from '../../lib/brand';
 
 const DEFAULT_PROMO_BAND_BG = '/profile/our-story-golden-silk.png';
@@ -24,7 +25,7 @@ export function HomePromoBand({ banner }) {
     refetchOnWindowFocus: true,
   });
 
-  const bandBgUrl = bandCfg?.imageUrl || DEFAULT_PROMO_BAND_BG;
+  const bandBgUrl = useBandBackgroundUrl(bandCfg, DEFAULT_PROMO_BAND_BG);
 
   return (
     <section className="home-promo-band-section relative overflow-hidden">

@@ -38,6 +38,18 @@ export async function ensureSiteSectionsTable() {
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB
   `);
+  try {
+    await pool.execute(`ALTER TABLE site_sections ADD COLUMN dark_image_url VARCHAR(1000) NULL`);
+  } catch {
+    /* column exists */
+  }
+  try {
+    await pool.execute(
+      `ALTER TABLE site_sections ADD COLUMN dark_media_type ENUM('image','video') NOT NULL DEFAULT 'image'`
+    );
+  } catch {
+    /* column exists */
+  }
   await pool.execute(
     `INSERT INTO site_sections (section_key, eyebrow, headline, body, cta_label, cta_link)
      VALUES (?,?,?,?,?,?)

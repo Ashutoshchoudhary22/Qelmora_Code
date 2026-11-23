@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowRight, Mail } from 'lucide-react';
 import { api } from '../api/client';
+import { hasCustomBandBackground, useBandBackgroundUrl } from '../lib/useBandBackground';
 
 const DEFAULT_NEWSLETTER_BG = '/profile/our-story-golden-silk.png';
 
@@ -22,8 +23,8 @@ export function Newsletter() {
     refetchOnWindowFocus: true,
   });
 
-  const bgUrl = bandCfg?.imageUrl || DEFAULT_NEWSLETTER_BG;
-  const hasCustomBg = Boolean(bandCfg?.imageUrl);
+  const bgUrl = useBandBackgroundUrl(bandCfg, DEFAULT_NEWSLETTER_BG);
+  const hasCustomBg = hasCustomBandBackground(bandCfg);
 
   function submit(e) {
     e.preventDefault();

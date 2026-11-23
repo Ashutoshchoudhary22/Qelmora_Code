@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { api } from '../../api/client';
+import { useBandBackgroundUrl } from '../../lib/useBandBackground';
 import { ProductGrid } from '../ProductGrid';
 
 const DEFAULT_NEW_ARRIVALS_BG = '/profile/our-story-golden-silk.png';
@@ -29,7 +30,7 @@ export function HomeNewArrivalsSection() {
     queryFn: async () => (await api.get('/products?newArrival=1&category=women&limit=4')).data,
   });
 
-  const bgUrl = bandCfg?.imageUrl || DEFAULT_NEW_ARRIVALS_BG;
+  const bgUrl = useBandBackgroundUrl(bandCfg, DEFAULT_NEW_ARRIVALS_BG);
 
   return (
     <section className="home-new-arrivals-band relative overflow-hidden">

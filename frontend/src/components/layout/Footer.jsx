@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Facebook, Instagram, Mail, Twitter, Youtube } from 'lucide-react';
 import { api } from '../../api/client';
+import { useBandBackgroundUrl } from '../../lib/useBandBackground';
 
 function PinterestIcon({ size = 17 }) {
   return (
@@ -33,8 +34,8 @@ export function Footer() {
     refetchOnWindowFocus: true,
   });
 
-  const bgUrl = footerCfg?.imageUrl || '';
-  const hasCustomBg = Boolean(bgUrl);
+  const bgUrl = useBandBackgroundUrl(footerCfg, '', '');
+  const hasCustomBg = Boolean(footerCfg?.imageUrl || footerCfg?.darkImageUrl);
 
   return (
     <footer

@@ -319,6 +319,46 @@ const NEW_ARRIVALS_BAND_GUIDELINES = [
   DARK_BAND_GUIDELINE,
 ];
 
+const SHOP_OFFERS_BAND_GUIDELINES = [
+  { label: 'Size', value: '2400×600 px or wider (wide strip behind carousel)' },
+  { label: 'Format', value: 'JPG, PNG, or WebP' },
+  { label: 'File size', value: 'Under 800 KB' },
+  { label: 'Tip', value: 'Subtle textures — offer tile images stay in the carousel below' },
+  DARK_BAND_GUIDELINE,
+];
+
+export function ShopMenOffersBandBackgroundEditor() {
+  return (
+    <SectionImageEditor
+      sectionKey="shop_men_offers_band"
+      headline="Men's shop offers band background"
+      title="Offer carousel background (Men)"
+      hint="Full-width strip behind the offer carousel on /shop/men. Upload tiles above in Men's Shop Offers."
+      guidelines={SHOP_OFFERS_BAND_GUIDELINES}
+      previewHref="/shop/men"
+      previewLabel="men's shop offers"
+      cloudFolder="qelmora/shop-offers-men"
+      saveLabel="Save men's offers background"
+    />
+  );
+}
+
+export function ShopWomenOffersBandBackgroundEditor() {
+  return (
+    <SectionImageEditor
+      sectionKey="shop_women_offers_band"
+      headline="Women's shop offers band background"
+      title="Offer carousel background (Women)"
+      hint="Full-width strip behind the offer carousel on /shop/women. Upload tiles above in Women's Shop Offers."
+      guidelines={SHOP_OFFERS_BAND_GUIDELINES}
+      previewHref="/shop/women"
+      previewLabel="women's shop offers"
+      cloudFolder="qelmora/shop-offers-women"
+      saveLabel="Save women's offers background"
+    />
+  );
+}
+
 export function NewArrivalsBandBackgroundEditor() {
   return (
     <SectionImageEditor

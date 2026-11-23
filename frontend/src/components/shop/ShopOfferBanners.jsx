@@ -2,6 +2,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../api/client';
+import { hasCustomBandBackground, useBandBackgroundUrl } from '../../lib/useBandBackground';
+
+const OFFERS_BAND_KEYS = {
+  shop_men: 'shop_men_offers_band',
+  shop_women: 'shop_women_offers_band',
+};
 
 const STEP_MS = 3800;
 
@@ -120,18 +126,53 @@ function ShopOfferStepCarousel({ items }) {
 }
 
 export function ShopOfferBanners({ placement }) {
+  const bandKey = OFFERS_BAND_KEYS[placement];
+
   const { data } = useQuery({
     queryKey: ['banners', placement],
     queryFn: async () => (await api.get(`/banners?placement=${placement}`)).data,
     enabled: !!placement,
   });
 
+  const { data: bandCfg } = useQuery({
+    queryKey: ['content', bandKey],
+    queryFn: async () => {
+      try {
+        return (await api.get(`/content/${bandKey}`)).data;
+      } catch {
+        return null;
+      }
+    },
+    enabled: Boolean(bandKey),
+    staleTime: 30_000,
+    refetchOnWindowFocus: true,
+  });
+
+  const bgUrl = useBandBackgroundUrl(bandCfg, '', '');
+  const hasCustomBg = hasCustomBandBackground(bandCfg);
+
   const items = useMemo(() => data?.items || [], [data?.items]);
   if (!items.length) return null;
 
   return (
-    <section className="shop-offer-band border-b border-white/10 bg-[#0a0a0a] py-4 md:py-6">
-      <ShopOfferStepCarousel items={items} />
+    <section
+      className={`shop-offer-band relative overflow-hidden border-b border-white/10 bg-[#0a0a0a] py-4 md:py-6${
+        hasCustomBg ? ' shop-offer-band--has-bg' : ''
+      }`}
+    >
+      {hasCustomBg && bgUrl && (
+        <>
+          <div
+            className="shop-offer-band-bg"
+            style={{ backgroundImage: `url(${bgUrl})` }}
+            aria-hidden
+          />
+          <div className="shop-offer-band-scrim" aria-hidden />
+        </>
+      )}
+      <div className="relative z-[2]">
+        <ShopOfferStepCarousel items={items} />
+      </div>
     </section>
   );
 }

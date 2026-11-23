@@ -250,6 +250,36 @@ export async function ensureSiteSectionsTable() {
       'image',
     ]
   );
+  await pool.execute(
+    `INSERT INTO site_sections (section_key, eyebrow, headline, body, cta_label, cta_link, image_url, media_type)
+     VALUES (?,?,?,?,?,?,?,?)
+     ON DUPLICATE KEY UPDATE section_key=section_key`,
+    [
+      'shop_men_offers_band',
+      'Shop offers',
+      "Men's shop offers band background",
+      'Background behind the offer carousel on /shop/men. Offer slides still come from Admin → Shop offers.',
+      null,
+      null,
+      null,
+      'image',
+    ]
+  );
+  await pool.execute(
+    `INSERT INTO site_sections (section_key, eyebrow, headline, body, cta_label, cta_link, image_url, media_type)
+     VALUES (?,?,?,?,?,?,?,?)
+     ON DUPLICATE KEY UPDATE section_key=section_key`,
+    [
+      'shop_women_offers_band',
+      'Shop offers',
+      "Women's shop offers band background",
+      'Background behind the offer carousel on /shop/women. Offer slides still come from Admin → Shop offers.',
+      null,
+      null,
+      null,
+      'image',
+    ]
+  );
   siteSectionsReady = true;
 }
 

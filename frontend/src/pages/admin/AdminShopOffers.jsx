@@ -1,4 +1,8 @@
 import { Tag } from 'lucide-react';
+import {
+  ShopMenOffersBandBackgroundEditor,
+  ShopWomenOffersBandBackgroundEditor,
+} from '../../components/admin/FooterBackgroundEditor';
 import { ShopOfferPanel } from '../../components/admin/ShopOfferPanel';
 
 const ADMIN_WELCOME_BG = '/profile/QELMORA-admin.png';
@@ -26,6 +30,7 @@ export default function AdminShopOffers() {
       </header>
 
       <div className="admin-products-body flex flex-col gap-8">
+        <ShopMenOffersBandBackgroundEditor />
         <ShopOfferPanel
           variant="premium"
           sectionOnly
@@ -35,6 +40,7 @@ export default function AdminShopOffers() {
           sizeVariant="offerTile"
           description="Carousel on /shop/men. Sort order controls slide sequence."
         />
+        <ShopWomenOffersBandBackgroundEditor />
         <ShopOfferPanel
           variant="premium"
           sectionOnly

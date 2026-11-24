@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { buildSignupOtpEmailContent } from './signup-otp-email.js';
 
 function smtpPassword() {
   return process.env.SMTP_PASS || process.env.SMTP_PASSWORD || '';
@@ -53,18 +54,7 @@ export async function sendSignupOtpEmail({ to, name, otp }) {
     throw new Error('SMTP_USER is required');
   }
 
-  const subject = 'Your QELMORA verification code';
-  const text = `Hi ${name},\n\nYour sign-up verification code is: ${otp}\n\nThis code expires in 15 minutes. If you did not request this, you can ignore this email.\n\n— QELMORA`;
-
-  const html = `
-    <div style="font-family:system-ui,sans-serif;line-height:1.5;color:#1c1917;max-width:480px;">
-      <p style="margin:0 0 1rem;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#b45309;">QELMORA</p>
-      <p>Hi ${name},</p>
-      <p>Use this code to verify your email and finish creating your account:</p>
-      <p style="margin:1.25rem 0;font-size:28px;font-weight:600;letter-spacing:0.35em;">${otp}</p>
-      <p style="font-size:13px;color:#57534e;">Expires in 15 minutes.</p>
-    </div>
-  `;
+  const { subject, text, html } = buildSignupOtpEmailContent({ name, otp });
 
   await transport.sendMail({
     from: `"${fromName}" <${fromAddress}>`,

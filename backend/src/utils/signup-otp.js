@@ -1,7 +1,8 @@
 import crypto from 'crypto';
 import { hashToken } from './tokens.js';
 
-const OTP_TTL_MS = 15 * 60 * 1000;
+export const SIGNUP_OTP_TTL_MINUTES = 15;
+const OTP_TTL_MS = SIGNUP_OTP_TTL_MINUTES * 60 * 1000;
 const MAX_VERIFY_ATTEMPTS = 5;
 
 export function generateSignupOtp() {

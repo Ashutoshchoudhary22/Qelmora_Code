@@ -25,6 +25,7 @@ import {
   Sun,
   X,
 } from 'lucide-react';
+import { SeoHead } from '../../components/SeoHead';
 import { AdminRoute } from '../../components/ProtectedRoute';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -180,6 +181,7 @@ export default function AdminLayout() {
   return (
     <AdminRoute>
       <>
+      <SeoHead title="Admin" noindex path="/admin" />
       <div className="admin-shell admin-canvas admin-shell-grid h-screen max-h-[100dvh] overflow-hidden bg-[#080808] text-stone-100">
         <aside className="admin-sidebar admin-sidebar-premium hidden min-h-0 overflow-hidden border-r border-white/10 bg-[#0c0c0c] lg:flex lg:h-[100dvh] lg:w-full lg:flex-col lg:sticky lg:top-0">
           <SidebarNav />

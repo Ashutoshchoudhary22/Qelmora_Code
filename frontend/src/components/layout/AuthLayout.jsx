@@ -1,11 +1,13 @@
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../api/client';
 import { SiteSectionBand } from '../SiteSectionBand';
 import { useBandBackgroundUrl } from '../../lib/useBandBackground';
 import { useTheme } from '../../context/ThemeContext';
+import { SeoHead } from '../SeoHead';
 
 export function AuthLayout() {
+  const { pathname } = useLocation();
   const { isDark } = useTheme();
 
   const { data } = useQuery({
@@ -31,6 +33,11 @@ export function AuthLayout() {
 
   return (
     <div className="auth-layout relative min-h-screen bg-stone-50 text-stone-900 dark:bg-[#0a0a0a] dark:text-stone-100">
+      <SeoHead
+        title={pathname.includes('register') ? 'Create account' : 'Sign in'}
+        noindex
+        path={pathname}
+      />
       <div className="auth-layout-shell flex min-h-screen w-full">
       <aside className="auth-layout-aside relative hidden min-h-screen w-[min(42vw,520px)] shrink-0 lg:block">
         {panelUrl ? (

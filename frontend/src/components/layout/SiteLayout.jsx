@@ -4,6 +4,7 @@ import { useHomeHeaderScroll } from '../../hooks/useHomeHeaderScroll';
 import { useSiteHeaderBand } from '../../lib/useSiteHeaderBand';
 import { CartDrawer } from '../cart/CartDrawer';
 import { CartDrawerProvider } from '../../context/CartDrawerContext';
+import { RouteSeo } from '../RouteSeo';
 import { Footer } from './Footer';
 import { Navbar } from './Navbar';
 
@@ -23,6 +24,7 @@ export function SiteLayout() {
   return (
     <CartDrawerProvider>
     <div className="min-h-screen bg-q-black text-stone-100">
+      <RouteSeo />
       <ScrollToTop />
       {isHome ? (
         <div

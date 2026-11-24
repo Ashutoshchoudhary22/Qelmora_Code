@@ -21,6 +21,7 @@ import contentRoutes from './routes/content.routes.js';
 import accountOverviewRoutes from './routes/account-overview.routes.js';
 import contactRoutes from './routes/contact.routes.js';
 import instagramRoutes from './routes/instagram.routes.js';
+import seoRoutes from './routes/seo.routes.js';
 import { runStartupMigrations } from './utils/ensure-db.js';
 
 applyCloudinaryConfig();
@@ -51,6 +52,7 @@ app.use('/api/v1/instagram', instagramRoutes);
 app.use('/api/v1/coupons', couponRoutes);
 app.use('/api/v1/admin', adminRoutes);
 app.use('/api/v1/payments', paymentRoutes);
+app.use('/api/v1/seo', seoRoutes);
 
 app.get('/api/v1/health', async (_req, res) => {
   try {

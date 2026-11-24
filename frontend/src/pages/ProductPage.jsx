@@ -21,6 +21,8 @@ import { useAuth } from '../context/AuthContext';
 import { useCartDrawer } from '../context/CartDrawerContext';
 import { colorSwatchHex } from '../lib/colorSwatch';
 import { discountPercent, formatInr } from '../lib/money';
+import { breadcrumbJsonLd, productJsonLd, truncateMeta } from '../lib/seo';
+import { SeoHead } from '../components/SeoHead';
 
 const SIZE_ORDER = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
@@ -154,8 +156,40 @@ export default function ProductPage() {
     },
   });
 
+  const productSeo = product
+    ? {
+        title: product.name,
+        description:
+          truncateMeta(product.description) ||
+          `Shop ${product.name} at QELMORA — premium streetwear with limited stock.`,
+        image: product.media?.[0]?.secureUrl,
+        path: `/product/${product.slug}`,
+        type: 'product',
+        jsonLd: [
+          productJsonLd(product),
+          breadcrumbJsonLd([
+            { name: 'Home', path: '/' },
+            product.categorySlug
+              ? {
+                  name: product.category || product.categorySlug,
+                  path: `/shop/${product.categorySlug}`,
+                }
+              : null,
+            { name: product.name, path: `/product/${product.slug}` },
+          ].filter(Boolean)),
+        ],
+      }
+    : null;
+
   if (isLoading) return <main className="p-20 text-stone-500">Loading…</main>;
-  if (error || !product) return <main className="p-20 text-stone-500">Product not found.</main>;
+  if (error || !product) {
+    return (
+      <>
+        <SeoHead title="Product not found" description="This product is unavailable or has been removed." noindex />
+        <main className="p-20 text-stone-500">Product not found.</main>
+      </>
+    );
+  }
 
   const media = product.media || [];
   const active = media[activeMedia];
@@ -177,6 +211,17 @@ export default function ProductPage() {
       : TAB_COPY[activeTab];
 
   return (
+    <>
+      {productSeo && (
+        <SeoHead
+          title={productSeo.title}
+          description={productSeo.description}
+          path={productSeo.path}
+          image={productSeo.image}
+          type={productSeo.type}
+          jsonLd={productSeo.jsonLd}
+        />
+      )}
   <main className="product-detail-page site-container py-8 md:py-12">
       <Link to="/" className="product-detail-breadcrumb">
         ← Home
@@ -426,5 +471,6 @@ export default function ProductPage() {
         </button>
       )}
     </main>
+    </>
   );
 }

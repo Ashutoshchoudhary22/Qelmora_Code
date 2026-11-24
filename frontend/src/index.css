@@ -3014,6 +3014,333 @@ html[data-theme="dark"] .auth-layout .text-stone-400 {
   font-weight: 600;
 }
 
+/* Account — order status badges */
+.account-order-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.account-order-status-dot {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.account-order-status--placed {
+  color: #57534e;
+  background: rgb(120 113 108 / 0.12);
+  border-color: rgb(120 113 108 / 0.22);
+}
+
+.account-order-status--placed .account-order-status-dot {
+  background: #78716c;
+}
+
+.account-order-status--confirmed {
+  color: #9a3412;
+  background: rgb(232 149 74 / 0.14);
+  border-color: rgb(232 149 74 / 0.35);
+}
+
+.account-order-status--confirmed .account-order-status-dot {
+  background: #e8954a;
+  box-shadow: 0 0 0 2px rgb(232 149 74 / 0.25);
+}
+
+.account-order-status--packed {
+  color: #1e40af;
+  background: rgb(59 130 246 / 0.12);
+  border-color: rgb(59 130 246 / 0.28);
+}
+
+.account-order-status--packed .account-order-status-dot {
+  background: #3b82f6;
+  box-shadow: 0 0 8px rgb(59 130 246 / 0.45);
+}
+
+.account-order-status--shipped {
+  color: #b45309;
+  background: rgb(251 191 36 / 0.14);
+  border-color: rgb(251 191 36 / 0.35);
+}
+
+.account-order-status--shipped .account-order-status-dot {
+  background: #f59e0b;
+}
+
+.account-order-status--delivered {
+  color: #047857;
+  background: rgb(16 185 129 / 0.12);
+  border-color: rgb(16 185 129 / 0.3);
+}
+
+.account-order-status--delivered .account-order-status-dot {
+  background: #10b981;
+}
+
+.account-order-status--cancelled {
+  color: #b91c1c;
+  background: rgb(239 68 68 / 0.1);
+  border-color: rgb(239 68 68 / 0.28);
+}
+
+.account-order-status--cancelled .account-order-status-dot {
+  background: #ef4444;
+}
+
+html[data-theme="dark"] .account-order-status--placed {
+  color: #d6d3d1;
+  background: rgb(255 255 255 / 0.06);
+  border-color: rgb(255 255 255 / 0.12);
+}
+
+html[data-theme="dark"] .account-order-status--confirmed {
+  color: #fcd9b8;
+  background: rgb(232 149 74 / 0.16);
+  border-color: rgb(232 149 74 / 0.35);
+}
+
+html[data-theme="dark"] .account-order-status--packed {
+  color: #bfdbfe;
+  background: rgb(59 130 246 / 0.16);
+  border-color: rgb(96 165 250 / 0.35);
+}
+
+html[data-theme="dark"] .account-order-status--shipped {
+  color: #fde68a;
+  background: rgb(245 158 11 / 0.14);
+  border-color: rgb(251 191 36 / 0.3);
+}
+
+html[data-theme="dark"] .account-order-status--delivered {
+  color: #a7f3d0;
+  background: rgb(16 185 129 / 0.14);
+  border-color: rgb(52 211 153 / 0.35);
+}
+
+html[data-theme="dark"] .account-order-status--cancelled {
+  color: #fecaca;
+  background: rgb(239 68 68 / 0.14);
+  border-color: rgb(248 113 113 / 0.35);
+}
+
+.account-order-meta-pill {
+  display: inline-flex;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid rgb(0 0 0 / 0.08);
+  background: rgb(255 255 255 / 0.65);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #57534e;
+}
+
+.account-order-meta-pill--muted {
+  color: #78716c;
+  background: rgb(120 113 108 / 0.08);
+}
+
+html[data-theme="dark"] .account-order-meta-pill {
+  border-color: rgb(255 255 255 / 0.1);
+  background: rgb(255 255 255 / 0.06);
+  color: #d6d3d1;
+}
+
+/* Account — order tracking timeline */
+.order-track-card {
+  box-shadow: 0 12px 40px -32px rgb(0 0 0 / 0.12);
+}
+
+.order-track {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.order-track-step {
+  display: flex;
+  gap: 1rem;
+  position: relative;
+}
+
+.order-track-step:not(:last-child) {
+  padding-bottom: 1.75rem;
+}
+
+.order-track-rail {
+  position: relative;
+  display: flex;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-items: center;
+  width: 1.75rem;
+}
+
+.order-track-step:not(:last-child) .order-track-rail::after {
+  content: "";
+  position: absolute;
+  top: 1.65rem;
+  bottom: -1.75rem;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+  background: #e7e5e4;
+}
+
+.order-track-step--complete:not(:last-child) .order-track-rail::after {
+  background: linear-gradient(180deg, #10b981 0%, #34d399 100%);
+}
+
+.order-track-step--current:not(:last-child) .order-track-rail::after {
+  background: linear-gradient(180deg, #10b981 0%, #e7e5e4 70%);
+}
+
+.order-track-node {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 50%;
+  border: 2px solid #d6d3d1;
+  background: #fff;
+  color: #fff;
+  z-index: 1;
+}
+
+.order-track-step--complete .order-track-node {
+  border-color: #10b981;
+  background: #10b981;
+}
+
+.order-track-step--current .order-track-node {
+  border-color: #10b981;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgb(16 185 129 / 0.2);
+}
+
+.order-track-step--upcoming .order-track-node {
+  border-color: #d6d3d1;
+  background: #fafaf9;
+}
+
+.order-track-copy {
+  flex: 1;
+  min-width: 0;
+  padding-top: 0.05rem;
+}
+
+.order-track-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.5rem;
+}
+
+.order-track-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #292524;
+}
+
+.order-track-step--current .order-track-title,
+.order-track-step--complete .order-track-title {
+  color: #047857;
+}
+
+.order-track-step--upcoming .order-track-title {
+  color: #a8a29e;
+  font-weight: 500;
+}
+
+.order-track-title-check {
+  color: #10b981;
+}
+
+.order-track-sep {
+  color: #d6d3d1;
+  font-size: 0.85rem;
+}
+
+.order-track-time {
+  font-size: 0.86rem;
+  font-style: italic;
+  color: #78716c;
+}
+
+.order-track-sub {
+  margin: 0.35rem 0 0;
+  font-size: 0.84rem;
+  color: #57534e;
+}
+
+.order-track-step--upcoming .order-track-sub {
+  display: none;
+}
+
+.order-track--cancelled {
+  padding: 0.75rem 0;
+}
+
+.order-track-cancel-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #b91c1c;
+}
+
+.order-track-cancel-meta {
+  margin: 0.35rem 0 0;
+  font-size: 0.86rem;
+  color: #78716c;
+}
+
+html[data-theme="dark"] .order-track-card {
+  border-color: rgb(255 255 255 / 0.1);
+}
+
+html[data-theme="dark"] .order-track-title {
+  color: #e7e5e4;
+}
+
+html[data-theme="dark"] .order-track-step--current .order-track-title,
+html[data-theme="dark"] .order-track-step--complete .order-track-title {
+  color: #6ee7b7;
+}
+
+html[data-theme="dark"] .order-track-step--upcoming .order-track-title {
+  color: #78716c;
+}
+
+html[data-theme="dark"] .order-track-node {
+  background: #141210;
+}
+
+html[data-theme="dark"] .order-track-step--current .order-track-node {
+  background: #141210;
+}
+
+html[data-theme="dark"] .order-track-sub {
+  color: #a8a29e;
+}
+
 .account-sidebar-panel {
   display: flex;
   flex-direction: column;
@@ -4659,26 +4986,50 @@ html[data-theme="light"] .admin-shell [class*="0d0d0d"] {
 
 .checkout-address-pick {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-  margin-top: 0.85rem;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-top: 0.25rem;
 }
 
 .checkout-address-chip {
-  border-radius: 999px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  width: 100%;
+  border-radius: 0.75rem;
   border: 1px solid rgb(74 52 38 / 0.18);
   background: #fff;
-  padding: 0.4rem 0.85rem;
+  padding: 0.85rem 1rem;
+  text-align: left;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.checkout-address-chip-title {
   font-size: 0.86rem;
-  font-weight: 600;
+  font-weight: 700;
+  color: #292524;
+}
+
+.checkout-address-chip-line {
+  font-size: 0.84rem;
+  line-height: 1.45;
   color: #57534e;
-  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+
+.checkout-address-chip-meta {
+  font-size: 0.78rem;
+  color: #78716c;
 }
 
 .checkout-address-chip--active {
-  border-color: #4a3426;
-  background: #4a3426;
-  color: #fafaf9;
+  border-color: #c4843a;
+  background: linear-gradient(180deg, #fffaf4 0%, #fff7ed 100%);
+  box-shadow: 0 0 0 1px rgb(196 132 58 / 0.25);
+}
+
+.checkout-address-chip--active .checkout-address-chip-title {
+  color: #4a3426;
 }
 
 .checkout-link-btn {

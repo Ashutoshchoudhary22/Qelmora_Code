@@ -4,6 +4,17 @@ import { formatInr } from '../../lib/money';
 
 const STATUSES = ['placed', 'confirmed', 'packed', 'shipped', 'delivered', 'cancelled'];
 
+function formatOrderDate(iso) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleString('en-IN', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
 export default function AdminOrders() {
   const qc = useQueryClient();
   const { data, isLoading } = useQuery({
@@ -25,6 +36,7 @@ export default function AdminOrders() {
         <thead className="text-[10px] uppercase tracking-widest text-stone-500">
           <tr>
             <th className="py-2">Order</th>
+            <th>Order date</th>
             <th>Customer</th>
             <th>Total</th>
             <th>Payment</th>
@@ -34,7 +46,8 @@ export default function AdminOrders() {
         <tbody className="divide-y divide-white/10">
           {(data?.items || []).map((o) => (
             <tr key={o.id}>
-              <td className="py-3">{o.orderNumber}</td>
+              <td className="py-3 font-medium text-stone-800">{o.orderNumber}</td>
+              <td className="whitespace-nowrap text-stone-600">{formatOrderDate(o.createdAt)}</td>
               <td>{o.customerName}</td>
               <td>{formatInr(o.total)}</td>
               <td>{o.paymentMethod} / {o.paymentStatus}</td>

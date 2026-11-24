@@ -21,6 +21,8 @@ import { AddressForm } from '../components/AddressForm';
 import { ProtectedRoute } from '../components/ProtectedRoute';
 import { useAuth } from '../context/AuthContext';
 import { formatInr } from '../lib/money';
+import { OrderStatusBadge } from '../components/OrderStatusBadge';
+import { OrderTrackingTimeline } from '../components/OrderTrackingTimeline';
 
 const navItems = [
   { to: '/account', label: 'Overview', icon: LayoutGrid, end: true },
@@ -470,14 +472,6 @@ export function AddressesSection() {
   );
 }
 
-function orderStatusClass(status) {
-  const s = String(status || '').toLowerCase();
-  if (s.includes('deliver') || s.includes('complete')) return 'text-emerald-500';
-  if (s.includes('cancel')) return 'text-red-400';
-  if (s.includes('ship') || s.includes('process')) return 'text-q-accent';
-  return 'text-stone-500';
-}
-
 export function OrdersList() {
   const { data, isLoading } = useQuery({
     queryKey: ['orders'],
@@ -510,11 +504,9 @@ export function OrdersList() {
                     {new Date(o.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                   </p>
                 </div>
-                <div className="text-right">
-                  <p className="text-stone-800 dark:text-stone-200">{formatInr(o.total)}</p>
-                  <p className={`mt-1 text-[10px] uppercase tracking-widest ${orderStatusClass(o.orderStatus)}`}>
-                    {o.orderStatus}
-                  </p>
+                <div className="flex flex-col items-end gap-2 text-right">
+                  <p className="font-medium text-stone-800 dark:text-stone-200">{formatInr(o.total)}</p>
+                  <OrderStatusBadge status={o.orderStatus} />
                 </div>
               </Link>
             </li>
@@ -543,13 +535,25 @@ export function OrderDetailPage() {
         ← Back to orders
       </Link>
       <h2 className="font-display mt-4 text-3xl font-light text-stone-900 dark:text-stone-50">{data.orderNumber}</h2>
-      <p className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-xs uppercase tracking-widest text-stone-500">
-        <span>{data.paymentMethod?.toUpperCase()}</span>
-        <span className="text-stone-300 dark:text-white/20">·</span>
-        <span className={orderStatusClass(data.paymentStatus)}>{data.paymentStatus}</span>
-        <span className="text-stone-300 dark:text-white/20">·</span>
-        <span className={orderStatusClass(data.orderStatus)}>{data.orderStatus}</span>
-      </p>
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        <span className="account-order-meta-pill">{data.paymentMethod?.toUpperCase() || '—'}</span>
+        <OrderStatusBadge status={data.orderStatus} />
+        {data.paymentStatus && (
+          <span className="account-order-meta-pill account-order-meta-pill--muted">{data.paymentStatus}</span>
+        )}
+      </div>
+
+      <section className="order-track-card mt-8 rounded-xl border border-stone-200 bg-white p-6 dark:border-white/10 dark:bg-[#0c0c0c]/90 md:p-8">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.35em] text-stone-500">Tracking</p>
+        <h3 className="font-display mt-2 text-xl font-light text-stone-900 dark:text-stone-50">Order status</h3>
+        <div className="mt-6">
+          <OrderTrackingTimeline
+            orderStatus={data.orderStatus}
+            createdAt={data.createdAt}
+            updatedAt={data.updatedAt}
+          />
+        </div>
+      </section>
 
       <div className="mt-8 grid gap-6 sm:grid-cols-2">
         <div className="rounded-lg border border-stone-200 bg-stone-50/50 p-5 dark:border-white/10 dark:bg-black/20">

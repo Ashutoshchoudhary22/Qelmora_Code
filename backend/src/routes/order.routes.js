@@ -27,7 +27,8 @@ router.get('/:orderNumber', async (req, res, next) => {
     const [orders] = await pool.execute(
       `SELECT id, order_number AS orderNumber, address_snapshot AS addressSnapshot, subtotal,
         discount_amount AS discountAmount, total_amount AS total, payment_method AS paymentMethod,
-        payment_status AS paymentStatus, order_status AS orderStatus, created_at AS createdAt
+        payment_status AS paymentStatus, order_status AS orderStatus, created_at AS createdAt,
+        updated_at AS updatedAt
        FROM orders WHERE order_number=? AND user_id=? LIMIT 1`,
       [req.params.orderNumber, req.user.sub]
     );

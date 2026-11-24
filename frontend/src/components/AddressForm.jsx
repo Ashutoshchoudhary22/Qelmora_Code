@@ -20,7 +20,7 @@ export function AddressForm({ initialFullName = '', isDefault = true, onSuccess,
     mutationFn: () =>
       api.post('/addresses', {
         fullName: form.fullName.trim(),
-        phone: form.phone.trim(),
+        phone: form.phone.replace(/\D/g, ''),
         line1: form.line1.trim(),
         line2: form.line2.trim() || null,
         city: form.city.trim(),
@@ -35,14 +35,21 @@ export function AddressForm({ initialFullName = '', isDefault = true, onSuccess,
       onSuccess?.(data);
     },
     onError: (e) => {
-      setFieldError(e.response?.data?.message || 'Could not save address');
+      const zodMsg = e.response?.data?.errors?.[0]?.message;
+      setFieldError(zodMsg || e.response?.data?.message || 'Could not save address');
     },
   });
 
   function submit(e) {
     e.preventDefault();
+    e.stopPropagation();
     if (!form.fullName.trim() || !form.phone.trim() || !form.line1.trim() || !form.city.trim() || !form.state.trim() || !form.postalCode.trim()) {
       setFieldError('Fill all required fields.');
+      return;
+    }
+    const phoneDigits = form.phone.replace(/\D/g, '');
+    if (phoneDigits.length !== 10) {
+      setFieldError('Phone must be exactly 10 digits.');
       return;
     }
     save.mutate();
@@ -50,7 +57,7 @@ export function AddressForm({ initialFullName = '', isDefault = true, onSuccess,
 
   const fields = [
     { key: 'fullName', label: 'Full name', required: true },
-    { key: 'phone', label: 'Phone', required: true },
+    { key: 'phone', label: 'Phone (10 digits)', required: true, phone: true },
     { key: 'line1', label: 'Address line 1', required: true },
     { key: 'line2', label: 'Address line 2 (optional)', required: false },
     { key: 'city', label: 'City', required: true },
@@ -60,17 +67,25 @@ export function AddressForm({ initialFullName = '', isDefault = true, onSuccess,
 
   return (
     <form onSubmit={submit} className="space-y-3">
-      {fields.map(({ key, label, required }) => (
+      {fields.map(({ key, label, required, phone }) => (
         <input
           key={key}
           value={form[key]}
-          onChange={(e) => setForm({ ...form, [key]: e.target.value })}
+          type={phone ? 'tel' : 'text'}
+          inputMode={phone ? 'numeric' : undefined}
+          maxLength={phone ? 10 : undefined}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              [key]: phone ? e.target.value.replace(/\D/g, '').slice(0, 10) : e.target.value,
+            })
+          }
           placeholder={label}
           required={required}
           className="input-field"
         />
       ))}
-      {fieldError && <p className="text-sm text-red-400">{fieldError}</p>}
+      {fieldError && <p className="text-sm text-red-600">{fieldError}</p>}
       {save.error?.response?.data?.errors && (
         <p className="text-xs text-red-400">Check your details and try again.</p>
       )}

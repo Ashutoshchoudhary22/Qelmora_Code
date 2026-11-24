@@ -5,7 +5,6 @@ import {
   ArrowRight,
   Banknote,
   CreditCard,
-  Home,
   Lock,
   Mail,
   MapPin,
@@ -50,6 +49,7 @@ function CheckoutForm() {
   const { data: addresses, isLoading: loadingAddresses } = useQuery({
     queryKey: ['addresses'],
     queryFn: async () => (await api.get('/addresses')).data,
+    enabled: Boolean(user),
   });
 
   const items = addresses?.items || [];
@@ -66,8 +66,9 @@ function CheckoutForm() {
   }, [items, addressId]);
 
   useEffect(() => {
-    if (items.length === 0) setShowAddAddress(true);
-  }, [items.length]);
+    if (loadingAddresses) return;
+    setShowAddAddress(items.length === 0);
+  }, [items.length, loadingAddresses]);
 
   const placeCod = useMutation({
     mutationFn: () => api.post('/orders', { addressId: Number(addressId), paymentMethod: 'cod' }),
@@ -115,8 +116,7 @@ function CheckoutForm() {
     }
   }
 
-  function submit(e) {
-    e.preventDefault();
+  function placeOrder() {
     if (!addressId) return setError('Select or add a delivery address');
     if (paymentMethod === 'cod') placeCod.mutate();
     else payOnline();
@@ -133,7 +133,7 @@ function CheckoutForm() {
   const emailDisplay = user?.email || '';
 
   return (
-    <form onSubmit={submit} className="checkout-layout">
+    <div className="checkout-layout">
       <div>
         <section className="checkout-card">
           <div className="checkout-card-head">
@@ -148,21 +148,7 @@ function CheckoutForm() {
             <p className="text-sm text-stone-500">Loading addresses…</p>
           ) : (
             <>
-              {selectedAddress && !showAddAddress && (
-                <div role="presentation" className="checkout-field checkout-field--selectable">
-                  <span className="checkout-field-icon">
-                    <Home size={18} aria-hidden />
-                  </span>
-                  <span className="checkout-field-body">
-                    <span className="checkout-field-label">
-                      Address <span className="req">*</span>
-                    </span>
-                    <span className="checkout-field-value">{formatAddressLine(selectedAddress)}</span>
-                  </span>
-                </div>
-              )}
-
-              {items.length > 1 && !showAddAddress && (
+              {!showAddAddress && items.length > 0 && (
                 <div className="checkout-address-pick">
                   {items.map((a) => (
                     <button
@@ -173,8 +159,12 @@ function CheckoutForm() {
                       }`}
                       onClick={() => setAddressId(String(a.id))}
                     >
-                      {a.city || a.line1}
-                      {a.isDefault ? ' · Default' : ''}
+                      <span className="checkout-address-chip-title">
+                        {a.fullName || user?.name || 'Address'}
+                        {a.isDefault ? ' · Default' : ''}
+                      </span>
+                      <span className="checkout-address-chip-line">{formatAddressLine(a)}</span>
+                      {a.phone && <span className="checkout-address-chip-meta">{a.phone}</span>}
                     </button>
                   ))}
                 </div>
@@ -303,8 +293,9 @@ function CheckoutForm() {
           <p className="checkout-summary-items">{cart?.itemCount || 0} items in your bag</p>
           <div className="checkout-summary-divider" />
           <button
-            type="submit"
+            type="button"
             disabled={placeCod.isPending || !addressId}
+            onClick={placeOrder}
             className="checkout-place-order"
           >
             <Lock size={16} aria-hidden />
@@ -313,7 +304,7 @@ function CheckoutForm() {
           </button>
         </div>
       </aside>
-    </form>
+    </div>
   );
 }
 

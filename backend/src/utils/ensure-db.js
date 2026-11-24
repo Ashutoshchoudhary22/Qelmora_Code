@@ -9,6 +9,7 @@ let contactMessagesReady = false;
 let bannerMobileReady = false;
 let productCategoriesReady = false;
 let accountOverviewTilesReady = false;
+let signupEmailOtpsReady = false;
 
 export async function ensureCategoryMediaColumn() {
   if (categoryMediaReady) return;
@@ -517,6 +518,42 @@ export async function ensureAccountOverviewTilesTable() {
   accountOverviewTilesReady = true;
 }
 
+export async function ensureUsersEmailVerifiedColumn() {
+  try {
+    await pool.execute(`ALTER TABLE users ADD COLUMN email_verified_at DATETIME NULL`);
+    console.log('Database: added users.email_verified_at');
+  } catch (e) {
+    if (e.code !== 'ER_DUP_FIELDNAME') throw e;
+  }
+}
+
+export async function ensureSignupEmailOtpsTable() {
+  if (signupEmailOtpsReady) return;
+  await ensureUsersEmailVerifiedColumn();
+  try {
+    await pool.execute(`ALTER TABLE signup_email_otps ADD COLUMN phone VARCHAR(25) NULL`);
+    console.log('Database: added signup_email_otps.phone');
+  } catch (e) {
+    if (e.code !== 'ER_DUP_FIELDNAME' && e.code !== 'ER_NO_SUCH_TABLE') throw e;
+  }
+  await pool.execute(`
+    CREATE TABLE IF NOT EXISTS signup_email_otps (
+      id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+      email VARCHAR(190) NOT NULL,
+      name VARCHAR(120) NOT NULL,
+      phone VARCHAR(25) NULL,
+      password_hash VARCHAR(255) NOT NULL,
+      otp_hash VARCHAR(64) NOT NULL,
+      expires_at DATETIME NOT NULL,
+      attempts INT NOT NULL DEFAULT 0,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE KEY uq_signup_email (email),
+      INDEX idx_signup_otp_expires (expires_at)
+    ) ENGINE=InnoDB
+  `);
+  signupEmailOtpsReady = true;
+}
+
 export async function runStartupMigrations() {
   await ensureDatabaseSchema();
   await ensureCategoryMediaColumn();
@@ -527,4 +564,5 @@ export async function runStartupMigrations() {
   await ensureContactMessagesTable();
   await ensureProductCategoriesTable();
   await ensureAccountOverviewTilesTable();
+  await ensureSignupEmailOtpsTable();
 }

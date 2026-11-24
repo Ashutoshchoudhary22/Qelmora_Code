@@ -69,7 +69,7 @@ function AccountMenu({ onNavigate, heroOverlay = false }) {
       </button>
       {menuOpen && (
         <div
-          className="account-menu-dropdown absolute right-0 top-[calc(100%+0.65rem)] z-50 min-w-[11.5rem] overflow-hidden rounded-md border border-stone-200 bg-white py-1 shadow-xl"
+          className="account-menu-dropdown absolute right-0 top-[calc(100%+0.5rem)] z-[100] min-w-[11.5rem] overflow-hidden rounded-md border border-stone-200 bg-white py-1 shadow-xl"
           role="menu"
         >
           <p className="truncate border-b border-stone-100 px-4 py-2 text-[10px] text-stone-500">{user.email}</p>
@@ -112,7 +112,7 @@ export function Navbar({ heroOverlay = false, inHomeShell = false, headerBgUrl =
 
   return (
     <header
-      className={`site-header z-40 transition-[background-color,border-color,backdrop-filter,box-shadow] duration-300 ${
+      className={`site-header z-50 transition-[background-color,border-color,backdrop-filter,box-shadow] duration-300 ${
         heroOverlay
           ? 'site-header-hero border-b-0 bg-transparent backdrop-blur-none shadow-none'
           : showHeaderBg
@@ -123,10 +123,10 @@ export function Navbar({ heroOverlay = false, inHomeShell = false, headerBgUrl =
       }`}
     >
       {showHeaderBg && (
-        <>
-          <div className="site-header-band-bg" style={{ backgroundImage: `url(${headerBgUrl})` }} aria-hidden />
-          <div className="site-header-band-scrim" aria-hidden />
-        </>
+        <div className="site-header-band-layers" aria-hidden>
+          <div className="site-header-band-bg" style={{ backgroundImage: `url(${headerBgUrl})` }} />
+          <div className="site-header-band-scrim" />
+        </div>
       )}
       <div className="site-container relative z-[2] flex items-center justify-between gap-4 py-4">
         <Link
@@ -156,7 +156,7 @@ export function Navbar({ heroOverlay = false, inHomeShell = false, headerBgUrl =
           ))}
         </nav>
 
-        <div className="flex items-center gap-3 md:gap-5">
+        <div className="relative z-[3] flex items-center gap-3 md:gap-5">
           <button
             type="button"
             onClick={toggleTheme}

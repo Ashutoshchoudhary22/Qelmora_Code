@@ -38,14 +38,24 @@ export function AuthProvider({ children }) {
     [persist]
   );
 
-  const register = useCallback(
-    async (name, email, password) => {
-      const { data } = await api.post('/auth/register', { name, email, password });
+  const sendRegisterOtp = useCallback(async (name, email, phone, password) => {
+    const { data } = await api.post('/auth/register/send-otp', { name, email, phone, password });
+    return data;
+  }, []);
+
+  const verifyRegisterOtp = useCallback(
+    async (email, otp) => {
+      const { data } = await api.post('/auth/register/verify', { email, otp });
       persist(data.user, data.token);
       return data.user;
     },
     [persist]
   );
+
+  const resendRegisterOtp = useCallback(async (email) => {
+    const { data } = await api.post('/auth/register/resend-otp', { email });
+    return data;
+  }, []);
 
   useEffect(() => {
     const syncSession = () => {
@@ -77,11 +87,13 @@ export function AuthProvider({ children }) {
       hasToken,
       isAuthenticated: !!user || hasToken,
       login,
-      register,
+      sendRegisterOtp,
+      verifyRegisterOtp,
+      resendRegisterOtp,
       logout,
       isAdmin: user?.role === 'admin',
     };
-  }, [user, booting, login, register, logout]);
+  }, [user, booting, login, sendRegisterOtp, verifyRegisterOtp, resendRegisterOtp, logout]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

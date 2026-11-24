@@ -555,6 +555,49 @@ a {
   background: #ffffff;
 }
 
+.auth-form-label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #78716c;
+}
+
+.auth-password-field {
+  position: relative;
+}
+
+.auth-password-field .input-field {
+  padding-right: 2.85rem;
+}
+
+.auth-password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.65rem;
+  display: inline-flex;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  padding: 0.25rem;
+  color: #78716c;
+  transition: color 0.2s;
+}
+
+.auth-password-toggle:hover {
+  color: #1c1917;
+}
+
+[data-theme="dark"] .auth-panel .auth-password-toggle {
+  color: #a8a29e;
+}
+
+[data-theme="dark"] .auth-panel .auth-password-toggle:hover {
+  color: #1c1917;
+}
+
 .auth-panel .input-field:-webkit-autofill,
 .auth-panel .input-field:-webkit-autofill:hover,
 .contact-input {
@@ -841,10 +884,22 @@ a {
   border-color: rgb(0 0 0 / 0.08);
 }
 
+.site-header {
+  overflow: visible;
+}
+
 .site-header--has-bg {
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   background: transparent !important;
+}
+
+.site-header-band-layers {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
 }
 
 .site-header-band-bg {
@@ -2944,6 +2999,8 @@ html[data-theme="dark"] .auth-layout .text-stone-400 {
 
 /* —— Account dashboard (luxury overview) —— */
 .account-dashboard-page {
+  position: relative;
+  z-index: 0;
   background: linear-gradient(165deg, #faf6f0 0%, #f3ebe1 45%, #efe6dc 100%);
   color: #1c1917;
 }
